@@ -1,7 +1,7 @@
 FE Ruang Seni
 
 Nama anggota:
-1. Muhammad Dila - DONE DONE
+1. Muhammad Dila - DONE 
 2. Mukti Prabowo
 3. Krisna Diva - DONE
-4. Rosmayanti
+4. Rosmayanti DONE
