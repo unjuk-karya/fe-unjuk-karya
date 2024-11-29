@@ -4,21 +4,30 @@ import Swal from 'sweetalert2';
 const Login = {
   async render() {
     return `
-     <div class="auth-container">
-       <h2 class="auth-heading">Login</h2>
-       <form id="loginForm">
-         <div class="form-group">
-           <label class="form-label" for="identifier">Username or Email</label>
-           <input class="form-input" type="text" id="identifier" required>
-         </div>
-         <div class="form-group">
-           <label class="form-label" for="password">Password</label>
-           <input class="form-input" type="password" id="password" required>
-         </div>
-         <button type="submit" class="btn btn-primary">Login</button>
-         <p class="auth-footer">Don't have an account? <a href="#/register" class="link">Register here</a></p>
-       </form>
-     </div>
+    <div class="auth-container">
+    <div class="auth-layout">
+      <div class="login-image">
+        <img src="../login-bg.svg" alt="Login Illustration">
+      </div>
+      <div class="login-form">
+        <h2 class="auth-heading">Login</h2>
+        <form id="loginForm">
+          <div class="form-group">
+            <label class="form-label" for="identifier">Username or Email</label>
+            <input class="form-input" type="text" id="identifier" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-input" type="password" id="password" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+          <p class="auth-footer">
+            Don't have an account? <a href="#/register" class="link">Register here</a>
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>  
    `;
   },
 

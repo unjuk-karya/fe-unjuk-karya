@@ -35,3 +35,14 @@
   }
 }
 
+@media (max-width: 768px) {
+  .login-image {
+    display: none; /* Sembunyikan gambar pada layar kecil */
+  }
+
+  .login-form {
+    max-width: 100%; /* Form mengambil seluruh lebar */
+  }
+}
+
+
