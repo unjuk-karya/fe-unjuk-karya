@@ -11,6 +11,8 @@ class AuthRegister extends HTMLElement {
 
   _updateStyle() {
     this._style.textContent = `
+      @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css');
+    
       * {
         padding: 0;
         margin: 0;
@@ -118,6 +120,20 @@ class AuthRegister extends HTMLElement {
         box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
       }
       
+      .form-group .validation-message {
+        display: none; /* Initially hide validation messages */
+        align-items: center;
+        text-align: center;
+        margin-top: 4px;
+        font-size: 14px;
+        color: red;
+      }
+      
+      .form-group .validation-message i {
+        margin-right: 4px;
+        font-size: 18px;
+      }
+      
       form button {
         display: flex;
         justify-content: center;
@@ -138,7 +154,12 @@ class AuthRegister extends HTMLElement {
         margin-top: 24px;
       }
       
-      form button:hover {
+      form button:disabled {
+        background: #d3d3d3;
+        cursor: not-allowed;
+      }
+      
+      form button:hover:enabled {
         cursor: pointer;
         background: #4f73d9;
       }
@@ -169,9 +190,105 @@ class AuthRegister extends HTMLElement {
     `;
   }
 
-
   connectedCallback() {
     this.render();
+    this._setupValidation();
+  }
+
+  _setupValidation() {
+    const nameInput = this._shadowRoot.querySelector('#username');
+    const emailInput = this._shadowRoot.querySelector('#email');
+    const passwordInput = this._shadowRoot.querySelector('#password');
+    const confirmPasswordInput = this._shadowRoot.querySelector('#confirmPassword');
+    const submitButton = this._shadowRoot.querySelector('button[type="submit"]');
+
+    const nameValidationMessage = this._shadowRoot.querySelector('.username-validation');
+    const emailValidationMessage = this._shadowRoot.querySelector('.email-validation');
+    const passwordValidationMessage = this._shadowRoot.querySelector('.password-validation');
+    const confirmPasswordValidationMessage = this._shadowRoot.querySelector('.confirmPassword-validation');
+
+    const nameFocused = { value: false };
+    const emailFocused = { value: false };
+    const passwordFocused = { value: false };
+    const confirmPasswordFocused = { value: false };
+
+    const validateInputs = () => {
+      const nameValid = nameInput.value.trim().length >= 5;
+      const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
+      const passwordValid = passwordInput.value.trim().length >= 8;
+      const confirmPasswordValid = confirmPasswordInput.value === passwordInput.value.trim();
+
+      // Username validation
+      if (nameValidationMessage) {
+        if (nameFocused.value && !nameValid) {
+          nameValidationMessage.style.display = 'flex';
+          nameValidationMessage.querySelector('p').textContent = 'Username minimal 5 karakter';
+          nameInput.style.borderColor = 'red';
+        } else {
+          nameValidationMessage.style.display = 'none';
+          nameInput.style.borderColor = '#dfe5ef';
+        }
+      }
+
+      // Email validation
+      if (emailValidationMessage) {
+        if (emailFocused.value && !emailValid) {
+          emailValidationMessage.style.display = 'flex';
+          emailValidationMessage.querySelector('p').textContent = 'Masukkan alamat email yang valid';
+          emailInput.style.borderColor = 'red';
+        } else {
+          emailValidationMessage.style.display = 'none';
+          emailInput.style.borderColor = '#dfe5ef';
+        }
+      }
+
+      // Password validation
+      if (passwordValidationMessage) {
+        if (passwordFocused.value && !passwordValid) {
+          passwordValidationMessage.style.display = 'flex';
+          passwordValidationMessage.querySelector('p').textContent = 'Kata sandi minimal 8 karakter';
+          passwordInput.style.borderColor = 'red';
+        } else {
+          passwordValidationMessage.style.display = 'none';
+          passwordInput.style.borderColor = '#dfe5ef';
+        }
+      }
+
+      // Confirm Password validation
+      if (confirmPasswordValidationMessage) {
+        if (confirmPasswordFocused.value && !confirmPasswordValid) {
+          confirmPasswordValidationMessage.style.display = 'flex';
+          confirmPasswordValidationMessage.querySelector('p').textContent = 'Kata sandi tidak cocok';
+          confirmPasswordInput.style.borderColor = 'red';
+        } else {
+          confirmPasswordValidationMessage.style.display = 'none';
+          confirmPasswordInput.style.borderColor = '#dfe5ef';
+        }
+      }
+
+      // Enable/Disable submit button
+      submitButton.disabled = !(nameValid && emailValid && passwordValid && confirmPasswordValid);
+    };
+
+    // Add event listeners to the inputs
+    [nameInput, emailInput, passwordInput, confirmPasswordInput].forEach((input) =>
+      input.addEventListener('input', () => {
+        if (input === nameInput) nameFocused.value = true;
+        if (input === emailInput) emailFocused.value = true;
+        if (input === passwordInput) passwordFocused.value = true;
+        if (input === confirmPasswordInput) confirmPasswordFocused.value = true;
+        validateInputs();
+      })
+    );
+
+    // Focus event handlers for inputs
+    nameInput.addEventListener('focus', () => nameFocused.value = true);
+    emailInput.addEventListener('focus', () => emailFocused.value = true);
+    passwordInput.addEventListener('focus', () => passwordFocused.value = true);
+    confirmPasswordInput.addEventListener('focus', () => confirmPasswordFocused.value = true);
+
+    // Initial validation
+    validateInputs();
   }
 
   render() {
@@ -179,31 +296,49 @@ class AuthRegister extends HTMLElement {
     this._shadowRoot.innerHTML += `  
       <div class="auth-container">
         <article>
-          <!--   TODO Ganti logo   -->
-<!--          <img class="auth-logo" src="../icons/dark-logo.svg" alt="Icon Logo">-->
           <h1>Selamat datang 👋</h1>
           <p>Daftar sekarang untuk menjadi bagian dari komunitas seni yang kreatif</p>
         </article>
         <form>
           <div class="form-group">
-            <label for="name">Nama Lengkap</label>
-            <input type="text" id="name">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Masukkan username">
+            <div class="validation-message username-validation">
+              <i class="ti ti-x"></i>
+              <p></p>
+            </div>
           </div>
           <div class="form-group">
-            <label for="email">Alamat Email</label>
-            <input type="email" id="email">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Masukkan email">
+            <div class="validation-message email-validation">
+              <i class="ti ti-x"></i>
+              <p></p>
+            </div>
           </div>
           <div class="form-group">
             <label for="password">Kata Sandi</label>
-            <input type="password" id="password">
+            <input type="password" id="password" placeholder="Masukkan kata sandi">
+            <div class="validation-message password-validation">
+              <i class="ti ti-x"></i>
+              <p></p>
+            </div>
           </div>
-          <button type="submit">Daftar Sekarang</button>
+          <div class="form-group">
+            <label for="confirmPassword">Konfirmasi Kata Sandi</label>
+            <input type="password" id="confirmPassword" placeholder="Konfirmasi kata sandi">
+            <div class="validation-message confirmPassword-validation">
+              <i class="ti ti-x"></i>
+              <p></p>
+            </div>
+          </div>
+          <button type="submit" disabled>Daftar</button>
         </form>
-        <p class="signin-link">
-          Sudah punya akun? <a href="#" class="signin">Masuk</a>
-        </p>
-      </div>   
-  `;
+        <div class="signin-link">
+          <p>Sudah punya akun? <a href="#/login">Masuk</a></p>
+        </div>
+      </div>
+    `;
   }
 }
 
