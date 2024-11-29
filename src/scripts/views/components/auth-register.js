@@ -121,7 +121,7 @@ class AuthRegister extends HTMLElement {
       }
       
       .form-group .validation-message {
-        display: none; /* Initially hide validation messages */
+        display: none;
         align-items: center;
         text-align: center;
         margin-top: 4px;
@@ -134,6 +134,37 @@ class AuthRegister extends HTMLElement {
         font-size: 18px;
       }
       
+      .input-container {
+        position: relative;
+        width: 100%;
+      }
+      
+      input[type="password"] {
+        width: 100%;
+        min-height: 40px;
+        padding: 8px 16px;
+        font-size: 14px;
+        border: 1px solid #dfe5ef;
+        border-radius: 8px;
+        outline: none;
+        box-sizing: border-box;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      
+      .eye-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 18px;
+        color: #5a6a85;
+      }
+      
+      .eye-icon:hover {
+        color: #4f73d9;
+      }
+
       form button {
         display: flex;
         justify-content: center;
@@ -289,57 +320,80 @@ class AuthRegister extends HTMLElement {
 
     // Initial validation
     validateInputs();
+
+    // Toggle password visibility
+    const togglePassword = this._shadowRoot.querySelector('#togglePassword');
+    togglePassword.addEventListener('click', () => {
+      const typePassword = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = typePassword;
+      togglePassword.classList.toggle('ti-eye-off');
+    });
+
+    // Toggle confirm password visibility
+    const togglePasswordConfirm = this._shadowRoot.querySelector('#togglePasswordConfirm');
+    togglePasswordConfirm.addEventListener('click', () => {
+      const typePasswordConfirm = confirmPasswordInput.type === 'password' ? 'text' : 'password';
+      confirmPasswordInput.type = typePasswordConfirm;
+      togglePasswordConfirm.classList.toggle('ti-eye-off');
+    });
   }
 
   render() {
     this._shadowRoot.appendChild(this._style);
     this._shadowRoot.innerHTML += `  
-      <div class="auth-container">
-        <article>
-          <h1>Selamat datang 👋</h1>
-          <p>Daftar sekarang untuk menjadi bagian dari komunitas seni yang kreatif</p>
-        </article>
-        <form>
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" placeholder="Masukkan username">
-            <div class="validation-message username-validation">
-              <i class="ti ti-x"></i>
-              <p></p>
-            </div>
+    <div class="auth-container">
+      <article>
+        <h1>Selamat datang 👋</h1>
+        <p>Daftar sekarang untuk menjadi bagian dari komunitas seni yang kreatif</p>
+      </article>
+      <form>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Masukkan username">
+          <div class="validation-message username-validation">
+            <i class="ti ti-x"></i>
+            <p></p>
           </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="Masukkan email">
-            <div class="validation-message email-validation">
-              <i class="ti ti-x"></i>
-              <p></p>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="password">Kata Sandi</label>
-            <input type="password" id="password" placeholder="Masukkan kata sandi">
-            <div class="validation-message password-validation">
-              <i class="ti ti-x"></i>
-              <p></p>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="confirmPassword">Konfirmasi Kata Sandi</label>
-            <input type="password" id="confirmPassword" placeholder="Konfirmasi kata sandi">
-            <div class="validation-message confirmPassword-validation">
-              <i class="ti ti-x"></i>
-              <p></p>
-            </div>
-          </div>
-          <button type="submit" disabled>Daftar</button>
-        </form>
-        <div class="signin-link">
-          <p>Sudah punya akun? <a href="#/login">Masuk</a></p>
         </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Masukkan email">
+          <div class="validation-message email-validation">
+            <i class="ti ti-x"></i>
+            <p></p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">Kata Sandi</label>
+          <div class="input-container">
+            <input type="password" id="password" placeholder="Masukkan kata sandi">
+            <i class="eye-icon ti ti-eye" id="togglePassword"></i>
+          </div>
+          <div class="validation-message password-validation">
+            <i class="ti ti-x"></i>
+            <p></p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Konfirmasi Kata Sandi</label>
+          <div class="input-container">
+            <input type="password" id="confirmPassword" placeholder="Konfirmasi kata sandi">
+            <i class="eye-icon ti ti-eye" id="togglePasswordConfirm"></i>
+          </div>
+          <div class="validation-message confirmPassword-validation">
+            <i class="ti ti-x"></i>
+            <p></p>
+          </div>
+        </div>
+        <button type="submit" disabled>Daftar</button>
+      </form>
+      <div class="signin-link">
+        <p>Sudah punya akun? <a href="#/login">Masuk</a></p>
       </div>
-    `;
+    </div>
+  `;
   }
+
 }
 
 customElements.define('auth-register', AuthRegister);

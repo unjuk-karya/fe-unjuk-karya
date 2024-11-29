@@ -37,15 +37,31 @@ const Register = {
 
         window.location.href = '#/login';
       } catch (error) {
+        let errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
+
+        if (error.status === 422 && error.data?.errors) {
+          const validationErrors = [];
+
+          if (error.data.errors.email) {
+            validationErrors.push(`Email: ${error.data.errors.email.join(', ')}`);
+          }
+          if (error.data.errors.username) {
+            validationErrors.push(`Username: ${error.data.errors.username.join(', ')}`);
+          }
+
+          errorMessage = validationErrors.join('\n');
+        }
+
         Swal.fire({
           icon: 'error',
           title: 'Pendaftaran Gagal',
-          text: error.data?.message || 'Terjadi kesalahan. Silakan coba lagi.',
+          text: errorMessage,
         });
       } finally {
         submitButton.disabled = false;
       }
     });
+
   }
 };
 
