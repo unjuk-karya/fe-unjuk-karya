@@ -5,11 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Unjuk Karya adalah platform untuk menampilkan karya-karya terbaik dari para penggiat seni">
   <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
   <title>Unjuk Karya</title>
 </head>
 <body>
-  <header id="appBarContainer"></header>
-  <main id="mainContent"></main>
+  <div class="layout">
+    <side-bar></side-bar>
+    <div class="main-content">
+      <app-bar></app-bar>
+      <main id="mainContent"></main>
+    </div>
+  </div>
+  <footer></footer>
 </body>
+<script>
+  let btn = document.querySelector('#btn');
+  let sidebar = document.querySelector('.sidebar');
+
+  btn.onclick = function () {
+      sidebar.classList.toggle('active');
+  };
+
+</script>
 </html>

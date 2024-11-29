@@ -5,7 +5,7 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: white;
+  background-color: #f3f3f3;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -46,7 +46,7 @@ body {
 }
 
 .app-bar .app-bar__brand h1 {
-  color: #db0000;
+  color: #1D77E6;
   text-transform: uppercase;
   font-size: 22px;
   user-select: none;
@@ -211,3 +211,25 @@ footer p a {
   25% { transform: translateX(-5px); }
   75% { transform: translateX(5px); }
  }
+
+ .layout {
+  display: grid;
+  grid-template-columns: 30px auto;
+  transition: grid-template-columns 0.3s ease;
+}
+
+.layout.sidebar-active {
+  grid-template-columns: 250px auto;
+}
+
+.main-content {
+  transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+.main-content.app-bar-collapsed {
+  margin-left: 80px;
+}
+
+.main-content.app-bar-expanded {
+  margin-left: 30px;
+}
