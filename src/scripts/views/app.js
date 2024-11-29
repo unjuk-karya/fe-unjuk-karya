@@ -13,7 +13,7 @@ class App {
   async renderPage() {
     const url = UrlParser.parseActiveUrlWithCombiner();
 
-    if (!checkAuth()) return;
+   
 
     if (url === '/login' || url === '/register') {
       this._appBarContainer.innerHTML = '';
