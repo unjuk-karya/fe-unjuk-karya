@@ -1,4 +1,4 @@
-class AuthRegister extends HTMLElement {
+class AuthLogin extends HTMLElement {
   _shadowRoot = null;
   _style = null;
 
@@ -121,7 +121,7 @@ class AuthRegister extends HTMLElement {
       }
       
       .form-group .validation-message {
-        display: none; /* Initially hide validation messages */
+        display: none;
         align-items: center;
         text-align: center;
         margin-top: 4px;
@@ -182,6 +182,34 @@ class AuthRegister extends HTMLElement {
         color: #4f73d9;
       }
       
+      .remember-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 16px;
+        justify-content: space-between;
+        font-size: 14px;
+      }
+      
+      .remember-checkbox input {
+        margin: 0;
+      }
+      
+      .remember-checkbox input[type="checkbox"] {
+        transform: scale(1.2);
+        margin-right: 4px;
+      }
+
+      .remember-checkbox a {
+        font-size: 14px;
+        color: #5d87ff;
+        text-decoration: none;
+      }
+
+      .remember-checkbox a:hover {
+        text-decoration: underline;
+      }
+
       @media (max-width: 480px) {
         .auth-container {
           width: 90%;
@@ -197,26 +225,18 @@ class AuthRegister extends HTMLElement {
 
   _setupValidation() {
     const nameInput = this._shadowRoot.querySelector('#username');
-    const emailInput = this._shadowRoot.querySelector('#email');
     const passwordInput = this._shadowRoot.querySelector('#password');
-    const confirmPasswordInput = this._shadowRoot.querySelector('#confirmPassword');
     const submitButton = this._shadowRoot.querySelector('button[type="submit"]');
 
     const nameValidationMessage = this._shadowRoot.querySelector('.username-validation');
-    const emailValidationMessage = this._shadowRoot.querySelector('.email-validation');
     const passwordValidationMessage = this._shadowRoot.querySelector('.password-validation');
-    const confirmPasswordValidationMessage = this._shadowRoot.querySelector('.confirmPassword-validation');
 
     const nameFocused = { value: false };
-    const emailFocused = { value: false };
     const passwordFocused = { value: false };
-    const confirmPasswordFocused = { value: false };
 
     const validateInputs = () => {
       const nameValid = nameInput.value.trim().length >= 5;
-      const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
       const passwordValid = passwordInput.value.trim().length >= 8;
-      const confirmPasswordValid = confirmPasswordInput.value === passwordInput.value.trim();
 
       // Username validation
       if (nameValidationMessage) {
@@ -227,18 +247,6 @@ class AuthRegister extends HTMLElement {
         } else {
           nameValidationMessage.style.display = 'none';
           nameInput.style.borderColor = '#dfe5ef';
-        }
-      }
-
-      // Email validation
-      if (emailValidationMessage) {
-        if (emailFocused.value && !emailValid) {
-          emailValidationMessage.style.display = 'flex';
-          emailValidationMessage.querySelector('p').textContent = 'Masukkan alamat email yang valid';
-          emailInput.style.borderColor = 'red';
-        } else {
-          emailValidationMessage.style.display = 'none';
-          emailInput.style.borderColor = '#dfe5ef';
         }
       }
 
@@ -254,38 +262,22 @@ class AuthRegister extends HTMLElement {
         }
       }
 
-      // Confirm Password validation
-      if (confirmPasswordValidationMessage) {
-        if (confirmPasswordFocused.value && !confirmPasswordValid) {
-          confirmPasswordValidationMessage.style.display = 'flex';
-          confirmPasswordValidationMessage.querySelector('p').textContent = 'Kata sandi tidak cocok';
-          confirmPasswordInput.style.borderColor = 'red';
-        } else {
-          confirmPasswordValidationMessage.style.display = 'none';
-          confirmPasswordInput.style.borderColor = '#dfe5ef';
-        }
-      }
-
       // Enable/Disable submit button
-      submitButton.disabled = !(nameValid && emailValid && passwordValid && confirmPasswordValid);
+      submitButton.disabled = !(nameValid && passwordValid);
     };
 
     // Add event listeners to the inputs
-    [nameInput, emailInput, passwordInput, confirmPasswordInput].forEach((input) =>
+    [nameInput, passwordInput].forEach((input) =>
       input.addEventListener('input', () => {
         if (input === nameInput) nameFocused.value = true;
-        if (input === emailInput) emailFocused.value = true;
         if (input === passwordInput) passwordFocused.value = true;
-        if (input === confirmPasswordInput) confirmPasswordFocused.value = true;
         validateInputs();
       })
     );
 
     // Focus event handlers for inputs
     nameInput.addEventListener('focus', () => nameFocused.value = true);
-    emailInput.addEventListener('focus', () => emailFocused.value = true);
     passwordInput.addEventListener('focus', () => passwordFocused.value = true);
-    confirmPasswordInput.addEventListener('focus', () => confirmPasswordFocused.value = true);
 
     // Initial validation
     validateInputs();
@@ -296,22 +288,14 @@ class AuthRegister extends HTMLElement {
     this._shadowRoot.innerHTML += `  
       <div class="auth-container">
         <article>
-          <h1>Selamat datang 👋</h1>
-          <p>Daftar sekarang untuk menjadi bagian dari komunitas seni yang kreatif</p>
+          <h1>Selamat datang kembali 🎨</h1>
+          <p>Masuk ke akun kamu untuk melanjutkan petualangan bersama kami</p>
         </article>
         <form>
           <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" placeholder="Masukkan username">
             <div class="validation-message username-validation">
-              <i class="ti ti-x"></i>
-              <p></p>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="Masukkan email">
-            <div class="validation-message email-validation">
               <i class="ti ti-x"></i>
               <p></p>
             </div>
@@ -324,22 +308,21 @@ class AuthRegister extends HTMLElement {
               <p></p>
             </div>
           </div>
-          <div class="form-group">
-            <label for="confirmPassword">Konfirmasi Kata Sandi</label>
-            <input type="password" id="confirmPassword" placeholder="Konfirmasi kata sandi">
-            <div class="validation-message confirmPassword-validation">
-              <i class="ti ti-x"></i>
-              <p></p>
+          <div class="remember-checkbox">
+            <div>
+              <input type="checkbox" id="remember" name="remember">
+              <label for="remember">Ingat perangkat ini</label>
             </div>
+            <a href="#">Lupa kata sandi?</a>
           </div>
-          <button type="submit" disabled>Daftar</button>
+          <button type="submit" disabled>Masuk</button>
         </form>
         <div class="signin-link">
-          <p>Sudah punya akun? <a href="#/login">Masuk</a></p>
+          <p>Belum punya akun? <a href="#/register">Daftar sekarang</a></p>
         </div>
       </div>
     `;
   }
 }
 
-customElements.define('auth-register', AuthRegister);
+customElements.define('auth-login', AuthLogin);
