@@ -31,26 +31,30 @@ class AuthRegister extends HTMLElement {
         justify-content: center;
         align-items: center;
         background-color: white;
-        min-width: 440px;
-        min-height: 600px;
         border-radius: 8px;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-      }
-      
-      .auth-logo {
-        padding-bottom: 48px;
-      }
-      
-      .auth-with-another {
-        display: flex;
-        flex-direction: row;
-        gap: 16px;
-        justify-content: center; /* Center buttons horizontally */
+        padding: 24px;
         width: 100%;
+        max-width: 440px;
       }
       
-      .auth-with-another span {
-        margin-left: 8px;
+      article {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        gap: 16px;
+        margin-bottom: 21px;
+      }
+      
+      article h1 {
+        color: #2a3547;
+      }
+      
+      article p {
+        font-size: 16px;
+        color: #5a6a85;
       }
       
       .auth-with-another button {
@@ -59,14 +63,12 @@ class AuthRegister extends HTMLElement {
         align-items: center;
         background: none;
         border: 1px solid #eff4f8;
-        flex: 1;
         outline: none;
         box-shadow: none;
         font-size: 14px;
         font-family: 'Plus Jakarta Sans', sans-serif;
         padding: 11px 30px;
         border-radius: 8px;
-        min-width: 176px;
       }
       
       .auth-with-another button:hover {
@@ -80,15 +82,6 @@ class AuthRegister extends HTMLElement {
         text-align: center;
         color: #5a6a85;
         margin: 24px 0;
-      }
-      
-      .break-paragraph::before,
-      .break-paragraph::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background-color: #eff4f8;
-        margin: 0 8px;
       }
       
       form {
@@ -138,12 +131,11 @@ class AuthRegister extends HTMLElement {
         font-family: 'Plus Jakarta Sans', sans-serif;
         padding: 11px 30px;
         border-radius: 8px;
-        min-width: 176px;
         background: #5d87ff;
         font-weight: 600;
         color: #fff;
         width: 100%;
-        margin-top:24px;
+        margin-top: 24px;
       }
       
       form button:hover {
@@ -168,7 +160,13 @@ class AuthRegister extends HTMLElement {
         text-decoration: underline;
         color: #4f73d9;
       }
-  `;
+      
+      @media (max-width: 480px) {
+        .auth-container {
+          width: 90%;
+        }
+      }
+    `;
   }
 
 
@@ -180,42 +178,32 @@ class AuthRegister extends HTMLElement {
     this._shadowRoot.appendChild(this._style);
     this._shadowRoot.innerHTML += `  
       <div class="auth-container">
-        <!--   TODO Ganti logo   -->
-        <img class="auth-logo" src="../icons/dark-logo.svg" alt="Icon Logo">
-          <div class="auth-with">
-            <!--   TODO Antara butuh dan tidak   -->
-            <div class="auth-with-another">
-              <button>
-                <img src="https://bootstrapdemos.adminmart.com/modernize/dist/assets/images/svgs/google-icon.svg" alt="modernize-img" class="img-fluid me-2" width="18" height="18">
-                <span>with Google</span>
-              </button>
-              <button>
-                <img src="https://bootstrapdemos.adminmart.com/modernize/dist/assets/images/svgs/google-icon.svg" alt="modernize-img" class="img-fluid me-2" width="18" height="18">
-                <span>with Google</span>
-              </button>
-            </div>
-            <p class="break-paragraph">or sign up with</p>
-            <form>
-              <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name">
-              </div>
-              <div class="form-group">
-                <label for="email">Email address</label>
-                <input type="email" id="email">
-              </div>
-              <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password">
-              </div>
-              <button type="submit">Sign Up</button>
-            </form>
-            <p class="signin-link">
-              Already have an Account? <a href="#" class="signin">Sign In</a>
-            </p>
+        <article>
+          <!--   TODO Ganti logo   -->
+<!--          <img class="auth-logo" src="../icons/dark-logo.svg" alt="Icon Logo">-->
+          <h1>Selamat datang 👋</h1>
+          <p>Daftar sekarang untuk menjadi bagian dari komunitas seni yang kreatif</p>
+        </article>
+        <form>
+          <div class="form-group">
+            <label for="name">Nama Lengkap</label>
+            <input type="text" id="name">
           </div>
+          <div class="form-group">
+            <label for="email">Alamat Email</label>
+            <input type="email" id="email">
+          </div>
+          <div class="form-group">
+            <label for="password">Kata Sandi</label>
+            <input type="password" id="password">
+          </div>
+          <button type="submit">Daftar Sekarang</button>
+        </form>
+        <p class="signin-link">
+          Sudah punya akun? <a href="#" class="signin">Masuk</a>
+        </p>
       </div>   
-    `;
+  `;
   }
 }
 
