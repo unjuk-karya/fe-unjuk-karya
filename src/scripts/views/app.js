@@ -1,33 +1,39 @@
 import DrawerInitiator from '../utils/drawer-initiator';
 import UrlParser from '../routes/url-parser';
 import routes from '../routes/routes';
-import { createAppShell, initLogout } from '../views/templates/template-creator';
-import checkAuth from '../utils/middleware';
-
+import { initLogout } from '../views/templates/template-creator';
 class App {
-  constructor({ content, appBarContainer }) {
+  constructor({ content }) {
     this._content = content;
-    this._appBarContainer = appBarContainer;
   }
 
   async renderPage() {
     const url = UrlParser.parseActiveUrlWithCombiner();
 
     if (url === '/login' || url === '/register') {
-      this._appBarContainer.innerHTML = '';
+      const appBar = document.querySelector('app-bar');
+      if (appBar) appBar.style.display = 'none';
     } else {
-      this._appBarContainer.innerHTML = createAppShell();
-      DrawerInitiator.init({
-        button: document.querySelector('#hamburgerButton'),
-        drawer: document.querySelector('#navigationDrawer'),
-        content: this._content,
-      });
-      initLogout();
+      const appBar = document.querySelector('app-bar');
+      if (appBar) {
+        appBar.style.display = 'block';
+        DrawerInitiator.init({
+          button: document.querySelector('#hamburgerButton'),
+          drawer: document.querySelector('#navigationDrawer'),
+          content: this._content,
+        });
+
+        initLogout();
+      }
     }
 
     const page = routes[url];
-    this._content.innerHTML = await page.render();
-    await page.afterRender();
+    if (this._content) {
+      this._content.innerHTML = await page.render();
+      await page.afterRender();
+    } else {
+      console.error('Content container not found in DOM.');
+    }
   }
 }
 

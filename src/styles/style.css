@@ -5,6 +5,9 @@
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-main {
-  background-color: #edf3fc;
+body {
+  background-color: #f3f3f3;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }

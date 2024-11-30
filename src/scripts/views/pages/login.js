@@ -5,12 +5,11 @@ const Login = {
   async render() {
     return `
       <auth-login></auth-login>
-   `;
+    `;
   },
 
   async afterRender() {
     const loginForm = document.querySelector('auth-login');
-
     const form = loginForm.shadowRoot.querySelector('form');
     const submitButton = form.querySelector('button[type="submit"]');
 
@@ -18,6 +17,16 @@ const Login = {
       event.preventDefault();
 
       submitButton.disabled = true;
+
+      const loadingSwal = Swal.fire({
+        title: 'Sedang Proses...',
+        text: 'Mohon tunggu sebentar sementara kami memproses login kamu',
+        didOpen: () => {
+          Swal.showLoading();
+        },
+        showConfirmButton: false,
+        allowOutsideClick: false,
+      });
 
       const formData = {
         identifier: form.querySelector('#identifier').value,
@@ -28,11 +37,13 @@ const Login = {
         const response = await AuthSource.login(formData);
 
         localStorage.setItem('token', response.token);
+        
+        Swal.close();
 
         Swal.fire({
           icon: 'success',
           title: 'Login Berhasil',
-          text: 'Anda telah berhasil masuk. Selamat menikmati pengalaman kamu!',
+          text: 'Anda telah berhasil masuk. Selamat menikmati pengalaman Anda!',
         });
 
         window.location.href = '#/';
@@ -49,6 +60,8 @@ const Login = {
           errorMessage = validationErrors.join('\n');
         }
 
+        Swal.close();
+
         Swal.fire({
           icon: 'error',
           title: 'Login Gagal',
@@ -58,7 +71,6 @@ const Login = {
         submitButton.disabled = false;
       }
     });
-
   }
 };
 
