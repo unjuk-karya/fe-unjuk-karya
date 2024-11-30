@@ -36,6 +36,8 @@ const Login = {
       try {
         const response = await AuthSource.login(formData);
 
+        localStorage.setItem('token', response.token);
+        
         Swal.close();
 
         Swal.fire({
