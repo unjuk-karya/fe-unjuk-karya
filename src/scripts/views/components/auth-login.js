@@ -12,13 +12,13 @@ class AuthLogin extends HTMLElement {
   _updateStyle() {
     this._style.textContent = `
       @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css');
-    
+
       * {
         padding: 0;
         margin: 0;
         box-sizing: border-box;
       }
-      
+
       :host {
         display: flex;
         justify-content: center;
@@ -26,7 +26,7 @@ class AuthLogin extends HTMLElement {
         height: 100vh;
         background-color: #f0f0f0;
       }
-      
+
       .auth-container {
         display: flex;
         flex-direction: column;
@@ -39,7 +39,7 @@ class AuthLogin extends HTMLElement {
         width: 100%;
         max-width: 440px;
       }
-      
+
       article {
         display: flex;
         flex-direction: column;
@@ -49,60 +49,33 @@ class AuthLogin extends HTMLElement {
         gap: 16px;
         margin-bottom: 21px;
       }
-      
+
       article h1 {
         color: #2a3547;
       }
-      
+
       article p {
         font-size: 16px;
         color: #5a6a85;
       }
-      
-      .auth-with-another button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: none;
-        border: 1px solid #eff4f8;
-        outline: none;
-        box-shadow: none;
-        font-size: 14px;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        padding: 11px 30px;
-        border-radius: 8px;
-      }
-      
-      .auth-with-another button:hover {
-        cursor: pointer;
-      }
-      
-      .break-paragraph {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        color: #5a6a85;
-        margin: 24px 0;
-      }
-      
+
       form {
         width: 100%;
       }
-      
+
       form .form-group {
         display: flex;
         flex-direction: column;
         margin-bottom: 16px;
       }
-      
+
       form .form-group label {
         margin-bottom: 8px;
         font-size: 14px;
         color: #2a3547;
         font-weight: 600;
       }
-      
+
       form .form-group input {
         width: 100%;
         min-height: 40px;
@@ -114,12 +87,12 @@ class AuthLogin extends HTMLElement {
         box-sizing: border-box;
         font-family: 'Plus Jakarta Sans', sans-serif;
       }
-      
+
       form .form-group input:focus {
         border-color: #aec3ff;
         box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
       }
-      
+
       .form-group .validation-message {
         display: none;
         align-items: center;
@@ -128,12 +101,31 @@ class AuthLogin extends HTMLElement {
         font-size: 14px;
         color: red;
       }
-      
+
       .form-group .validation-message i {
         margin-right: 4px;
         font-size: 18px;
       }
-      
+
+      .input-container {
+        position: relative;
+        width: 100%;
+      }
+
+      .eye-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        font-size: 18px;
+        color: #5a6a85;
+      }
+
+      .eye-icon:hover {
+        color: #4f73d9;
+      }
+
       form button {
         display: flex;
         justify-content: center;
@@ -153,61 +145,33 @@ class AuthLogin extends HTMLElement {
         width: 100%;
         margin-top: 24px;
       }
-      
+
       form button:disabled {
         background: #d3d3d3;
         cursor: not-allowed;
       }
-      
+
       form button:hover:enabled {
         cursor: pointer;
         background: #4f73d9;
       }
-      
-      .signin-link {
+
+      .signup-link {
         margin-top: 21px;
         font-size: 14px;
         color: #5a6a85;
         text-align: center;
         font-size: 14px;
       }
-      
-      .signin-link a {
+
+      .signup-link a {
         color: #5d87ff;
         text-decoration: none;
       }
-      
-      .signin-link a:hover {
+
+      .signup-link a:hover {
         text-decoration: underline;
         color: #4f73d9;
-      }
-      
-      .remember-checkbox {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: 16px;
-        justify-content: space-between;
-        font-size: 14px;
-      }
-      
-      .remember-checkbox input {
-        margin: 0;
-      }
-      
-      .remember-checkbox input[type="checkbox"] {
-        transform: scale(1.2);
-        margin-right: 4px;
-      }
-
-      .remember-checkbox a {
-        font-size: 14px;
-        color: #5d87ff;
-        text-decoration: none;
-      }
-
-      .remember-checkbox a:hover {
-        text-decoration: underline;
       }
 
       @media (max-width: 480px) {
@@ -224,29 +188,29 @@ class AuthLogin extends HTMLElement {
   }
 
   _setupValidation() {
-    const nameInput = this._shadowRoot.querySelector('#username');
+    const identifierInput = this._shadowRoot.querySelector('#identifier');
     const passwordInput = this._shadowRoot.querySelector('#password');
     const submitButton = this._shadowRoot.querySelector('button[type="submit"]');
 
-    const nameValidationMessage = this._shadowRoot.querySelector('.username-validation');
+    const identifierValidationMessage = this._shadowRoot.querySelector('.identifier-validation');
     const passwordValidationMessage = this._shadowRoot.querySelector('.password-validation');
 
-    const nameFocused = { value: false };
+    const identifierFocused = { value: false };
     const passwordFocused = { value: false };
 
     const validateInputs = () => {
-      const nameValid = nameInput.value.trim().length >= 5;
+      const identifierValid = identifierInput.value.trim().length >= 4;
       const passwordValid = passwordInput.value.trim().length >= 8;
 
-      // Username validation
-      if (nameValidationMessage) {
-        if (nameFocused.value && !nameValid) {
-          nameValidationMessage.style.display = 'flex';
-          nameValidationMessage.querySelector('p').textContent = 'Username minimal 5 karakter';
-          nameInput.style.borderColor = 'red';
+      // Identifier validation
+      if (identifierValidationMessage) {
+        if (identifierFocused.value && !identifierValid) {
+          identifierValidationMessage.style.display = 'flex';
+          identifierValidationMessage.querySelector('p').textContent = 'Identifier minimal 4 karakter';
+          identifierInput.style.borderColor = 'red';
         } else {
-          nameValidationMessage.style.display = 'none';
-          nameInput.style.borderColor = '#dfe5ef';
+          identifierValidationMessage.style.display = 'none';
+          identifierInput.style.borderColor = '#dfe5ef';
         }
       }
 
@@ -263,63 +227,62 @@ class AuthLogin extends HTMLElement {
       }
 
       // Enable/Disable submit button
-      submitButton.disabled = !(nameValid && passwordValid);
+      submitButton.disabled = !(identifierValid && passwordValid);
     };
 
-    // Add event listeners to the inputs
-    [nameInput, passwordInput].forEach((input) =>
+    [identifierInput, passwordInput].forEach((input) =>
       input.addEventListener('input', () => {
-        if (input === nameInput) nameFocused.value = true;
+        if (input === identifierInput) identifierFocused.value = true;
         if (input === passwordInput) passwordFocused.value = true;
         validateInputs();
       })
     );
 
-    // Focus event handlers for inputs
-    nameInput.addEventListener('focus', () => nameFocused.value = true);
-    passwordInput.addEventListener('focus', () => passwordFocused.value = true);
+    identifierInput.addEventListener('focus', () => (identifierFocused.value = true));
+    passwordInput.addEventListener('focus', () => (passwordFocused.value = true));
 
-    // Initial validation
     validateInputs();
+
+    // Toggle password visibility
+    const togglePassword = this._shadowRoot.querySelector('#togglePassword');
+    togglePassword.addEventListener('click', () => {
+      const typePassword = passwordInput.type === 'password' ? 'text' : 'password';
+      passwordInput.type = typePassword;
+      togglePassword.classList.toggle('ti-eye-off');
+    });
   }
 
   render() {
     this._shadowRoot.appendChild(this._style);
-    this._shadowRoot.innerHTML += `  
+    this._shadowRoot.innerHTML += `
       <div class="auth-container">
         <article>
-          <h1>Selamat datang kembali 🎨</h1>
-          <p>Masuk ke akun kamu untuk melanjutkan petualangan bersama kami</p>
+          <h1>Selamat datang kembali 👋</h1>
+          <p>Masuk untuk melanjutkan</p>
         </article>
         <form>
           <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" placeholder="Masukkan username">
-            <div class="validation-message username-validation">
+            <label for="identifier">Username/Email</label>
+            <input type="text" id="identifier" placeholder="Masukkan username atau email">
+            <div class="validation-message identifier-validation">
               <i class="ti ti-x"></i>
               <p></p>
             </div>
           </div>
           <div class="form-group">
             <label for="password">Kata Sandi</label>
-            <input type="password" id="password" placeholder="Masukkan kata sandi">
+            <div class="input-container">
+              <input type="password" id="password" placeholder="Masukkan kata sandi">
+              <i class="eye-icon ti ti-eye" id="togglePassword"></i>
+            </div>
             <div class="validation-message password-validation">
               <i class="ti ti-x"></i>
               <p></p>
             </div>
           </div>
-          <div class="remember-checkbox">
-            <div>
-              <input type="checkbox" id="remember" name="remember">
-              <label for="remember">Ingat perangkat ini</label>
-            </div>
-            <a href="#">Lupa kata sandi?</a>
-          </div>
           <button type="submit" disabled>Masuk</button>
         </form>
-        <div class="signin-link">
-          <p>Belum punya akun? <a href="#/register">Daftar sekarang</a></p>
-        </div>
+        <p class="signup-link">Belum punya akun? <a href="#/register">Daftar</a></p>
       </div>
     `;
   }
