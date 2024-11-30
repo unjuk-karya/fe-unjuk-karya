@@ -244,7 +244,7 @@ class AuthRegister extends HTMLElement {
     const confirmPasswordFocused = { value: false };
 
     const validateInputs = () => {
-      const nameValid = nameInput.value.trim().length >= 5;
+      const nameValid = nameInput.value.trim().length >= 4;
       const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
       const passwordValid = passwordInput.value.trim().length >= 8;
       const confirmPasswordValid = confirmPasswordInput.value === passwordInput.value.trim();
@@ -253,7 +253,7 @@ class AuthRegister extends HTMLElement {
       if (nameValidationMessage) {
         if (nameFocused.value && !nameValid) {
           nameValidationMessage.style.display = 'flex';
-          nameValidationMessage.querySelector('p').textContent = 'Username minimal 5 karakter';
+          nameValidationMessage.querySelector('p').textContent = 'Username minimal 4 karakter';
           nameInput.style.borderColor = 'red';
         } else {
           nameValidationMessage.style.display = 'none';
