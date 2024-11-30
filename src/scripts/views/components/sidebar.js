@@ -10,6 +10,7 @@ class SideBar extends HTMLElement {
             width: 80px;
             background-color: #fff;
             padding: 0.4rem 0.8rem;
+            z-index: 100;
             transition: all 0.5s ease;
           }
   
@@ -21,7 +22,7 @@ class SideBar extends HTMLElement {
             position: absolute;
             margin-top: 20px;
             color: #2A3547;
-            top: 0.4rem;
+            top: 0;
             left: 50%;
             font-size: 1.2rem;
             line-height: 50px;
@@ -43,12 +44,12 @@ class SideBar extends HTMLElement {
             color: #2A3547;
             display: flex;
             align-items: center;
-            height: 50px;
+            height: 30px;
             width: 100%;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.5s ease;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
           }
   
           .sidebar.active .top .logo {

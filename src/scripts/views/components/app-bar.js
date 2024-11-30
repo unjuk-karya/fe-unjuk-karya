@@ -8,8 +8,8 @@ class AppBar extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         .app-bar {
-          padding: 8px 16px;
-          background-color: white;
+          padding: 20px 16px;
+          background-color: #fff;
           display: grid;
           grid-template-columns: auto 1fr auto;
           align-items: center;
@@ -17,7 +17,6 @@ class AppBar extends HTMLElement {
           position: sticky;
           top: 0;
           z-index: 99;
-          box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
         }
 
         .app-bar .app-bar__brand h1 {
@@ -26,6 +25,7 @@ class AppBar extends HTMLElement {
           font-size: 22px;
           margin: 0;
           user-select: none;
+          margin-left: 75px;
         }
 
         .app-bar .app-bar__navigation {
