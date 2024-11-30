@@ -9,9 +9,6 @@ class App {
 
   async renderPage() {
     const url = UrlParser.parseActiveUrlWithCombiner();
-
-    // if (!checkAuth()) return;
-
     if (url === '/login' || url === '/register') {
       const appBar = document.querySelector('app-bar');
       if (appBar) appBar.style.display = 'none';

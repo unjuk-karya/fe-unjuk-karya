@@ -1,19 +1,17 @@
 * {
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
   background-color: #f3f3f3;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/*
-  AppBar
-*/
 
 .app-bar {
   padding: 8px 16px;
@@ -76,145 +74,9 @@ body {
   width: 100%;
 }
 
-/*
-  Main Content
-*/
-
-main {
-  padding: 32px;
-  flex: 1;
-}
-
-.content {
-  margin: 0 auto;
-  min-height: 100%;
-}
-
-.content .content__heading {
-  font-weight: normal;
-}
-
-
-/*
-  Footer
-*/
-
-footer {
-  padding: 16px;
-}
-
-footer p {
-  text-align: center;
-  color: #aaaaaa;
-}
-
-footer p a {
-  color: #db0000;
-  text-decoration: none;
-}
-
-/*
-  Form
-*/
-
-.auth-container {
-  max-width: 400px;
-  margin: 2.5rem auto;
-  padding: 2rem;
-  background: #fff;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
- }
- 
- .auth-heading {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #333;
- }
- 
- .form-group {
-  margin-bottom: 1.25rem;
- }
- 
- .form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #555;
-  font-weight: 500;
- }
- 
- .form-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 0.25rem;
-  font-size: 0.875rem;
-  transition: border-color 0.3s;
- }
- 
- .form-input:focus {
-  outline: none;
-  border-color: #4CAF50;
- }
- 
- .btn {
-  width: 100%;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 0.25rem;
-  font-size: 1rem;
-  cursor: pointer;
- }
- 
- .btn-primary {
-  background: #4CAF50;
-  color: white;
- }
- 
- .btn-primary:hover {
-  background: #45a049;
- }
- 
- .auth-footer {
-  text-align: center;
-  margin-top: 1.25rem;
-  color: #666;
- }
- 
- .link {
-  color: #4CAF50;
-  text-decoration: none;
- }
- 
- .link:hover {
-  text-decoration: underline;
- }
-
-.error-message {
-  color: #dc3545;
-  font-size: 12px;
-  margin-top: 4px;
-  display: block;
- }
- 
- .form-group input.error {
-  border-color: #dc3545;
- }
- 
- /* Optional: Add shake animation */
- .error-message {
-  animation: shake 0.5s ease-in-out;
- }
- 
- @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
- }
-
  .layout {
   display: grid;
-  grid-template-columns: 30px auto;
+  grid-template-columns: 70px auto;
   transition: grid-template-columns 0.3s ease;
 }
 
