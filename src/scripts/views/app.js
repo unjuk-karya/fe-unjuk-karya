@@ -13,8 +13,6 @@ class App {
   async renderPage() {
     const url = UrlParser.parseActiveUrlWithCombiner();
 
-   
-
     if (url === '/login' || url === '/register') {
       this._appBarContainer.innerHTML = '';
     } else {
