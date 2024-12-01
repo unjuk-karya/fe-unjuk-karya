@@ -4,7 +4,7 @@ class PostSource {
   static async getAllPosts() {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(API_ENDPOINT.POST, {
+    const response = await fetch(API_ENDPOINT.EXPLORE, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

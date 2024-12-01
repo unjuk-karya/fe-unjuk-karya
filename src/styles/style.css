@@ -11,3 +11,8 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+.container {
+  margin: 0 auto;
+  padding: 20px;
+}

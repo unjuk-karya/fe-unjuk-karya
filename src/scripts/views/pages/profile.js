@@ -1,10 +1,10 @@
-const Explore = {
+const Profile = {
   async render() {
     return `
     <div class="container">
-        <explore-menu></explore-menu>
+        <profile-header></profile-header>
         </div>
-      `;
+        `;
   },
 
   async afterRender() {
@@ -12,4 +12,4 @@ const Explore = {
   }
 };
 
-export default Explore;
+export default Profile;

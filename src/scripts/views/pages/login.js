@@ -18,7 +18,7 @@ const Login = {
 
       submitButton.disabled = true;
 
-      const loadingSwal = Swal.fire({
+      Swal.fire({
         title: 'Sedang Proses...',
         text: 'Mohon tunggu sebentar sementara kami memproses login kamu',
         didOpen: () => {
@@ -37,6 +37,7 @@ const Login = {
         const response = await AuthSource.login(formData);
 
         localStorage.setItem('token', response.token);
+        localStorage.setItem('id', response.id);
 
         Swal.close();
 
@@ -44,9 +45,9 @@ const Login = {
           icon: 'success',
           title: 'Login Berhasil',
           text: 'Anda telah berhasil masuk. Selamat menikmati pengalaman Anda!',
+        }).then(() => {
+          window.location.href = '#/';
         });
-
-        window.location.href = '#/';
       } catch (error) {
         let errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
 

@@ -18,7 +18,7 @@ const Register = {
 
       submitButton.disabled = true;
 
-      const loadingSwal = Swal.fire({
+      Swal.fire({
         title: 'Sedang Proses...',
         text: 'Mohon tunggu sebentar sementara kami memproses register kamu',
         didOpen: () => {
@@ -36,7 +36,7 @@ const Register = {
       };
 
       try {
-        const response = await AuthSource.register(formData);
+        await AuthSource.register(formData);
 
         Swal.close();
 
@@ -44,9 +44,9 @@ const Register = {
           icon: 'success',
           title: 'Pendaftaran Berhasil',
           text: 'Selamat datang di komunitas!',
+        }).then(() => {
+          window.location.href = '#/login';
         });
-
-        window.location.href = '#/login';
       } catch (error) {
         Swal.close();
 

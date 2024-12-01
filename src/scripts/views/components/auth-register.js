@@ -11,7 +11,7 @@ class AuthRegister extends HTMLElement {
 
   _updateStyle() {
     this._style.textContent = `
-      @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css');
+      @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
     
       * {
         padding: 0;
@@ -326,7 +326,7 @@ class AuthRegister extends HTMLElement {
     togglePassword.addEventListener('click', () => {
       const typePassword = passwordInput.type === 'password' ? 'text' : 'password';
       passwordInput.type = typePassword;
-      togglePassword.classList.toggle('ti-eye-off');
+      togglePassword.classList.toggle('fa-eye-slash');
     });
 
     // Toggle confirm password visibility
@@ -334,7 +334,7 @@ class AuthRegister extends HTMLElement {
     togglePasswordConfirm.addEventListener('click', () => {
       const typePasswordConfirm = confirmPasswordInput.type === 'password' ? 'text' : 'password';
       confirmPasswordInput.type = typePasswordConfirm;
-      togglePasswordConfirm.classList.toggle('ti-eye-off');
+      togglePasswordConfirm.classList.toggle('fa-eye-slash');
     });
   }
 
@@ -351,7 +351,7 @@ class AuthRegister extends HTMLElement {
           <label for="username">Username</label>
           <input type="text" id="username" placeholder="Masukkan username">
           <div class="validation-message username-validation">
-            <i class="ti ti-x"></i>
+            <i class="fa fa-times"></i>
             <p></p>
           </div>
         </div>
@@ -359,7 +359,7 @@ class AuthRegister extends HTMLElement {
           <label for="email">Email</label>
           <input type="email" id="email" placeholder="Masukkan email">
           <div class="validation-message email-validation">
-            <i class="ti ti-x"></i>
+            <i class="fa fa-times"></i>
             <p></p>
           </div>
         </div>
@@ -367,10 +367,10 @@ class AuthRegister extends HTMLElement {
           <label for="password">Kata Sandi</label>
           <div class="input-container">
             <input type="password" id="password" placeholder="Masukkan kata sandi">
-            <i class="eye-icon ti ti-eye" id="togglePassword"></i>
+            <i class="eye-icon fa fa-eye" id="togglePassword"></i>
           </div>
           <div class="validation-message password-validation">
-            <i class="ti ti-x"></i>
+            <i class="fa fa-times"></i>
             <p></p>
           </div>
         </div>
@@ -378,10 +378,10 @@ class AuthRegister extends HTMLElement {
           <label for="confirmPassword">Konfirmasi Kata Sandi</label>
           <div class="input-container">
             <input type="password" id="confirmPassword" placeholder="Konfirmasi kata sandi">
-            <i class="eye-icon ti ti-eye" id="togglePasswordConfirm"></i>
+            <i class="eye-icon fa fa-eye" id="togglePasswordConfirm"></i>
           </div>
           <div class="validation-message confirmPassword-validation">
-            <i class="ti ti-x"></i>
+            <i class="fa fa-times"></i>
             <p></p>
           </div>
         </div>

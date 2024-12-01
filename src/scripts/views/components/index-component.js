@@ -4,3 +4,4 @@ import './sidebar.js';
 import './explore.js';
 import  './auth-login.js';
 import './auth-register.js';
+import './profile-header.js';

@@ -11,7 +11,7 @@ class AuthLogin extends HTMLElement {
 
   _updateStyle() {
     this._style.textContent = `
-      @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css');
+      @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
 
       * {
         padding: 0;
@@ -248,7 +248,7 @@ class AuthLogin extends HTMLElement {
     togglePassword.addEventListener('click', () => {
       const typePassword = passwordInput.type === 'password' ? 'text' : 'password';
       passwordInput.type = typePassword;
-      togglePassword.classList.toggle('ti-eye-off');
+      togglePassword.classList.toggle('fa-eye-slash');
     });
   }
 
@@ -265,7 +265,7 @@ class AuthLogin extends HTMLElement {
             <label for="identifier">Username/Email</label>
             <input type="text" id="identifier" placeholder="Masukkan username atau email">
             <div class="validation-message identifier-validation">
-              <i class="ti ti-x"></i>
+              <i class="fa fa-times"></i>
               <p></p>
             </div>
           </div>
@@ -273,10 +273,10 @@ class AuthLogin extends HTMLElement {
             <label for="password">Kata Sandi</label>
             <div class="input-container">
               <input type="password" id="password" placeholder="Masukkan kata sandi">
-              <i class="eye-icon ti ti-eye" id="togglePassword"></i>
+              <i class="eye-icon fa fa-eye" id="togglePassword"></i>
             </div>
             <div class="validation-message password-validation">
-              <i class="ti ti-x"></i>
+              <i class="fa fa-times"></i>
               <p></p>
             </div>
           </div>
