@@ -1,38 +1,45 @@
-import DrawerInitiator from '../utils/drawer-initiator';
-import UrlParser from '../routes/url-parser';
 import routes from '../routes/routes';
-import { initLogout } from '../views/templates/template-creator';
+import UrlParser from '../routes/url-parser';
+
 class App {
   constructor({ content }) {
     this._content = content;
   }
 
   async renderPage() {
-    const url = UrlParser.parseActiveUrlWithCombiner();
+    try {
+      const url = UrlParser.parseActiveUrlWithCombiner();
+      const token = localStorage.getItem('token');
 
-    if (url === '/login' || url === '/register') {
-      const appBar = document.querySelector('app-bar');
-      if (appBar) appBar.style.display = 'none';
-    } else {
-      const appBar = document.querySelector('app-bar');
-      if (appBar) {
-        appBar.style.display = 'block';
-        DrawerInitiator.init({
-          button: document.querySelector('#hamburgerButton'),
-          drawer: document.querySelector('#navigationDrawer'),
-          content: this._content,
-        });
-
-        initLogout();
+      if (!token && url !== '/login' && url !== '/register') {
+        window.location.href = '#/login';
+        return;
       }
-    }
 
-    const page = routes[url];
-    if (this._content) {
-      this._content.innerHTML = await page.render();
-      await page.afterRender();
-    } else {
-      console.error('Content container not found in DOM.');
+      if (token && (url === '/login' || url === '/register')) {
+        window.location.href = '#/';
+        return;
+      }
+
+      if (url === '/login' || url === '/register') {
+        document.body.innerHTML = '<main id="mainContent"></main>';
+        this._content = document.querySelector('#mainContent');
+      } else if (!document.querySelector('app-layout')) {
+        document.body.innerHTML = `
+          <app-layout>
+            <main id="mainContent"></main>
+          </app-layout>
+        `;
+        this._content = document.querySelector('#mainContent');
+      }
+
+      const page = routes[url];
+      if (this._content) {
+        this._content.innerHTML = await page.render();
+        await page.afterRender();
+      }
+    } catch (error) {
+      console.error('Error in renderPage:', error);
     }
   }
 }

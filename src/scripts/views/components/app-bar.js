@@ -7,6 +7,15 @@ class AppBar extends HTMLElement {
   connectedCallback() {
     this.shadowRoot.innerHTML = `
       <style>
+        :host {
+          display: block;
+          position: fixed;
+          top: 0;
+          right: 0;
+          left: 0;
+          z-index: 99;
+        }
+
         .app-bar {
           padding: 20px 16px;
           background-color: #fff;
@@ -14,9 +23,7 @@ class AppBar extends HTMLElement {
           grid-template-columns: auto 1fr auto;
           align-items: center;
           gap: 10px;
-          position: sticky;
-          top: 0;
-          z-index: 99;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .app-bar .app-bar__brand h1 {
@@ -39,34 +46,35 @@ class AppBar extends HTMLElement {
           font-weight: bold;
           padding: 8px;
           transition: color 0.3s;
+          cursor: pointer;
         }
 
         .app-bar .app-bar__navigation a:hover {
           color: #1D77E6;
         }
       </style>
+      
       <div class="app-bar">
-        <!-- Brand Section -->
         <div class="app-bar__brand">
           <h1>Unjuk Karya</h1>
         </div>
         <div></div>
-
         <nav class="app-bar__navigation">
-          <a href="#" id="logout">Logout</a>
+          <a id="logout">Logout</a>
         </nav>
       </div>
     `;
 
+    this.initLogout();
+  }
+
+  initLogout() {
     const logoutButton = this.shadowRoot.querySelector('#logout');
-    if (logoutButton) {
-      logoutButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        console.log('Logout button clicked!');
-      });
-    } else {
-      console.error('Logout button not found in Web Component.');
-    }
+    logoutButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.clear();
+      window.location.href = '#/login';
+    });
   }
 }
 
