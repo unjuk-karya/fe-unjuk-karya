@@ -2,7 +2,7 @@ const Explore = {
   async render() {
     return `
     <div class="container">
-        <explore-menu></explore-menu>
+        <explore-index></explore-index>
         </div>
       `;
   },

@@ -7,7 +7,8 @@ class ProfileHeader extends HTMLElement {
   }
 
   async connectedCallback() {
-    const userId = localStorage.getItem('id');
+    const userId = JSON.parse(localStorage.getItem('user')).id;
+
     try {
       const profileData = await ProfileSource.getUserProfile(userId);
       const userPosts = await ProfileSource.getUserPosts(userId);
