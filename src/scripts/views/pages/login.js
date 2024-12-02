@@ -37,7 +37,7 @@ const Login = {
         const response = await AuthSource.login(formData);
 
         localStorage.setItem('token', response.token);
-        localStorage.setItem('id', response.id);
+        localStorage.setItem('user', JSON.stringify(response));
 
         Swal.close();
 
