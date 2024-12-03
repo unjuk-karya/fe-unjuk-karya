@@ -4,6 +4,7 @@ class PostDetailActions extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this.isLikesProcessing = false; // Tambahkan properti ini
   }
 
   set data(postData) {
@@ -50,6 +51,12 @@ class PostDetailActions extends HTMLElement {
           font-weight: 600;
           font-size: 14px;
           color: #262626;
+          cursor: pointer;
+        }
+
+        .likes-count.disabled {
+          cursor: not-allowed;
+          opacity: 0.6;
         }
 
         .post-date {
@@ -72,7 +79,7 @@ class PostDetailActions extends HTMLElement {
           </button>
         </div>
         
-        <div class="likes-count">
+        <div class="likes-count ${this.isLikesProcessing ? 'disabled' : ''}" id="likes-count">
           ${this._data.likesCount} suka
         </div>
         
@@ -102,6 +109,20 @@ class PostDetailActions extends HTMLElement {
     const saveButton = this.shadowRoot.querySelector('#save-button');
     saveButton.addEventListener('click', () => {
       this.dispatchEvent(new CustomEvent('save-click'));
+    });
+
+    // Likes count
+    const likesCount = this.shadowRoot.querySelector('#likes-count');
+    likesCount.addEventListener('click', async () => {
+      if (this.isLikesProcessing) return;
+      this.isLikesProcessing = true;
+
+      this.dispatchEvent(new CustomEvent('likes-click'));
+
+      setTimeout(() => {
+        this.isLikesProcessing = false;
+        this.render();
+      }, 300);
     });
   }
 

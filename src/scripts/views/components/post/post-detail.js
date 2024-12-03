@@ -1,6 +1,6 @@
 import PostSource from '../../../data/post-source.js';
 import './post-detail-comment.js';
-import './post-detail-actions.js';
+import './post-detail-action.js';
 
 class PostDetail extends HTMLElement {
   constructor() {
@@ -30,6 +30,17 @@ class PostDetail extends HTMLElement {
       this.render();
     } catch (error) {
       console.error('Error fetching data:', error);
+    }
+  }
+
+  async showLikesModal() {
+    try {
+      const likesData = await PostSource.getPostLikes(this._postId);
+      const likeModal = document.createElement('post-detail-like');
+      likeModal.data = likesData;
+      document.body.appendChild(likeModal);
+    } catch (error) {
+      console.error('Error fetching likes:', error);
     }
   }
 
@@ -165,7 +176,7 @@ class PostDetail extends HTMLElement {
           max-width: 1000px;
           height: 90vh;
           display: flex;
-          border-radius: 4px;
+          border-radius: 10px;
           overflow: hidden;
         }
   
@@ -420,6 +431,10 @@ class PostDetail extends HTMLElement {
 
     postActions.addEventListener('save-click', () => {
       this.handleSave();
+    });
+
+    postActions.addEventListener('likes-click', () => {
+      this.showLikesModal();
     });
 
     postActions.addEventListener('comment-click', () => {

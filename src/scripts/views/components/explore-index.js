@@ -1,6 +1,6 @@
 import PostSource from '../../data/post-source.js';
-import './explore/post-card.js';
-import './explore/post-detail.js';
+import './post/post-card.js';
+import './post/post-detail.js';
 
 class ExploreIndex extends HTMLElement {
   constructor() {
