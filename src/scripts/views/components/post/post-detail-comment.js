@@ -1,4 +1,5 @@
 import { formatDate } from '../../../utils/formatter.js';
+import PostSource from '../../../data/post-source.js';
 
 class PostDetailComment extends HTMLElement {
   constructor() {
@@ -134,13 +135,18 @@ class PostDetailComment extends HTMLElement {
     this.setupEventListeners();
   }
 
-  setupEventListeners() {
+  async setupEventListeners() {
     const likeButton = this.shadowRoot.querySelector('.like-button');
-    likeButton.addEventListener('click', (e) => {
+    likeButton.addEventListener('click', async (e) => {
       e.stopPropagation();
-      this._data.isLiked = !this._data.isLiked;
-      this._data.likesCount += this._data.isLiked ? 1 : -1;
-      this.render();
+      try {
+        this._data.isLiked = !this._data.isLiked;
+        this._data.likesCount += this._data.isLiked ? 1 : -1;
+        this.render();
+        await PostSource.likeComment(this._data.postId, this._data.id);
+      } catch (error) {
+        console.error('Error liking comment:', error);
+      }
     });
   }
 }

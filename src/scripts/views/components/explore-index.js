@@ -92,7 +92,7 @@ class ExploreIndex extends HTMLElement {
         .container-explore {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 24px;
+          gap: 16px;
           margin: 0;
           padding: 0;
         }

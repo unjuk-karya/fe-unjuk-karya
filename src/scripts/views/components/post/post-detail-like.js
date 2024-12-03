@@ -1,3 +1,5 @@
+import ProfileSource from '../../../data/profile-source';
+
 class PostDetailLike extends HTMLElement {
   constructor() {
     super();
@@ -18,6 +20,7 @@ class PostDetailLike extends HTMLElement {
 
       user.isFollowing = isNowFollowing;
       this.render();
+      await ProfileSource.followUser(userId);
     } catch (error) {
       console.error('Error toggling follow:', error);
     }
