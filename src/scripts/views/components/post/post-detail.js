@@ -1,6 +1,7 @@
 import PostSource from '../../../data/post-source.js';
+import ProfileSource from '../../../data/profile-source.js';
 import './post-detail-comment.js';
-import './post-detail-actions.js';
+import './post-detail-action.js';
 
 class PostDetail extends HTMLElement {
   constructor() {
@@ -11,6 +12,7 @@ class PostDetail extends HTMLElement {
     this.isCommentVisible = false;
     this.currentPage = 1;
     this.totalPages = 1;
+    this.isLoading = false;
   }
 
   set postId(id) {
@@ -33,12 +35,24 @@ class PostDetail extends HTMLElement {
     }
   }
 
+  async showLikesModal() {
+    try {
+      const likesData = await PostSource.getPostLikes(this._postId);
+      const likeModal = document.createElement('post-detail-like');
+      likeModal.data = likesData;
+      document.body.appendChild(likeModal);
+    } catch (error) {
+      console.error('Error fetching likes:', error);
+    }
+  }
+
   async handleLike() {
     try {
       this._post.isLiked = !this._post.isLiked;
       this._post.likesCount += this._post.isLiked ? 1 : -1;
       const postActions = this.shadowRoot.querySelector('post-detail-actions');
       postActions.updateLikeStatus(this._post.isLiked, this._post.likesCount);
+      await PostSource.likePost(this._postId);
     } catch (error) {
       console.error('Error toggling like:', error);
     }
@@ -49,6 +63,7 @@ class PostDetail extends HTMLElement {
       this._post.isSaved = !this._post.isSaved;
       const postActions = this.shadowRoot.querySelector('post-detail-actions');
       postActions.updateSaveStatus(this._post.isSaved);
+      await PostSource.savePost(this._postId);
     } catch (error) {
       console.error('Error toggling save:', error);
     }
@@ -58,6 +73,7 @@ class PostDetail extends HTMLElement {
     try {
       this._post.isFollowing = !this._post.isFollowing;
       this.updateFollowStatus();
+      await ProfileSource.followUser(this._post.user.id);
     } catch (error) {
       console.error('Error toggling follow:', error);
     }
@@ -97,28 +113,81 @@ class PostDetail extends HTMLElement {
   }
 
   async handleComment(commentText) {
+    if (this.isLoading) return;
+
     try {
+      this.isLoading = true;
+      const addComment = this.shadowRoot.querySelector('.add-comment');
+
+      const loadingIndicator = document.createElement('div');
+      loadingIndicator.classList.add('comment-loading-indicator');
+      loadingIndicator.innerHTML = `
+        <style>
+          .comment-loading-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+          }
+          .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e9ecef;
+            border-top: 2px solid #0095f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+          }
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        </style>
+        <div class="loading-spinner"></div>
+      `;
+
+      addComment.style.position = 'relative';
+      addComment.appendChild(loadingIndicator);
+
+      const newComment = await PostSource.postComment(this._postId, commentText);
+
+      loadingIndicator.remove();
+      addComment.style.position = '';
+
       const user = JSON.parse(localStorage.getItem('user')) ?? {};
-      const newComment = {
-        id: Date.now(),
-        content: commentText,
-        createdAt: new Date().toISOString(),
+      this._comments.unshift({
+        ...newComment,
         user: {
           id: user.id,
           name: user.name,
           username: user.username,
           avatar: user.avatar
-        },
-        likesCount: 0,
-        isLiked: false
-      };
-      this._comments.unshift(newComment);
+        }
+      });
+
       this.renderComments();
+
+      const commentInput = this.shadowRoot.querySelector('.comment-input');
+      commentInput.value = '';
+      this.isCommentVisible = false;
+      addComment.style.display = 'none';
 
       const commentsSection = this.shadowRoot.querySelector('.comments-section');
       commentsSection.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
       console.error('Error posting comment:', error);
+      const loadingIndicator = this.shadowRoot.querySelector('.comment-loading-indicator');
+      if (loadingIndicator) {
+        loadingIndicator.remove();
+        this.shadowRoot.querySelector('.add-comment').style.position = '';
+      }
+    } finally {
+      this.isLoading = false;
     }
   }
 
@@ -143,7 +212,7 @@ class PostDetail extends HTMLElement {
     if (!this._post) return;
 
     this.shadowRoot.innerHTML = `
-<style>
+      <style>
         @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
   
         .modal-overlay {
@@ -165,7 +234,7 @@ class PostDetail extends HTMLElement {
           max-width: 1000px;
           height: 90vh;
           display: flex;
-          border-radius: 4px;
+          border-radius: 10px;
           overflow: hidden;
         }
   
@@ -275,6 +344,11 @@ class PostDetail extends HTMLElement {
           overflow-y: auto;
         }
   
+        .comment-input:disabled {
+          background: #fafafa;
+          color: #8e8e8e;
+        }
+  
         .post-button {
           border: none;
           background: none;
@@ -284,6 +358,11 @@ class PostDetail extends HTMLElement {
           cursor: pointer;
           padding: 0;
           opacity: 0.3;
+        }
+  
+        .post-button:disabled {
+          opacity: 0.3;
+          cursor: not-allowed;
         }
   
         .comment-input:not(:placeholder-shown) + .post-button {
@@ -332,12 +411,8 @@ class PostDetail extends HTMLElement {
         }
   
         @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
       </style>
   
@@ -392,19 +467,16 @@ class PostDetail extends HTMLElement {
   }
 
   setupEventListeners() {
-    // Close button
     this.shadowRoot.querySelector('.close-button').addEventListener('click', () => {
       this.remove();
     });
 
-    // Modal overlay click
     this.shadowRoot.querySelector('.modal-overlay').addEventListener('click', (e) => {
       if (e.target.classList.contains('modal-overlay')) {
         this.remove();
       }
     });
 
-    // Follow button
     if (!this._post.isMyself) {
       const followButton = this.shadowRoot.querySelector('#follow-button');
       followButton.addEventListener('click', () => {
@@ -412,7 +484,6 @@ class PostDetail extends HTMLElement {
       });
     }
 
-    // Post actions events
     const postActions = this.shadowRoot.querySelector('post-detail-actions');
     postActions.addEventListener('like-click', () => {
       this.handleLike();
@@ -420,6 +491,10 @@ class PostDetail extends HTMLElement {
 
     postActions.addEventListener('save-click', () => {
       this.handleSave();
+    });
+
+    postActions.addEventListener('likes-click', () => {
+      this.showLikesModal();
     });
 
     postActions.addEventListener('comment-click', () => {
@@ -435,7 +510,6 @@ class PostDetail extends HTMLElement {
       }
     });
 
-    // Comment form events
     const textarea = this.shadowRoot.querySelector('.comment-input');
     const postButton = this.shadowRoot.querySelector('.add-comment .post-button');
 
@@ -444,9 +518,6 @@ class PostDetail extends HTMLElement {
         const commentText = textarea.value.trim();
         if (commentText) {
           this.handleComment(commentText);
-          textarea.value = '';
-          this.isCommentVisible = false;
-          textarea.parentElement.style.display = 'none';
         }
       });
 
