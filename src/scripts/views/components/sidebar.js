@@ -1,3 +1,5 @@
+import Swal from 'sweetalert2';
+
 class SideBar extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
@@ -153,6 +155,34 @@ class SideBar extends HTMLElement {
         .more.active .dropdown {
           display: block;
         }
+        
+        .sidebar .nav-item {
+          opacity: 0;
+          visibility: hidden;
+          display: none;
+          white-space: nowrap;
+        }
+        
+        .sidebar.active .nav-item {
+          opacity: 1;
+          visibility: visible;
+          display: inline-block;
+          margin-left: 10px;
+        }
+        
+        .sidebar ul li a {
+          display: flex;
+          align-items: center;
+          color: #2A3547;
+          text-decoration: none;
+          border-radius: 0.8rem;
+          width: 100%;
+        }
+        
+        .sidebar ul li a i {
+          margin-right: 10px;
+        }
+
       </style>
       <div class="sidebar">
         <div class="top">
@@ -204,9 +234,9 @@ class SideBar extends HTMLElement {
               <span class="nav-item">More</span>
             </a>
             <div class="dropdown">
-              <a href="#/transaction-history"><i class="fa-solid fa-clock-rotate-left"></i>Riwayat Transaksi</a>
-              <a href="#/settings"><i class="fa-solid fa-gear"></i>Settings</a>
-              <a href="#/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>Logout</a>
+              <a href="#/transaction-history"><i class="fa-solid fa-clock-rotate-left"></i><span class="nav-item">Riwayat Transaksi</span></a>
+              <a href="#/settings"><i class="fa-solid fa-gear"></i><span class="nav-item">Settings</span></a>
+              <a href="#/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="nav-item">Logout</span></a>
             </div>
           </li>
         </ul>
@@ -220,14 +250,11 @@ class SideBar extends HTMLElement {
   initToggleButton() {
     const btn = this.querySelector('#btn');
     const sidebar = this.querySelector('.sidebar');
-    const moreButton = this.querySelector('.more');
 
     if (btn) {
       btn.addEventListener('click', () => {
         sidebar.classList.toggle('active');
-        moreButton.classList.remove('active');  // Disable dropdown when sidebar is closed
 
-        // Emit custom event
         this.dispatchEvent(new CustomEvent('sidebarToggle', {
           bubbles: true,
           composed: true
@@ -240,12 +267,59 @@ class SideBar extends HTMLElement {
     const moreButton = this.querySelector('.more');
     if (moreButton) {
       moreButton.addEventListener('click', () => {
-        if (this.querySelector('.sidebar').classList.contains('active')) {
-          moreButton.classList.toggle('active');
+        const isOpen = moreButton.classList.contains('active');
+        const sidebar = this.querySelector('.sidebar');
+
+        if (sidebar.classList.contains('active')) {
+          moreButton.classList.toggle('active', !isOpen);
+        } else {
+          moreButton.classList.add('active');
+        }
+
+        if (isOpen) {
+          moreButton.classList.remove('active');
         }
       });
+
+      // Logout button logic with confirmation dialog
+      const logoutButton = this.querySelector('.more .dropdown a[href="#/logout"]');
+      if (logoutButton) {
+        logoutButton.addEventListener('click', (event) => {
+          event.preventDefault();
+
+          Swal.fire({
+            title: 'Are you sure you want to logout?',
+            text: 'You will be logged out of your account.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, logout',
+            cancelButtonText: 'Cancel',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              localStorage.removeItem('token');
+              localStorage.removeItem('user');
+
+              Swal.fire({
+                icon: 'success',
+                title: 'Logged out successfully!',
+                text: 'You have been logged out of your account.',
+              }).then(() => {
+                window.location.href = '#/login';
+              });
+            } else {
+              Swal.fire({
+                icon: 'info',
+                title: 'Logout Canceled',
+                text: 'You are still logged in.',
+              });
+            }
+          });
+        });
+
+      }
     }
   }
+
 }
 
 customElements.define('side-bar', SideBar);
