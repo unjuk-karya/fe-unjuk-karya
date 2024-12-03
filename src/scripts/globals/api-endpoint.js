@@ -1,4 +1,4 @@
-import CONFIG from './config';
+import CONFIG from '../../../env.js';
 
 const API_ENDPOINT = {
   LOGIN: `${CONFIG.BASE_URL}auth/login`, // POST
