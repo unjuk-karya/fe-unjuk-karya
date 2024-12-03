@@ -1,6 +1,7 @@
 import PostSource from '../../data/post-source.js';
 import './post/post-card.js';
 import './post/post-detail.js';
+import './loading-indicator.js';
 
 class ExploreIndex extends HTMLElement {
   constructor() {
@@ -57,6 +58,7 @@ class ExploreIndex extends HTMLElement {
 
     try {
       this.isLoading = true;
+      this.render(); // Re-render to show loading state
       const response = await PostSource.getAllPosts(page, pageSize);
 
       if (page === 1) {
@@ -87,6 +89,7 @@ class ExploreIndex extends HTMLElement {
           margin: 0 auto;
           padding: 20px;
           box-sizing: border-box;
+          min-height: 100vh;
         }
 
         .container-explore {
@@ -126,15 +129,37 @@ class ExploreIndex extends HTMLElement {
           grid-column: 1 / -1;
           margin-top: 20px;
         }
+
+        .initial-loader {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: calc(100vh - 40px);
+          grid-column: 1 / -1;
+        }
+
+        .bottom-loader {
+          grid-column: 1 / -1;
+        }
       </style>
 
-      <div class="container-explore" id="postsContainer"></div>
-      ${this.currentPage < this.totalPages ? '<div id="sentinel"></div>' : ''}
+      ${this.isLoading && this.posts.length === 0 ?
+    `<div class="initial-loader">
+          <loading-indicator></loading-indicator>
+        </div>` :
+    '<div class="container-explore" id="postsContainer"></div>'}
+      
+      ${this.currentPage < this.totalPages ?
+    `<div id="sentinel"></div>
+         ${this.isLoading ?
+    `<div class="bottom-loader">
+              <loading-indicator></loading-indicator>
+            </div>` : ''}` : ''}
     `;
 
     const container = this.shadowRoot.getElementById('postsContainer');
 
-    if (this.posts && this.posts.length > 0) {
+    if (container && this.posts && this.posts.length > 0) {
       this.posts.forEach((post) => {
         const postCard = document.createElement('post-card');
         postCard.post = post;
@@ -143,15 +168,6 @@ class ExploreIndex extends HTMLElement {
     }
 
     this.setupEventListeners();
-  }
-
-  disconnectedCallback() {
-    if (this.observer) {
-      this.observer.disconnect();
-    }
-    if (this.debounceTimeout) {
-      clearTimeout(this.debounceTimeout);
-    }
   }
 }
 

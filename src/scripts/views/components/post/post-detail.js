@@ -2,6 +2,7 @@ import PostSource from '../../../data/post-source.js';
 import ProfileSource from '../../../data/profile-source.js';
 import './post-detail-comment.js';
 import './post-detail-action.js';
+import Swal from 'sweetalert2';
 
 class PostDetail extends HTMLElement {
   constructor() {
@@ -18,6 +19,46 @@ class PostDetail extends HTMLElement {
   set postId(id) {
     this._postId = id;
     this.fetchAndRender();
+  }
+
+  async handleDelete() {
+    const result = await Swal.fire({
+      title: 'Apakah anda yakin?',
+      text: 'Postingan yang dihapus tidak dapat dikembalikan',
+      icon: 'warning',
+      showCancelButton: true,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        Swal.fire({
+          title: 'Menghapus postingan...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        await PostSource.deletePost(this._postId);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Terhapus!',
+          text: 'Postingan berhasil dihapus',
+          timer: 1500
+        }).then(() => {
+          window.location.reload();
+        });
+
+      } catch (error) {
+        console.error('Error deleting post:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Gagal menghapus postingan'
+        });
+      }
+    }
   }
 
   async fetchAndRender() {
@@ -100,6 +141,13 @@ class PostDetail extends HTMLElement {
         ...commentData,
         postId: this._postId
       };
+
+      commentElement.addEventListener('comment-deleted', (event) => {
+        const { commentId } = event.detail;
+        this._comments = this._comments.filter((comment) => comment.id !== commentId);
+        this.renderComments();
+      });
+
       commentsContainer.append(commentElement);
     });
 
@@ -167,7 +215,10 @@ class PostDetail extends HTMLElement {
           name: user.name,
           username: user.username,
           avatar: user.avatar
-        }
+        },
+        isMyself: true,
+        isLiked: false,
+        likesCount: 0
       });
 
       this.renderComments();
@@ -265,6 +316,7 @@ class PostDetail extends HTMLElement {
           display: flex;
           align-items: center;
           gap: 10px;
+          position: relative;
         }
   
         .user-avatar {
@@ -294,6 +346,44 @@ class PostDetail extends HTMLElement {
         .follow-button.following {
           background-color: #fff;
           color: #0095f6;
+        }
+        
+        .more-options-button {
+          margin-left: auto;
+          background: none;
+          border: none;
+          font-size: 16px;
+          color: #262626;
+          cursor: pointer;
+          padding: 8px;
+        }
+
+        .options-menu {
+          position: absolute;
+          top: 80%;
+          right: 12px;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+          z-index: 10;
+        }
+
+        .delete-button {
+          width: 100%;
+          padding: 12px 16px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          border: none;
+          background: none;
+          color: #ed4956;
+          cursor: pointer;
+          font-size: 14px;
+          white-space: nowrap;
+        }
+
+        .delete-button:hover {
+          background: #fafafa;
         }
   
         .post-content-section {
@@ -426,11 +516,21 @@ class PostDetail extends HTMLElement {
             <div class="post-header">
               <img class="user-avatar" src="${this._post.user.avatar || 'https://via.placeholder.com/32'}" alt="">
               <span class="username">${this._post.user.username}</span>
-              ${!this._post.isMyself ? `
-                <button class="follow-button ${this._post.isFollowing ? 'following' : ''}" id="follow-button">
+              ${this._post.isMyself ? `
+                <button class="more-options-button">
+                  <i class="fas fa-ellipsis-h"></i>
+                </button>
+                <div class="options-menu" style="display: none;">
+                  <button class="delete-button">
+                    <i class="far fa-trash-alt"></i>
+                    <span>Hapus</span>
+                  </button>
+                </div>
+              ` : `
+              <button class="follow-button ${this._post.isFollowing ? 'following' : ''}" id="follow-button">
                   ${this._post.isFollowing ? 'Mengikuti' : 'Ikuti'}
                 </button>
-              ` : ''}
+              `}
             </div>
   
             <div class="comments-section">
@@ -477,7 +577,25 @@ class PostDetail extends HTMLElement {
       }
     });
 
-    if (!this._post.isMyself) {
+    if (this._post.isMyself) {
+      const moreButton = this.shadowRoot.querySelector('.more-options-button');
+      const optionsMenu = this.shadowRoot.querySelector('.options-menu');
+
+      moreButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        optionsMenu.style.display = optionsMenu.style.display === 'none' ? 'block' : 'none';
+      });
+
+      const deleteButton = this.shadowRoot.querySelector('.delete-button');
+      deleteButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.handleDelete();
+      });
+
+      document.addEventListener('click', () => {
+        optionsMenu.style.display = 'none';
+      });
+    } else if (!this._post.isMyself) {
       const followButton = this.shadowRoot.querySelector('#follow-button');
       followButton.addEventListener('click', () => {
         this.handleFollow();

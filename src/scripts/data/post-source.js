@@ -186,6 +186,51 @@ class PostSource {
     return responseData.data;
   }
 
+  static async deletePost(postId) {
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(API_ENDPOINT.POST_BY_ID(postId), {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw {
+        status: response.status,
+        data: responseData
+      };
+    }
+
+    return responseData.data;
+  }
+
+  static async deleteComment(postId, commentId) {
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(API_ENDPOINT.COMMENT(postId, commentId), {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw {
+        status: response.status,
+        data: responseData
+      };
+    }
+
+    return responseData.data;
+  }
 }
 
 export default PostSource;
