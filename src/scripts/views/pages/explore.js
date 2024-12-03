@@ -1,14 +1,14 @@
 const Explore = {
   async render() {
     return `
-    <div class="container">
+      <div class="container">
         <explore-index></explore-index>
-        </div>
-      `;
+      </div>
+    `;
   },
 
   async afterRender() {
-    // Kosong karena hanya fokus pada render
+
   }
 };
 
