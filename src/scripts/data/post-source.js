@@ -1,10 +1,10 @@
 import API_ENDPOINT from '../globals/api-endpoint';
 
 class PostSource {
-  static async getAllPosts() {
+  static async getAllPosts(page = 1, pageSize = 8) {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(API_ENDPOINT.ALL_POST, {
+    const response = await fetch(API_ENDPOINT.ALL_POST(page, pageSize), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -47,10 +47,10 @@ class PostSource {
     return responseData.data;
   }
 
-  static async getCommentsByPostId(postId) {
+  static async getCommentsByPostId(postId, page = 1, pageSize = 5) {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(API_ENDPOINT.COMMENTS_BY_POST_ID(postId), {
+    const response = await fetch(API_ENDPOINT.COMMENTS_BY_POST_ID(postId, page, pageSize), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
