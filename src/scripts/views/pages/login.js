@@ -20,7 +20,7 @@ const Login = {
 
       Swal.fire({
         title: 'Sedang Proses...',
-        text: 'Mohon tunggu sebentar sementara kami memproses login kamu',
+        text: 'Mohon tunggu sebentar sementara kami memproses login Anda',
         didOpen: () => {
           Swal.showLoading();
         },

@@ -20,7 +20,7 @@ const Register = {
 
       Swal.fire({
         title: 'Sedang Proses...',
-        text: 'Mohon tunggu sebentar sementara kami memproses register kamu',
+        text: 'Mohon tunggu sebentar sementara kami memproses register Anda',
         didOpen: () => {
           Swal.showLoading();
         },

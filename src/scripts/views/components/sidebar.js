@@ -156,14 +156,14 @@ class SideBar extends HTMLElement {
           display: block;
         }
         
-        .sidebar .nav-item {
+        .sidebar .nav-item-dropdown {
           opacity: 0;
           visibility: hidden;
           display: none;
           white-space: nowrap;
         }
         
-        .sidebar.active .nav-item {
+        .sidebar.active .nav-item-dropdown {
           opacity: 1;
           visibility: visible;
           display: inline-block;
@@ -234,9 +234,9 @@ class SideBar extends HTMLElement {
               <span class="nav-item">More</span>
             </a>
             <div class="dropdown">
-              <a href="#/transaction-history"><i class="fa-solid fa-clock-rotate-left"></i><span class="nav-item">Riwayat Transaksi</span></a>
-              <a href="#/settings"><i class="fa-solid fa-gear"></i><span class="nav-item">Settings</span></a>
-              <a href="#/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="nav-item">Logout</span></a>
+              <a href="#/transaction-history"><i class="fa-solid fa-clock-rotate-left"></i><span class="nav-item-dropdown">Riwayat Transaksi</span></a>
+              <a href="#/settings"><i class="fa-solid fa-gear"></i><span class="nav-item-dropdown">Settings</span></a>
+              <a href="#/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="nav-item-dropdown">Logout</span></a>
             </div>
           </li>
         </ul>
@@ -288,12 +288,12 @@ class SideBar extends HTMLElement {
           event.preventDefault();
 
           Swal.fire({
-            title: 'Are you sure you want to logout?',
-            text: 'You will be logged out of your account.',
+            title: 'Apakah Anda yakin ingin keluar?',
+            text: 'Anda akan keluar dari akun Anda.',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: 'Yes, logout',
-            cancelButtonText: 'Cancel',
+            confirmButtonText: 'Ya, keluar',
+            cancelButtonText: 'Batal',
           }).then((result) => {
             if (result.isConfirmed) {
               localStorage.removeItem('token');
@@ -301,21 +301,20 @@ class SideBar extends HTMLElement {
 
               Swal.fire({
                 icon: 'success',
-                title: 'Logged out successfully!',
-                text: 'You have been logged out of your account.',
+                title: 'Berhasil Keluar!',
+                text: 'Anda telah keluar dari akun Anda.',
               }).then(() => {
                 window.location.href = '#/login';
               });
             } else {
               Swal.fire({
                 icon: 'info',
-                title: 'Logout Canceled',
-                text: 'You are still logged in.',
+                title: 'Keluar Dibatalkan',
+                text: 'Anda masih terhubung dengan akun Anda.',
               });
             }
           });
         });
-
       }
     }
   }
