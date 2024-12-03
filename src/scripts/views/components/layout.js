@@ -20,7 +20,7 @@ class AppLayout extends HTMLElement {
   
           .main-wrapper {
             flex: 1;      
-            margin-left: 110px;
+            margin-left: 90px;
             transition: margin-left 0.5s ease;
             display: flex;        
             flex-direction: column;
@@ -33,7 +33,7 @@ class AppLayout extends HTMLElement {
           }
   
           .content-wrapper {
-            padding-top: 80px;
+            padding-top: 10px;
             flex: 1;
             overflow-y: auto; /* Tambahkan ini */
             height: 100%; /* Tambahkan ini */
@@ -48,7 +48,6 @@ class AppLayout extends HTMLElement {
         <div class="container">
           <side-bar></side-bar>
           <div class="main-wrapper">
-            <app-bar></app-bar>
             <div class="content-wrapper">
               <slot></slot>
             </div>

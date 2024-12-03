@@ -21,6 +21,7 @@ class ProfileHeader extends HTMLElement {
   render(profileData, userPosts) {
     const container = document.createElement('div');
     container.innerHTML = `
+    <div class="container">
       <!-- Header dengan Background -->
       <header class="header">
         <div class="cover">
@@ -76,12 +77,15 @@ class ProfileHeader extends HTMLElement {
           </div>
         `).join('')}
       </div>
+      </div>
     `;
 
     // Gaya CSS
     const style = document.createElement('style');
     style.textContent = `
-
+      .container {
+        padding:120px;
+      }
       .header {
         position: relative;
         background: linear-gradient(to right, #a5d6ff, #d6a5ff);

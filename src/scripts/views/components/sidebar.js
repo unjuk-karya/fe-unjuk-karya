@@ -2,15 +2,14 @@ class SideBar extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
       <style>
-
-                @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
 
         .sidebar {
           position: fixed;
           top: 0;
           left: 0;
           height: 100vh;
-          width: 80px;
+          width: 55px;
           background-color: #fff;
           padding: 0.4rem 0.8rem;
           z-index: 100;
@@ -65,10 +64,14 @@ class SideBar extends HTMLElement {
 
         .sidebar ul {
           padding-left: 0;
+          list-style-type: none;
+          position: relative;
+          height: calc(100% - 50px);
+          display: flex;
+          flex-direction: column;
         }
 
         .sidebar ul li {
-          list-style-type: none;
           height: 40px;
           width: 90%;
           margin: 0.8rem 0;
@@ -102,12 +105,53 @@ class SideBar extends HTMLElement {
 
         .sidebar ul li a .nav-item {
           opacity: 0;
-          transition: opacity 0.5s ease;
+          visibility: hidden;
+          transition: all 0.5s ease;
           white-space: nowrap;
         }
 
         .sidebar.active ul li a .nav-item {
           opacity: 1;
+          visibility: visible;
+        }
+
+        .sidebar ul .more {
+          position: absolute;
+          bottom: 40px;
+          width: 100%;
+        }
+
+        .more .dropdown {
+          display: none;
+          position: absolute;
+          bottom: 40px;
+          left: 0;
+          width: 100%;
+          background-color: #fff;
+          box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+          border-radius: 8px;
+          z-index: 200;
+          margin-left: 10px;
+          padding: 10px;
+        }
+
+        .more .dropdown a {
+          padding: 0.3rem;
+          display: block;
+          color: #2A3547;
+          text-decoration: none;
+          font-size: 1rem;
+          transition: background-color 0.3s ease;
+          width: 90%;
+        }
+
+        .more .dropdown a:hover {
+          background-color: #EEF3FF;
+          width: 90%;
+        }
+
+        .more.active .dropdown {
+          display: block;
         }
       </style>
       <div class="sidebar">
@@ -115,7 +159,7 @@ class SideBar extends HTMLElement {
           <div class="logo">
             <img src="/images/logo.png" alt="Logo">
           </div>
-                   <i class="fa fa-bars" id="btn"></i>
+          <i class="fa fa-bars" id="btn"></i>
         </div>
         <ul>
           <li>
@@ -132,13 +176,19 @@ class SideBar extends HTMLElement {
           </li>
           <li>
             <a href="#/add-post">
-              <i class="fa-solid fa-plus"></i>
+              <i class="fa-solid fa-square-plus"></i>
               <span class="nav-item">Add Post</span>
             </a>
           </li>
           <li>
+            <a href="#/search-user">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span class="nav-item">Search User</span>
+            </a>
+          </li>
+          <li>
             <a href="#/marketplace">
-              <i class="fa-solid fa-store"></i>
+              <i class="fa-solid fa-shop"></i>
               <span class="nav-item">Marketplace</span>
             </a>
           </li>
@@ -148,25 +198,51 @@ class SideBar extends HTMLElement {
               <span class="nav-item">Profile</span>
             </a>
           </li>
+          <li class="more">
+            <a href="javascript:void(0)">
+              <i class="fa-solid fa-ellipsis"></i>
+              <span class="nav-item">More</span>
+            </a>
+            <div class="dropdown">
+              <a href="#/transaction-history"><i class="fa-solid fa-clock-rotate-left"></i>Riwayat Transaksi</a>
+              <a href="#/settings"><i class="fa-solid fa-gear"></i>Settings</a>
+              <a href="#/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>Logout</a>
+            </div>
+          </li>
         </ul>
       </div>
     `;
 
     this.initToggleButton();
+    this.initDropdownToggle();
   }
 
   initToggleButton() {
     const btn = this.querySelector('#btn');
+    const sidebar = this.querySelector('.sidebar');
+    const moreButton = this.querySelector('.more');
+
     if (btn) {
       btn.addEventListener('click', () => {
-        const sidebar = this.querySelector('.sidebar');
         sidebar.classList.toggle('active');
+        moreButton.classList.remove('active');  // Disable dropdown when sidebar is closed
 
         // Emit custom event
         this.dispatchEvent(new CustomEvent('sidebarToggle', {
           bubbles: true,
           composed: true
         }));
+      });
+    }
+  }
+
+  initDropdownToggle() {
+    const moreButton = this.querySelector('.more');
+    if (moreButton) {
+      moreButton.addEventListener('click', () => {
+        if (this.querySelector('.sidebar').classList.contains('active')) {
+          moreButton.classList.toggle('active');
+        }
       });
     }
   }
