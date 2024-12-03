@@ -1,4 +1,5 @@
 import { formatDate } from '../../../utils/formatter.js';
+import './post-detail.js';
 
 class PostCard extends HTMLElement {
   constructor() {
@@ -15,14 +16,17 @@ class PostCard extends HTMLElement {
   setupEventListeners() {
     const card = this.shadowRoot.querySelector('.card');
     card.addEventListener('click', () => {
+      console.log('Card clicked:', this._post.id);
       this.dispatchEvent(new CustomEvent('post-click', {
         detail: { postId: this._post.id },
         bubbles: true,
         composed: true
       }));
+
+      // Tambahkan log untuk verifikasi event
+      console.log('Event post-click dispatched');
     });
   }
-
   render() {
     if (!this._post) return;
 

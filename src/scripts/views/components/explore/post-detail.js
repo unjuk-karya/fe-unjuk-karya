@@ -1,6 +1,6 @@
 import PostSource from '../../../data/post-source.js';
-import './post-comment.js';
-import { formatDate } from '../../../utils/formatter.js';
+import './post-detail-comment.js';
+import './post-detail-actions.js';
 
 class PostDetail extends HTMLElement {
   constructor() {
@@ -9,6 +9,8 @@ class PostDetail extends HTMLElement {
     this._post = null;
     this._comments = [];
     this.isCommentVisible = false;
+    this.currentPage = 1;
+    this.totalPages = 1;
   }
 
   set postId(id) {
@@ -20,36 +22,23 @@ class PostDetail extends HTMLElement {
     try {
       const [postData, commentsData] = await Promise.all([
         PostSource.getPostById(this._postId),
-        PostSource.getCommentsByPostId(this._postId)
+        PostSource.getCommentsByPostId(this._postId, this.currentPage)
       ]);
       this._post = postData;
-      this._comments = commentsData;
+      this._comments = commentsData.comments;
+      this.totalPages = commentsData.pagination.totalPages;
       this.render();
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   }
 
-  updateLikeStatus() {
-    const likeButton = this.shadowRoot.querySelector('#like-button');
-    const likesCountElement = this.shadowRoot.querySelector('.likes-count');
-
-    likeButton.classList.toggle('liked', this._post.isLiked);
-    likeButton.querySelector('i').className = `fa${this._post.isLiked ? 's' : 'r'} fa-heart`;
-    likesCountElement.textContent = `${this._post.likesCount} likes`;
-  }
-
-  updateSaveStatus() {
-    const saveButton = this.shadowRoot.querySelector('#save-button');
-    saveButton.classList.toggle('saved', this._post.isSaved);
-    saveButton.querySelector('i').className = `fa${this._post.isSaved ? 's' : 'r'} fa-bookmark`;
-  }
-
   async handleLike() {
     try {
       this._post.isLiked = !this._post.isLiked;
       this._post.likesCount += this._post.isLiked ? 1 : -1;
-      this.updateLikeStatus();
+      const postActions = this.shadowRoot.querySelector('post-detail-actions');
+      postActions.updateLikeStatus(this._post.isLiked, this._post.likesCount);
     } catch (error) {
       console.error('Error toggling like:', error);
     }
@@ -58,36 +47,10 @@ class PostDetail extends HTMLElement {
   async handleSave() {
     try {
       this._post.isSaved = !this._post.isSaved;
-      this.updateSaveStatus();
+      const postActions = this.shadowRoot.querySelector('post-detail-actions');
+      postActions.updateSaveStatus(this._post.isSaved);
     } catch (error) {
       console.error('Error toggling save:', error);
-    }
-  }
-
-  async handleComment(commentText) {
-    try {
-      const user = JSON.parse(localStorage.getItem('user')) ?? {};
-      const newComment = {
-        id: Date.now(),
-        content: commentText,
-        createdAt: new Date().toISOString(),
-        user: {
-          id: user.id,
-          name: user.name,
-          username: user.username,
-          avatar: user.avatar
-        },
-        likesCount: 0,
-        repliesCount: 0,
-        isLiked: false
-      };
-      this._comments.unshift(newComment);
-      this.renderComments();
-
-      const commentsSection = this.shadowRoot.querySelector('.comments-section');
-      commentsSection.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (error) {
-      console.error('Error posting comment:', error);
     }
   }
 
@@ -114,20 +77,75 @@ class PostDetail extends HTMLElement {
   renderComments() {
     const commentsContainer = this.shadowRoot.querySelector('#comments-container');
     commentsContainer.innerHTML = '';
+
     this._comments.forEach((commentData) => {
-      const commentElement = document.createElement('post-comment');
-      commentElement.data = commentData;
+      const commentElement = document.createElement('post-detail-comment');
+      commentElement.data = {
+        ...commentData,
+        postId: this._postId
+      };
       commentsContainer.append(commentElement);
     });
+
+    if (this.currentPage < this.totalPages) {
+      const loadMoreButton = document.createElement('button');
+      loadMoreButton.innerHTML = '<i class="fas fa-plus load-more-icon"></i>';
+      loadMoreButton.classList.add('load-more-button');
+      loadMoreButton.addEventListener('click', () => this.loadMoreComments());
+      commentsContainer.append(loadMoreButton);
+    }
+  }
+
+  async handleComment(commentText) {
+    try {
+      const user = JSON.parse(localStorage.getItem('user')) ?? {};
+      const newComment = {
+        id: Date.now(),
+        content: commentText,
+        createdAt: new Date().toISOString(),
+        user: {
+          id: user.id,
+          name: user.name,
+          username: user.username,
+          avatar: user.avatar
+        },
+        likesCount: 0,
+        isLiked: false
+      };
+      this._comments.unshift(newComment);
+      this.renderComments();
+
+      const commentsSection = this.shadowRoot.querySelector('.comments-section');
+      commentsSection.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (error) {
+      console.error('Error posting comment:', error);
+    }
+  }
+
+  async loadMoreComments() {
+    try {
+      const loadMoreButton = this.shadowRoot.querySelector('.load-more-button');
+      if (loadMoreButton) {
+        loadMoreButton.innerHTML = '<div class="spinner"></div>';
+        loadMoreButton.disabled = true;
+      }
+
+      this.currentPage += 1;
+      const commentsData = await PostSource.getCommentsByPostId(this._postId, this.currentPage);
+      this._comments = [...this._comments, ...commentsData.comments];
+      this.renderComments();
+    } catch (error) {
+      console.error('Error loading more comments:', error);
+    }
   }
 
   render() {
     if (!this._post) return;
 
     this.shadowRoot.innerHTML = `
-      <style>
+<style>
         @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
-
+  
         .modal-overlay {
           position: fixed;
           top: 0;
@@ -140,7 +158,7 @@ class PostDetail extends HTMLElement {
           justify-content: center;
           z-index: 1000;
         }
-
+  
         .modal-content {
           background: #fff;
           width: 100%;
@@ -150,27 +168,28 @@ class PostDetail extends HTMLElement {
           border-radius: 4px;
           overflow: hidden;
         }
-
+  
         .post-image-container {
           flex: 1;
           display: flex;
           align-items: center;
+          background: black;
         }
-
+  
         .post-image {
           width: 100%;
           height: auto;
           object-fit: contain;
         }
-
+  
         .post-sidebar {
-          width: 340px;
+          width: 440px;
           display: flex;
           flex-direction: column;
           background: #fff;
           border-left: 1px solid #efefef;
         }
-
+  
         .post-header {
           padding: 14px 16px;
           border-bottom: 1px solid #efefef;
@@ -178,20 +197,20 @@ class PostDetail extends HTMLElement {
           align-items: center;
           gap: 10px;
         }
-
+  
         .user-avatar {
           width: 32px;
           height: 32px;
           border-radius: 50%;
           object-fit: cover;
         }
-
+  
         .username {
           font-weight: 600;
           font-size: 14px;
           color: #262626;
         }
-
+  
         .follow-button {
           margin-left: auto;
           padding: 5px 10px;
@@ -202,79 +221,41 @@ class PostDetail extends HTMLElement {
           color: #fff;
           border-radius: 4px;
         }
-
+  
         .follow-button.following {
           background-color: #fff;
           color: #0095f6;
         }
-
+  
         .post-content-section {
           padding: 16px;
           border-bottom: 1px solid #efefef;
         }
-
+  
         .post-header-info {
           display: flex;
           flex-direction: column;
           gap: 8px;
         }
-
+  
         .post-title {
           font-size: 16px;
           font-weight: bold;
           color: #262626;
         }
-
+  
         .post-content {
           font-size: 14px;
           line-height: 1.5;
           color: #262626;
         }
-
+  
         .comments-section {
           flex: 1;
           overflow-y: auto;
           border-bottom: 1px solid #efefef;
         }
-
-        .post-actions {
-          padding: 8px 16px;
-          display: flex;
-          gap: 16px;
-        }
-
-        .action-button {
-          background: none;
-          border: none;
-          padding: 8px 0;
-          cursor: pointer;
-          font-size: 24px;
-          color: #262626;
-        }
-
-        .action-button.liked i {
-          color: #ed4956;
-          font-weight: 900;
-        }
-
-        .action-button.saved i {
-          color: #0095f6;
-          font-weight: 900;
-        }
-
-        .likes-count {
-          padding: 0 16px 4px;
-          font-weight: 600;
-          font-size: 14px;
-          color: #262626;
-        }
-
-        .post-date {
-          padding: 0 16px 12px;
-          font-size: 12px;
-          color: #8e8e8e;
-        }
-
+  
         .add-comment {
           padding: 12px 16px;
           display: flex;
@@ -282,7 +263,7 @@ class PostDetail extends HTMLElement {
           gap: 12px;
           border-top: 1px solid #efefef;
         }
-
+  
         .comment-input {
           flex: 1;
           border: none;
@@ -290,8 +271,10 @@ class PostDetail extends HTMLElement {
           font-size: 14px;
           resize: none;
           line-height: 1.4;
+          max-height: 80px;
+          overflow-y: auto;
         }
-
+  
         .post-button {
           border: none;
           background: none;
@@ -302,11 +285,11 @@ class PostDetail extends HTMLElement {
           padding: 0;
           opacity: 0.3;
         }
-
+  
         .comment-input:not(:placeholder-shown) + .post-button {
           opacity: 1;
         }
-
+  
         .close-button {
           position: fixed;
           top: 20px;
@@ -317,8 +300,47 @@ class PostDetail extends HTMLElement {
           font-size: 30px;
           cursor: pointer;
         }
+  
+        .load-more-button {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          padding: 10px;
+          border: none;
+          background: none;
+          cursor: pointer;
+          font-size: 20px;
+          color: #0095f6;
+        }
+  
+        .load-more-icon {
+          background-color: #fff;
+          color: #0095f6;
+          border-radius: 50%;
+          padding:5px 6px;
+          border: 2px solid #0095f6;
+        }
+  
+        .spinner {
+          border: 4px solid rgba(0, 0, 0, 0.1);
+          border-left-color: #0095f6;
+          border-radius: 50%;
+          width: 24px;
+          height: 24px;
+          animation: spin 1s linear infinite;
+        }
+  
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
       </style>
-
+  
       <div class="modal-overlay">
         <button class="close-button">&times;</button>
         <div class="modal-content">
@@ -326,12 +348,16 @@ class PostDetail extends HTMLElement {
             <img class="post-image" src="${this._post.image}" alt="">
           </div>
           <div class="post-sidebar">
-               <div class="post-header">
+            <div class="post-header">
               <img class="user-avatar" src="${this._post.user.avatar || 'https://via.placeholder.com/32'}" alt="">
               <span class="username">${this._post.user.username}</span>
-              ${!this._post.isMyself ? `<button class="follow-button ${this._post.isFollowing ? 'following' : ''}" id="follow-button">${this._post.isFollowing ? 'Mengikuti' : 'Ikuti'}</button>` : ''}
+              ${!this._post.isMyself ? `
+                <button class="follow-button ${this._post.isFollowing ? 'following' : ''}" id="follow-button">
+                  ${this._post.isFollowing ? 'Mengikuti' : 'Ikuti'}
+                </button>
+              ` : ''}
             </div>
-
+  
             <div class="comments-section">
               <div class="post-content-section">
                 <div class="post-header-info">
@@ -339,52 +365,46 @@ class PostDetail extends HTMLElement {
                   <div class="post-content">${this._post.content}</div>
                 </div>
               </div>
-
+  
               <div id="comments-container"></div>
             </div>
-
-            <div class="post-actions">
-              <button class="action-button ${this._post.isLiked ? 'liked' : ''}" id="like-button">
-                <i class="fa${this._post.isLiked ? 's' : 'r'} fa-heart"></i>
-              </button>
-              <button class="action-button">
-                <i class="far fa-comment"></i>
-              </button>
-              <button class="action-button ${this._post.isSaved ? 'saved' : ''}" id="save-button" style="margin-left: auto;">
-                <i class="fa${this._post.isSaved ? 's' : 'r'} fa-bookmark"></i>
-              </button>
-            </div>
-            
-            <div class="likes-count">
-              ${this._post.likesCount} suka
-            </div>
-            
-            <div class="post-date">
-              ${formatDate(this._post.createdAt)}
-            </div>
-
+  
+            <post-detail-actions></post-detail-actions>
+  
             <div class="add-comment" style="display: ${this.isCommentVisible ? 'flex' : 'none'}">
-              <textarea class="comment-input" placeholder="Add a comment..." rows="1"></textarea>
-              <button class="post-button">Post</button>
+              <textarea class="comment-input" placeholder="Tambahkan komentar..." rows="1"></textarea>
+              <button class="post-button">Kirim</button>
             </div>
           </div>
         </div>
       </div>
     `;
 
-    // Like button event listener
-    const likeButton = this.shadowRoot.querySelector('#like-button');
-    likeButton.addEventListener('click', () => {
-      this.handleLike();
+    const postActions = this.shadowRoot.querySelector('post-detail-actions');
+    postActions.data = {
+      isLiked: this._post.isLiked,
+      isSaved: this._post.isSaved,
+      likesCount: this._post.likesCount,
+      createdAt: this._post.createdAt
+    };
+
+    this.setupEventListeners();
+  }
+
+  setupEventListeners() {
+    // Close button
+    this.shadowRoot.querySelector('.close-button').addEventListener('click', () => {
+      this.remove();
     });
 
-    // Save button event listener
-    const saveButton = this.shadowRoot.querySelector('#save-button');
-    saveButton.addEventListener('click', () => {
-      this.handleSave();
+    // Modal overlay click
+    this.shadowRoot.querySelector('.modal-overlay').addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal-overlay')) {
+        this.remove();
+      }
     });
 
-    // Follow button event listener
+    // Follow button
     if (!this._post.isMyself) {
       const followButton = this.shadowRoot.querySelector('#follow-button');
       followButton.addEventListener('click', () => {
@@ -392,62 +412,58 @@ class PostDetail extends HTMLElement {
       });
     }
 
-    // Render comments
-    this.renderComments();
-
-    // Setup textarea auto-height
-    const textarea = this.shadowRoot.querySelector('.comment-input');
-    textarea.addEventListener('input', () => {
-      textarea.style.height = 'auto';
-      textarea.style.height = `${textarea.scrollHeight}px`;
+    // Post actions events
+    const postActions = this.shadowRoot.querySelector('post-detail-actions');
+    postActions.addEventListener('like-click', () => {
+      this.handleLike();
     });
 
-    this.setupEventListeners();
-  }
-
-  setupEventListeners() {
-    this.shadowRoot.querySelector('.close-button').addEventListener('click', () => {
-      this.remove();
+    postActions.addEventListener('save-click', () => {
+      this.handleSave();
     });
 
-    this.shadowRoot.querySelector('.modal-overlay').addEventListener('click', (e) => {
-      if (e.target.classList.contains('modal-overlay')) {
-        this.remove();
-      }
-    });
-
-    const commentButton = this.shadowRoot.querySelector('.action-button:nth-child(2)');
-    const addCommentSection = this.shadowRoot.querySelector('.add-comment');
-
-    commentButton.addEventListener('click', () => {
+    postActions.addEventListener('comment-click', () => {
       this.isCommentVisible = !this.isCommentVisible;
-      addCommentSection.style.display = this.isCommentVisible ? 'flex' : 'none';
+      this.render();
+      this.renderComments();
 
       if (this.isCommentVisible) {
-        const textarea = addCommentSection.querySelector('.comment-input');
-        textarea.focus();
+        setTimeout(() => {
+          const textarea = this.shadowRoot.querySelector('.comment-input');
+          if (textarea) textarea.focus();
+        }, 0);
       }
     });
 
-    const postButton = this.shadowRoot.querySelector('.post-button');
+    // Comment form events
     const textarea = this.shadowRoot.querySelector('.comment-input');
+    const postButton = this.shadowRoot.querySelector('.add-comment .post-button');
 
-    postButton.addEventListener('click', () => {
-      const commentText = textarea.value.trim();
-      if (commentText) {
-        this.handleComment(commentText);
-        textarea.value = '';
-        this.isCommentVisible = false;
-        addCommentSection.style.display = 'none';
-      }
-    });
+    if (textarea && postButton) {
+      postButton.addEventListener('click', () => {
+        const commentText = textarea.value.trim();
+        if (commentText) {
+          this.handleComment(commentText);
+          textarea.value = '';
+          this.isCommentVisible = false;
+          textarea.parentElement.style.display = 'none';
+        }
+      });
 
-    textarea.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        postButton.click();
-      }
-    });
+      textarea.addEventListener('input', () => {
+        textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight}px`;
+      });
+
+      textarea.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          postButton.click();
+        }
+      });
+    }
+
+    this.renderComments();
   }
 }
 
