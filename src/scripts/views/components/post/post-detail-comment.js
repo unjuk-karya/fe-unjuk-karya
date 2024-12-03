@@ -1,5 +1,6 @@
 import { formatDate } from '../../../utils/formatter.js';
 import PostSource from '../../../data/post-source.js';
+import Swal from 'sweetalert2';
 
 class PostDetailComment extends HTMLElement {
   constructor() {
@@ -10,6 +11,49 @@ class PostDetailComment extends HTMLElement {
   set data(commentData) {
     this._data = commentData;
     this.render();
+  }
+
+  async handleDelete() {
+    const result = await Swal.fire({
+      title: 'Apakah anda yakin?',
+      text: 'Komentar yang dihapus tidak dapat dikembalikan',
+      icon: 'warning',
+      showCancelButton: true,
+    });
+
+    if (result.isConfirmed) {
+      try {
+        Swal.fire({
+          title: 'Menghapus komentar...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        await PostSource.deleteComment(this._data.postId, this._data.id);
+
+        await Swal.fire({
+          icon: 'success',
+          title: 'Terhapus!',
+          text: 'Komentar berhasil dihapus',
+          timer: 1500,
+        });
+
+        this.remove();
+        this.dispatchEvent(new CustomEvent('comment-deleted', {
+          detail: { commentId: this._data.id }
+        }));
+
+      } catch (error) {
+        console.error('Error deleting comment:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: 'Gagal menghapus komentar'
+        });
+      }
+    }
   }
 
   render() {
@@ -93,16 +137,29 @@ class PostDetailComment extends HTMLElement {
           padding: 0;
           cursor: pointer;
           font-size: 14px;
-          color: #262626;
           margin-top: 4px;
+        }
+
+        .delete-button {
+          background: none;
+          border: none;
+          padding: 0;
+          cursor: pointer;
+          font-size: 12px;
         }
 
         .like-button.liked {
           color: #ed4956;
         }
 
-        .like-button:hover {
+        .like-button:hover, .delete-button:hover {
           opacity: 0.7;
+        }
+
+        .actions-group {
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
       </style>
 
@@ -123,11 +180,18 @@ class PostDetailComment extends HTMLElement {
               <span class="likes-count">
                 ${this._data.likesCount > 0 ? `${this._data.likesCount} suka` : ''}
               </span>
+              ${this._data.isMyself ? `
+                <button class="delete-button">
+                  <i class="far fa-trash-alt" style="color: #ed4956;"></i>
+                </button>
+              ` : ''}
             </div>
           </div>
-          <button class="like-button ${this._data.isLiked ? 'liked' : ''}">
-            <i class="fa${this._data.isLiked ? 's' : 'r'} fa-heart"></i>
-          </button>
+          <div class="actions-group">
+            <button class="like-button ${this._data.isLiked ? 'liked' : ''}">
+              <i class="fa${this._data.isLiked ? 's' : 'r'} fa-heart"></i>
+            </button>
+          </div>
         </div>
       </div>
     `;
@@ -148,6 +212,13 @@ class PostDetailComment extends HTMLElement {
         console.error('Error liking comment:', error);
       }
     });
+
+    if (this._data.isMyself) {
+      const deleteButton = this.shadowRoot.querySelector('.delete-button');
+      deleteButton.addEventListener('click', () => {
+        this.handleDelete();
+      });
+    }
   }
 }
 

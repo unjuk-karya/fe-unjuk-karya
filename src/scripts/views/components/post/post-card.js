@@ -23,7 +23,6 @@ class PostCard extends HTMLElement {
         composed: true
       }));
 
-      // Tambahkan log untuk verifikasi event
       console.log('Event post-click dispatched');
     });
   }
@@ -40,6 +39,7 @@ class PostCard extends HTMLElement {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             transition: transform 0.2s ease;
+            cursor: pointer;
           }
           
           .card:hover {
