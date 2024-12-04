@@ -327,9 +327,12 @@ class PostDetail extends HTMLElement {
         }
   
         .username {
-          font-weight: 600;
-          font-size: 14px;
-          color: #262626;
+          color: #000;
+          text-decoration: none;
+        }
+
+        .username:hover {
+          text-decoration: underline;
         }
   
         .follow-button {
@@ -522,7 +525,7 @@ class PostDetail extends HTMLElement {
           <div class="post-sidebar">
             <div class="post-header">
               <img class="user-avatar" src="${this._post.user.avatar || 'https://via.placeholder.com/32'}" alt="">
-              <span class="username">${this._post.user.username}</span>
+              <a href="#/search/${this._post.user.id}" class="username">${this._post.user.username}</a>
               ${this._post.isMyself ? `
                 <button class="more-options-button">
                   <i class="fas fa-ellipsis-h"></i>
@@ -575,6 +578,10 @@ class PostDetail extends HTMLElement {
 
   setupEventListeners() {
     this.shadowRoot.querySelector('.close-button').addEventListener('click', () => {
+      this.remove();
+    });
+
+    this.shadowRoot.querySelector('.username').addEventListener('click', () => {
       this.remove();
     });
 

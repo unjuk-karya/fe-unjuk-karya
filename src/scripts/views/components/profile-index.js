@@ -11,6 +11,8 @@ class ProfileIndex extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
 
+    this._userId = null;
+
     this.activeTab = 'posts';
     this.posts = [];
     this.likedPosts = [];
@@ -22,6 +24,8 @@ class ProfileIndex extends HTMLElement {
     this.isLoadingLikedPosts = false;
     this.isLoadingInitialData = true;
     this.profileData = null;
+    this.hasLoadedLikedPosts = false;
+    this.hasLoadedPosts = false;
 
     this.tabsContent = null;
     this.postsTab = null;
@@ -33,6 +37,17 @@ class ProfileIndex extends HTMLElement {
 
     this.handlePostClick = this.handlePostClick.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
+  }
+
+  get userId() {
+    return this._userId;
+  }
+
+  set userId(value) {
+    if (this._userId !== value) {
+      this._userId = value;
+      this.resetAndRefetch();
+    }
   }
 
   createTemplate() {
@@ -48,7 +63,6 @@ class ProfileIndex extends HTMLElement {
           justify-content: center;
           align-items: center;
           min-height: 100vh;
-          background-color: #fff;
         }
 
         .tabs-content {
@@ -79,6 +93,7 @@ class ProfileIndex extends HTMLElement {
           text-align: center;
           padding: 40px;
           color: #666;
+          display: none;
         }
 
         .bottom-loader {
@@ -90,7 +105,7 @@ class ProfileIndex extends HTMLElement {
 
         .sentinel {
           width: 100%;
-          height: 20px;
+          height: 0px;
           visibility: hidden;
         }
 
@@ -131,6 +146,11 @@ class ProfileIndex extends HTMLElement {
         <div class="tabs-content">
           <div id="posts" class="tab-content ${this.activeTab === 'posts' ? 'active' : ''}">
             <div class="grid"></div>
+            ${this.hasLoadedPosts ? `
+              <div class="empty-state">
+                <p>Belum ada postingan yang dibuat.</p>
+              </div>
+            ` : ''}
             <div class="sentinel" id="posts-sentinel"></div>
             <div class="bottom-loader" style="display: none">
               <loading-indicator></loading-indicator>
@@ -145,6 +165,11 @@ class ProfileIndex extends HTMLElement {
 
           <div id="liked" class="tab-content ${this.activeTab === 'liked' ? 'active' : ''}">
             <div class="grid"></div>
+            ${this.hasLoadedLikedPosts ? `
+              <div class="empty-state">
+                <p>Belum ada postingan yang disukai.</p>
+              </div>
+            ` : ''}
             <div class="sentinel" id="liked-posts-sentinel"></div>
             <div class="bottom-loader" style="display: none">
               <loading-indicator></loading-indicator>
@@ -153,6 +178,33 @@ class ProfileIndex extends HTMLElement {
         </div>
       `}
     `;
+  }
+
+  async resetAndRefetch() {
+    this.posts = [];
+    this.likedPosts = [];
+    this.postsPage = 1;
+    this.likedPostsPage = 1;
+    this.isLoadingInitialData = true;
+    this.profileData = null;
+    this.hasLoadedLikedPosts = false;
+    this.hasLoadedPosts = false;
+
+    this.render();
+    await this.fetchInitialData();
+  }
+
+  getCurrentUserId() {
+    if (this._userId) {
+      return this._userId;
+    }
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user?.id;
+    } catch (error) {
+      console.error('Failed to get user from localStorage:', error);
+      return null;
+    }
   }
 
   handlePostClick(e) {
@@ -166,10 +218,9 @@ class ProfileIndex extends HTMLElement {
     if (this.activeTab === newTab) return;
 
     this.activeTab = newTab;
-
     this.updateTabVisibility();
 
-    if (newTab === 'liked' && this.likedPosts.length === 0) {
+    if (newTab === 'liked' && !this.hasLoadedLikedPosts) {
       await this.fetchLikedPosts(1);
     }
 
@@ -223,15 +274,23 @@ class ProfileIndex extends HTMLElement {
   async fetchPosts(page = 1) {
     if (this.isLoadingPosts) return;
 
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      console.error('No user ID available');
+      return;
+    }
+
     try {
       this.isLoadingPosts = true;
       this.updateLoadingState('posts', true);
 
-      const userId = JSON.parse(localStorage.getItem('user')).id;
       const response = await ProfileSource.getUserPosts(userId, page);
 
       if (page === 1) {
         this.posts = response.posts;
+        this.hasLoadedPosts = true;
+        this.render();
+        this.updateEmptyState('posts', this.posts.length === 0);
       } else {
         this.posts = [...this.posts, ...response.posts];
       }
@@ -242,6 +301,9 @@ class ProfileIndex extends HTMLElement {
       this.updatePostsGrid();
     } catch (error) {
       console.error('Failed to fetch posts:', error);
+      this.hasLoadedPosts = true;
+      this.render();
+      this.updateEmptyState('posts', true);
     } finally {
       this.isLoadingPosts = false;
       this.updateLoadingState('posts', false);
@@ -251,15 +313,23 @@ class ProfileIndex extends HTMLElement {
   async fetchLikedPosts(page = 1) {
     if (this.isLoadingLikedPosts) return;
 
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      console.error('No user ID available');
+      return;
+    }
+
     try {
       this.isLoadingLikedPosts = true;
       this.updateLoadingState('liked', true);
 
-      const userId = JSON.parse(localStorage.getItem('user')).id;
       const response = await ProfileSource.getUserLikedPosts(userId, page);
 
       if (page === 1) {
         this.likedPosts = response.posts;
+        this.hasLoadedLikedPosts = true;
+        this.render();
+        this.updateEmptyState('liked', this.likedPosts.length === 0);
       } else {
         this.likedPosts = [...this.likedPosts, ...response.posts];
       }
@@ -270,6 +340,9 @@ class ProfileIndex extends HTMLElement {
       this.updateLikedPostsGrid();
     } catch (error) {
       console.error('Failed to fetch liked posts:', error);
+      this.hasLoadedLikedPosts = true;
+      this.render();
+      this.updateEmptyState('liked', true);
     } finally {
       this.isLoadingLikedPosts = false;
       this.updateLoadingState('liked', false);
@@ -283,28 +356,45 @@ class ProfileIndex extends HTMLElement {
     }
   }
 
+  updateEmptyState(tab, isEmpty) {
+    const grid = this.shadowRoot.querySelector(`#${tab} .grid`);
+    const emptyState = this.shadowRoot.querySelector(`#${tab} .empty-state`);
+
+    if (grid && emptyState) {
+      const shouldShowEmpty = isEmpty && (
+        (tab === 'liked' && this.hasLoadedLikedPosts) ||
+        (tab === 'posts' && this.hasLoadedPosts)
+      );
+
+      grid.style.display = shouldShowEmpty ? 'none' : 'grid';
+      emptyState.style.display = shouldShowEmpty ? 'block' : 'none';
+    }
+  }
+
   updatePostsGrid() {
     const grid = this.shadowRoot.querySelector('#posts .grid');
     if (!grid) return;
 
-    grid.innerHTML = this.posts.map(() => '<post-card-profile-1></post-card-profile-1>').join('');
-
-    const cards = grid.querySelectorAll('post-card-profile-1');
-    cards.forEach((card, index) => {
-      card.post = this.posts[index];
-    });
+    if (this.posts.length > 0) {
+      grid.innerHTML = this.posts.map(() => '<post-card-profile-1></post-card-profile-1>').join('');
+      const cards = grid.querySelectorAll('post-card-profile-1');
+      cards.forEach((card, index) => {
+        card.post = this.posts[index];
+      });
+    }
   }
 
   updateLikedPostsGrid() {
     const grid = this.shadowRoot.querySelector('#liked .grid');
     if (!grid) return;
 
-    grid.innerHTML = this.likedPosts.map(() => '<post-card-profile-2></post-card-profile-2>').join('');
-
-    const cards = grid.querySelectorAll('post-card-profile-2');
-    cards.forEach((card, index) => {
-      card.post = this.likedPosts[index];
-    });
+    if (this.likedPosts.length > 0) {
+      grid.innerHTML = this.likedPosts.map(() => '<post-card-profile-2></post-card-profile-2>').join('');
+      const cards = grid.querySelectorAll('post-card-profile-2');
+      cards.forEach((card, index) => {
+        card.post = this.likedPosts[index];
+      });
+    }
   }
 
   setupEventListeners() {
@@ -312,29 +402,47 @@ class ProfileIndex extends HTMLElement {
     this.shadowRoot.addEventListener('tabChange', this.handleTabChange);
   }
 
-  async connectedCallback() {
-    this.render();
-
-    const userId = JSON.parse(localStorage.getItem('user')).id;
+  async fetchInitialData() {
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      console.error('No user ID available');
+      this.isLoadingInitialData = false;
+      this.render();
+      return;
+    }
 
     try {
-      const [profileData, postsData] = await Promise.all([
-        ProfileSource.getUserProfile(userId),
-        ProfileSource.getUserPosts(userId, 1)
-      ]);
+      const profile = await ProfileSource.getUserProfile(userId);
 
-      this.profileData = profileData;
-      this.posts = postsData.posts;
-      this.postsPage = postsData.pagination.currentPage;
-      this.postsTotalPages = postsData.pagination.totalPages;
-    } catch (error) {
-      console.error('Failed to fetch initial data:', error);
-    } finally {
+      if (!profile || profile.status === 404) {
+        window.location.hash = '#/not-found';
+        return;
+      }
+
+      this.profileData = profile;
       this.isLoadingInitialData = false;
       this.render();
       this.setupEventListeners();
+
+      this.updateLoadingState('posts', true);
+      await this.fetchPosts(1);
+
+    } catch (error) {
+      console.error('Failed to fetch initial data:', error);
+      if (error.status === 404) {
+        window.location.hash = '#/not-found';
+        return;
+      }
+      this.isLoadingInitialData = false;
+      this.render();
+    } finally {
       this.setupIntersectionObserver();
     }
+  }
+
+  async connectedCallback() {
+    this.render();
+    await this.fetchInitialData();
   }
 
   render() {
@@ -346,16 +454,30 @@ class ProfileIndex extends HTMLElement {
         profileHeader.profileData = this.profileData;
       }
 
+      this.updateEmptyState('posts', this.posts.length === 0);
+      if (this.hasLoadedLikedPosts) {
+        this.updateEmptyState('liked', this.likedPosts.length === 0);
+      }
+
       this.updatePostsGrid();
       this.updateLikedPostsGrid();
     }
   }
-
   disconnectedCallback() {
     if (this.postsObserver) this.postsObserver.disconnect();
     if (this.likedPostsObserver) this.likedPostsObserver.disconnect();
     this.shadowRoot.removeEventListener('post-click', this.handlePostClick);
     this.shadowRoot.removeEventListener('tabChange', this.handleTabChange);
+  }
+
+  static get observedAttributes() {
+    return ['user-id'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'user-id' && oldValue !== newValue) {
+      this.userId = newValue;
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 import routes from '../routes/routes';
 import UrlParser from '../routes/url-parser';
+import NotFound from '../views/pages/not-found';
 
 class App {
   constructor({ content }) {
@@ -33,13 +34,18 @@ class App {
         this._content = document.querySelector('#mainContent');
       }
 
-      const page = routes[url];
+      const page = routes[url] || NotFound;
+
       if (this._content) {
         this._content.innerHTML = await page.render();
         await page.afterRender();
       }
     } catch (error) {
       console.error('Error in renderPage:', error);
+      if (this._content) {
+        this._content.innerHTML = await NotFound.render();
+        await NotFound.afterRender();
+      }
     }
   }
 }
