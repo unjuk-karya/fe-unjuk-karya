@@ -4,7 +4,10 @@ const API_ENDPOINT = {
   LOGIN: `${CONFIG.BASE_URL}auth/login`, // POST
   REGISTER: `${CONFIG.BASE_URL}auth/register`, // POST
   USER_PROFILE: (userId) => `${CONFIG.BASE_URL}users/${userId}/profile`, // GET
-  USER_POSTS: (userId) => `${CONFIG.BASE_URL}users/${userId}/posts`, // GET
+  USER_POSTS: (userId, page = 1, pageSize = 8) =>
+    `${CONFIG.BASE_URL}users/${userId}/posts?page=${page}&pageSize=${pageSize}`, // GET
+  USER_LIKED_POSTS: (userId, page = 1, pageSize = 8) =>
+    `${CONFIG.BASE_URL}users/${userId}/liked-posts?page=${page}&pageSize=${pageSize}`, // GET
   FOLLOW_USER: (userId) => `${CONFIG.BASE_URL}users/${userId}/follow`, // POST
   ALL_POST: (page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}posts?page=${page}&pageSize=${pageSize}`, // GET

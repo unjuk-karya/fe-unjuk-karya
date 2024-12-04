@@ -187,7 +187,7 @@ class PostDetail extends HTMLElement {
             width: 20px;
             height: 20px;
             border: 2px solid #e9ecef;
-            border-top: 2px solid #0095f6;
+            border-top: 2px solid #1D77E6;
             border-radius: 50%;
             animation: spin 1s linear infinite;
           }
@@ -337,15 +337,22 @@ class PostDetail extends HTMLElement {
           padding: 5px 10px;
           font-size: 14px;
           cursor: pointer;
-          border: 1px solid #0095f6;
-          background-color: #0095f6;
+          border: 1px solid #1D77E6;
+          background-color: #1D77E6;
           color: #fff;
           border-radius: 4px;
         }
   
+        follow-button:hover {
+            background-color: #0056b3;
+        }
         .follow-button.following {
           background-color: #fff;
-          color: #0095f6;
+          color: #1D77E6;
+        }
+
+        .follow-button.following:hover {
+            background-color: #f8f9fa;
         }
         
         .more-options-button {
@@ -442,7 +449,7 @@ class PostDetail extends HTMLElement {
         .post-button {
           border: none;
           background: none;
-          color: #0095f6;
+          color: #1D77E6;
           font-weight: 600;
           font-size: 14px;
           cursor: pointer;
@@ -480,20 +487,20 @@ class PostDetail extends HTMLElement {
           background: none;
           cursor: pointer;
           font-size: 20px;
-          color: #0095f6;
+          color: #1D77E6;
         }
   
         .load-more-icon {
           background-color: #fff;
-          color: #0095f6;
+          color: #1D77E6;
           border-radius: 50%;
           padding:5px 6px;
-          border: 2px solid #0095f6;
+          border: 2px solid #1D77E6;
         }
   
         .spinner {
           border: 4px solid rgba(0, 0, 0, 0.1);
-          border-left-color: #0095f6;
+          border-left-color: #1D77E6;
           border-radius: 50%;
           width: 24px;
           height: 24px;

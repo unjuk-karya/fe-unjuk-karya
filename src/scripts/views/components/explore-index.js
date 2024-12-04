@@ -1,5 +1,5 @@
 import PostSource from '../../data/post-source.js';
-import './post/post-card.js';
+import './post/post-card-explore.js';
 import './post/post-detail.js';
 import './loading-indicator.js';
 
@@ -124,10 +124,9 @@ class ExploreIndex extends HTMLElement {
 
         #sentinel {
           width: 100%;
-          height: 20px;
+          height: 0px;
           visibility: hidden;
-          grid-column: 1 / -1;
-          margin-top: 20px;
+          margin-top: 0px;
         }
 
         .initial-loader {
@@ -161,7 +160,7 @@ class ExploreIndex extends HTMLElement {
 
     if (container && this.posts && this.posts.length > 0) {
       this.posts.forEach((post) => {
-        const postCard = document.createElement('post-card');
+        const postCard = document.createElement('post-card-explore');
         postCard.post = post;
         container.appendChild(postCard);
       });

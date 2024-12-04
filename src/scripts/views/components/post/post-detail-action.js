@@ -42,7 +42,7 @@ class PostDetailActions extends HTMLElement {
         }
 
         .action-button.saved i {
-          color: #0095f6;
+          color: #1D77E6;
           font-weight: 900;
         }
 
