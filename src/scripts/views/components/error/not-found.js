@@ -1,4 +1,4 @@
-class NotFoundPage extends HTMLElement {
+class NotFound extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -10,11 +10,9 @@ class NotFoundPage extends HTMLElement {
           :host {
             display: block;
             min-height: 100vh;
-            background-color: #f9f9f9;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: Arial, sans-serif;
           }
   
           .container {
@@ -22,7 +20,7 @@ class NotFoundPage extends HTMLElement {
           }
   
           .error-code {
-            font-size: 10rem;
+            font-size: 8rem;
             font-weight: bold;
             background: linear-gradient(to right, #1D77E6, #EEF3FF);
             -webkit-background-clip: text;
@@ -52,7 +50,7 @@ class NotFoundPage extends HTMLElement {
             padding: 0.75rem 1.5rem;
             font-size: 1rem;
             color: #fff;
-            background-color: #007bff;
+            background-color: #1D77E6;
             text-decoration: none;
             border-radius: 5px;
             transition: background-color 0.3s ease;
@@ -65,16 +63,16 @@ class NotFoundPage extends HTMLElement {
   
         <div class="container">
           <h1 class="error-code">404</h1>
-          <h2>OPPS! PAGE NOT FOUND</h2>
+          <h2>OPPS! HALAMAN TIDAK DITEMUKAN</h2>
           <p>
-            Sorry, the page you're looking for doesn't exist. If you think something is broken, report a problem.
+            Maaf, halaman yang Anda cari tidak ada.
           </p>
           <div class="buttons">
-            <a href="/" class="btn">Return Home</a>
+            <a href="#/" class="btn">Kembali ke Beranda</a>
           </div>
         </div>
       `;
   }
 }
 
-customElements.define('not-found-page', NotFoundPage);
+customElements.define('not-found', NotFound);
