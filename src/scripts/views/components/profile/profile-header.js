@@ -25,13 +25,26 @@ class ProfileHeader extends HTMLElement {
     try {
       this._isFollowing = !this._isFollowing;
       this.updateFollowStatus();
-      await ProfileSource.followUser(this._profileData.user.id);
+      await ProfileSource.followUser(this._profileData.id);
     } catch (error) {
       console.error('Error toggling follow:', error);
     }
   }
+
+  updateFollowStatus() {
+    const followButton = this.shadowRoot.querySelector('.follow-button');
+    if (followButton) {
+      followButton.classList.toggle('following', this._isFollowing);
+      followButton.textContent = this._isFollowing ? 'Mengikuti' : 'Ikuti';
+    }
+  }
+
   render() {
     if (!this._profileData) return;
+    const coverPhoto = this._profileData.coverPhoto || 'https://picsum.photos/800/400';
+
+    const avatar = this._profileData.avatar || 'https://picsum.photos/200';
+
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -42,7 +55,7 @@ class ProfileHeader extends HTMLElement {
         .profile-container {
           position: relative;
           background: linear-gradient(to right, #a5d6ff, #d6a5ff);
-          background-image: url('${this._profileData.coverPhoto}');
+          background-image: url('${coverPhoto}');
           background-size: cover;
           background-repeat: no-repeat;
           background-position: center;
@@ -271,7 +284,7 @@ class ProfileHeader extends HTMLElement {
 
       <div class="profile-container">
         <header class="header">
-          <img src="${this._profileData.avatar}" alt="Profile Picture" class="profile-pic">
+          <img src="${avatar}" alt="Profile Picture" class="profile-pic">
         </header>
 
         <div class="profile-info">
