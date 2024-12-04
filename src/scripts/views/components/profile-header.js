@@ -53,38 +53,44 @@ class ProfileHeader extends HTMLElement {
         </div>
         <div class="buttons">
           <button>Edit Profil</button>
-          <button>Lihat Arsip</button>
         </div>
       </section>
 
-      <!-- Post Container -->
-      <div class="post-container">
-        ${userPosts.map((post) => `
-          <div class="post">
-            <div class="post-header">
-              <img src="${post.user.avatar}" alt="Profile Picture" class="profile-picture">
-              <div class="user-info">
-                <h3>${post.user.name}</h3>
-                <p>${new Date(post.createdAt).toLocaleString()}</p>
-              </div>
-            </div>
-            <p class="post-text">${post.content}</p>
-            <img src="${post.image}" alt="Post Image" class="post-image">
-            <div class="post-actions">
-              <button class="like-btn">👍 ${post.likesCount}</button>
-              <button class="comment-btn">💬 ${post.commentsCount}</button>
-            </div>
-          </div>
-        `).join('')}
+      <!-- Tabs Section -->
+      <div class="tabs">
+        <div class="tab active" data-target="posts">Posts</div>
+        <div class="tab" data-target="etalase">Etalase</div>
+        <div class="tab" data-target="saved">Disukai</div>
       </div>
+
+      <!-- Post Content -->
+      <div class="tab-content active" id="posts">
+        <div class="grid">
+          ${userPosts.map((post) => `
+            <div class="grid-item">
+              <img src="${post.image}" alt="Post Image">
+            </div>
+          `).join('')}
+        </div>
       </div>
+
+      <!-- Etalase Content -->
+      <div class="tab-content" id="etalase">
+        <p>Etalase masih kosong.</p>
+      </div>
+
+      <!-- Saved Content -->
+      <div class="tab-content" id="saved">
+        <p>Saved masih kosong.</p>
+      </div>
+    </div>
     `;
 
     // Gaya CSS
     const style = document.createElement('style');
     style.textContent = `
       .container {
-        padding:120px;
+        padding:5px;
       }
       .header {
         position: relative;
@@ -93,28 +99,33 @@ class ProfileHeader extends HTMLElement {
         background-size: cover;
         background-repeat: no-repeat;
         background-position: center;
-        height: 300px;
+        height: 350px;
         display: flex;
         justify-content: center;
         align-items: center;
         border-radius: 10px 10px 0px 0px;
       }
 
+      .profile-info {
+        margin-top: 290px;
+      }
+
       .cover {
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 10px;
       }
 
       .profile-pic {
-        width: 200px;
-        height: 200px;
+        width: 180px;
+        height: 180px;
         border-radius: 50%;
         border: 5px solid #fff;
       }
+        
 
       .profile-details h2 {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: bold;
         color: #000000;
         text-align: center;
@@ -132,9 +143,9 @@ class ProfileHeader extends HTMLElement {
         align-items: center;
         background-color: #fff;
         padding: 20px;
-        border-radius: 0px 0px 10px 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
+        border-radius: 0px 0px 0px 0px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+        height: 80px;
       }
 
       .stats {
@@ -159,7 +170,6 @@ class ProfileHeader extends HTMLElement {
         color: #fff;
         border: none;
         padding: 10px 20px;
-        margin-left: 10px;
         border-radius: 5px;
         cursor: pointer;
         font-size: 14px;
@@ -169,102 +179,76 @@ class ProfileHeader extends HTMLElement {
         background-color: #0056b3;
       }
 
-      /* New styles for posts and comments */
-      .post-container {
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        margin-top: 20px;
-      }
-
-      .post, .comment {
+      /* Tabs styles */
+      .tabs {
+        display: flex;
+        justify-content: center;
+        border-bottom: 1px solid #ddd;
         margin-bottom: 20px;
-        padding: 15px;
-        border-radius: 8px;
-        background-color: #f8f9fa;
+        background-color: #EEF3FF;
+        border-radius: 0px 0px 10px 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
 
-      .post-header, .comment-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-      }
-
-      .profile-picture {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 10px;
-      }
-
-      .user-info {
-        flex: 1;
-      }
-
-      .user-info h3 {
-        margin: 0;
-        font-size: 16px;
-        color: #333;
-      }
-
-      .user-info p {
-        margin: 0;
-        font-size: 12px;
-        color: #666;
-      }
-
-      .post-text, .comment-text {
-        margin-bottom: 15px;
-        font-size: 14px;
-        line-height: 1.5;
-        color: #444;
-      }
-
-      .post-image {
-        width: 100%;
-        border-radius: 8px;
-        margin-bottom: 15px;
-      }
-
-      .post-actions, .comment-actions {
-        display: flex;
-        gap: 10px;
-      }
-
-      .like-btn, .comment-btn {
-        background: none;
-        border: none;
-        padding: 5px 10px;
-        font-size: 14px;
-        color: #666;
+      .tab {
+        padding: 10px 20px;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
+        text-transform: uppercase;
+        font-size: 14px;
+        color: #1D77E6;
       }
 
-      .like-btn:hover, .comment-btn:hover {
-        color: #007bff;
+      .tab.active {
+        color: #1D77E6;
+        border-bottom: 2px solid #1D77E6;
       }
 
-      @media (max-width: 768px) {
-        .stats-section {
-          flex-direction: column;
-          text-align: center;
-          gap: 20px;
-        }
+      .tab:hover {
+        color: #1D77F9;
+      }
 
-        .stats {
-          flex-direction: column;
-          gap: 15px;
-        }
+      .tab-content {
+        display: none;
+      }
 
-        .post-container {
-          margin: 10px;
-        }
+      .tab-content.active {
+        display: block;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* Membagi menjadi 4 kolom */
+        grid-auto-rows: 350px;
+        gap: 10px;
+        justify-content: center;
+        align-content: center;
+      }
+
+      .grid-item img {
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+        object-fit: cover;
+        margin: auto;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .grid-item img:hover {
+        transform: scale(1.02);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
       }
     `;
+
+    // Tab navigation functionality
+    container.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        container.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        tab.classList.add('active');
+        container.querySelector(`#${tab.dataset.target}`).classList.add('active');
+      });
+    });
 
     // Menambahkan elemen dan gaya ke Shadow DOM
     this.shadowRoot.appendChild(style);
