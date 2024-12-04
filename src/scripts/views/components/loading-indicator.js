@@ -21,7 +21,7 @@ class LoadingIndicator extends HTMLElement {
             width: 48px;
             height: 48px;
             border: 5px solid #FFF;
-            border-bottom-color: #0095f6;
+            border-bottom-color: #1D77E6;
             border-radius: 50%;
             display: inline-block;
             box-sizing: border-box;

@@ -24,10 +24,33 @@ class ProfileSource {
     return responseData.data;
   }
 
-  static async getUserPosts(userId) {
+  static async getUserPosts(userId, page = 1, pageSize = 8) {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(API_ENDPOINT.USER_POSTS(userId), {
+    const response = await fetch(API_ENDPOINT.USER_POSTS(userId, page, pageSize), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw {
+        status: response.status,
+        data: responseData
+      };
+    }
+
+    return responseData.data;
+  }
+
+  static async getUserLikedPosts(userId, page = 1, pageSize = 8) {
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(API_ENDPOINT.USER_LIKED_POSTS(userId, page, pageSize), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

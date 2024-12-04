@@ -1,7 +1,7 @@
 import { formatDate } from '../../../utils/formatter.js';
 import './post-detail.js';
 
-class PostCard extends HTMLElement {
+class PostCardExplore extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -162,4 +162,4 @@ class PostCard extends HTMLElement {
   }
 }
 
-customElements.define('post-card', PostCard);
+customElements.define('post-card-explore', PostCardExplore);

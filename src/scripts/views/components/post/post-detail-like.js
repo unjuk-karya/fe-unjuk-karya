@@ -110,15 +110,15 @@ class PostDetailLike extends HTMLElement {
               padding: 5px 10px;
               font-size: 12px;
               cursor: pointer;
-              border: 1px solid #0095f6;
-              background-color: #0095f6;
+              border: 1px solid #1D77E6;
+              background-color: #1D77E6;
               color: #fff;
               border-radius: 4px;
             }
       
             .follow-button.following {
               background-color: #fff;
-              color: #0095f6;
+              color: #1D77E6;
             }
       
 .modal-close {

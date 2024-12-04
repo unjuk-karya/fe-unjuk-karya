@@ -2,7 +2,7 @@ const Profile = {
   async render() {
     return `
     <div class="container">
-        <profile-header></profile-header>
+        <profile-index></profile-index>
         </div>
         `;
   },
