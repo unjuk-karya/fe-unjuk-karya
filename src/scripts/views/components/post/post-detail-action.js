@@ -46,18 +46,19 @@ class PostDetailActions extends HTMLElement {
           font-weight: 900;
         }
 
-        .likes-count {
-          padding: 0 16px 4px;
-          font-weight: 600;
-          font-size: 14px;
-          color: #262626;
-          cursor: pointer;
-        }
+.likes-count {
+  padding: 0 16px 4px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #262626;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
 
-        .likes-count.disabled {
-          cursor: not-allowed;
-          opacity: 0.6;
-        }
+.likes-count:not(.disabled):hover {
+  text-decoration: underline;
+}
 
         .post-date {
           padding: 0 16px 12px;
