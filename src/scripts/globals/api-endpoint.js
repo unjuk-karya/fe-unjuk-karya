@@ -22,6 +22,7 @@ const API_ENDPOINT = {
   POST: (postId) => `${CONFIG.BASE_URL}posts/${postId}`, // DELETE/PUT,
   COMMENT: (postId, commentId) =>
     `${CONFIG.BASE_URL}posts/${postId}/comments/${commentId}`, // DELETE
+  SEARCH_USER: (query) => `${CONFIG.BASE_URL}users/search?q=${query}`, // GET
 
 };
 

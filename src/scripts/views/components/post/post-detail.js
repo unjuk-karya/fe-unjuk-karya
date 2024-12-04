@@ -327,7 +327,9 @@ class PostDetail extends HTMLElement {
         }
   
         .username {
+          font-weight: 600;
           color: #000;
+          margin-right: 4px;
           text-decoration: none;
         }
 
@@ -525,7 +527,7 @@ class PostDetail extends HTMLElement {
           <div class="post-sidebar">
             <div class="post-header">
               <img class="user-avatar" src="${this._post.user.avatar || 'https://via.placeholder.com/32'}" alt="">
-              <a href="#/search/${this._post.user.id}" class="username">${this._post.user.username}</a>
+              <a href="#/profile/${this._post.user.id}" class="username">${this._post.user.username}</a>
               ${this._post.isMyself ? `
                 <button class="more-options-button">
                   <i class="fas fa-ellipsis-h"></i>

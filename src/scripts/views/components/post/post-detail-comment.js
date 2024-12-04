@@ -106,12 +106,17 @@ class PostDetailComment extends HTMLElement {
 
         .username {
           font-weight: 600;
-          color: #262626;
+          color: #000;
           margin-right: 4px;
+          text-decoration: none;
+        }
+
+        .username:hover {
+          text-decoration: underline;
         }
 
         .comment-text {
-          color: #262626;
+          color: #000;
         }
 
         .comment-actions {
@@ -128,7 +133,8 @@ class PostDetailComment extends HTMLElement {
 
         .likes-count {
           font-size: 12px;
-          color: #262626;
+          color: #8e8e8e;
+          font-weight: 600;
         }
 
         .like-button {
@@ -172,7 +178,7 @@ class PostDetailComment extends HTMLElement {
           </div>
           <div class="comment-content">
             <div class="content-text">
-              <span class="username">@${this._data.user.username}</span>
+            <a href="#/profile/${this._data.user.id}" class="username">${this._data.user.username}</a>
               <span class="comment-text">${this._data.content}</span>
             </div>
             <div class="comment-actions">

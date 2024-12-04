@@ -45,7 +45,6 @@ class ProfileHeader extends HTMLElement {
 
     const avatar = this._profileData.avatar || 'https://picsum.photos/200';
 
-
     this.shadowRoot.innerHTML = `
       <style>
         :host {
@@ -284,13 +283,13 @@ class ProfileHeader extends HTMLElement {
 
       <div class="profile-container">
         <header class="header">
-          <img src="${avatar}" alt="Profile Picture" class="profile-pic">
+          <img src="${avatar}" alt="Foto Profil" class="profile-pic">
         </header>
 
         <div class="profile-info">
           <h2>${this._profileData.username}</h2>
           <h3>${this._profileData.name || ''}</h3>
-          <p>${this._profileData.bio || 'No bio available'}</p>
+          <p>${this._profileData.bio || 'Tidak ada bio'}</p>
         </div>
       </div>
 
@@ -298,15 +297,15 @@ class ProfileHeader extends HTMLElement {
         <div class="stats">
           <div class="stat-item">
             <h3>${this._profileData.postsCount}</h3>
-            <p>Posts</p>
+            <p>Postingan</p>
           </div>
           <div class="stat-item">
             <h3>${this._profileData.followersCount}</h3>
-            <p>Followers</p>
+            <p>Pengikut</p>
           </div>
           <div class="stat-item">
             <h3>${this._profileData.followingCount}</h3>
-            <p>Following</p>
+            <p>Mengikuti</p>
           </div>
         </div>
         <div class="buttons">

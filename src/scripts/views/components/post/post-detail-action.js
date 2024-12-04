@@ -50,7 +50,7 @@ class PostDetailActions extends HTMLElement {
   padding: 0 16px 4px;
   font-weight: 600;
   font-size: 14px;
-  color: #262626;
+  color: #000;
   display: inline-block;
   position: relative;
   cursor: pointer;
