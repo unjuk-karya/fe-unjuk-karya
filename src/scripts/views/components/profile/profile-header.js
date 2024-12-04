@@ -57,8 +57,8 @@ class ProfileHeader extends HTMLElement {
         }
 
         .profile-pic {
-          width: 150px;
-          height: 150px;
+          width: 250px;
+          height: 250px;
           border-radius: 50%;
           border: 4px solid #fff;
           background-color: #fff;

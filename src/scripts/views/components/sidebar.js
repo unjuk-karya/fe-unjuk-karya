@@ -183,6 +183,87 @@ class SideBar extends HTMLElement {
           margin-right: 10px;
         }
 
+        .modal-overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background-color: rgba(0, 0, 0, 0.65);
+          z-index: 150;
+        }
+
+        .modal-overlay.active {
+          display: block;
+        }
+
+        .modal {
+          display: none;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 200;
+          background-color: #fff;
+          width: 500px;
+          height: 500px;
+          padding: 1rem;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal.active {
+          display: block;
+        }
+
+        .modal-header {
+          font-size: 1.2rem;
+          font-weight: bold;
+          margin-bottom: 1rem;
+        }
+
+        .modal .search-input {
+          width: 95%;
+          padding: 0.8rem;
+          margin-bottom: 1rem;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+        }
+
+        .modal .results {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .modal .results li {
+          padding: 0.5rem;
+          border-bottom: 1px solid #eee;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .modal .results li img {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+        }
+
+        .modal .results li span {
+          font-size: 1rem;
+          color: #333;
+        }
+
+        .modal-close {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          font-size: 1.2rem;
+          cursor: pointer;
+        }
+
       </style>
       <div class="sidebar">
         <div class="top">
@@ -210,10 +291,10 @@ class SideBar extends HTMLElement {
               <span class="nav-item">Add Post</span>
             </a>
           </li>
-          <li>
-            <a href="#/search-user">
+           <li>
+            <a href="javascript:void(0)" id="searchIcon">
               <i class="fa-solid fa-magnifying-glass"></i>
-              <span class="nav-item">Search User</span>
+              <span class="nav-item">Search</span>
             </a>
           </li>
           <li>
@@ -241,10 +322,34 @@ class SideBar extends HTMLElement {
           </li>
         </ul>
       </div>
+
+      <!-- Modal Overlay -->
+      <div class="modal-overlay" id="modalOverlay"></div>
+      <!-- Modal untuk Search -->
+      <div class="modal" id="searchModal">
+        <span class="modal-close" id="modalClose">&times;</span>
+        <div class="modal-header">Search</div>
+        <input type="text" class="search-input" placeholder="Search for people...">
+        <ul class="results">
+          <li>
+            <img src="https://via.placeholder.com/40" alt="User 1">
+            <span>John Doe</span>
+          </li>
+          <li>
+            <img src="https://via.placeholder.com/40" alt="User 2">
+            <span>Jane Smith</span>
+          </li>
+          <li>
+            <img src="https://via.placeholder.com/40" alt="User 3">
+            <span>Michael Brown</span>
+          </li>
+        </ul>
+      </div>
     `;
 
     this.initToggleButton();
     this.initDropdownToggle();
+    this.initSearchModal();
   }
 
   initToggleButton() {
@@ -262,7 +367,7 @@ class SideBar extends HTMLElement {
       });
     }
   }
-
+  
   initDropdownToggle() {
     const moreButton = this.querySelector('.more');
     if (moreButton) {
@@ -319,6 +424,34 @@ class SideBar extends HTMLElement {
     }
   }
 
+  initSearchModal() {
+    const searchIcon = this.querySelector('#searchIcon');
+    const searchModal = this.querySelector('#searchModal');
+    const modalClose = this.querySelector('#modalClose');
+    const modalOverlay = this.querySelector('#modalOverlay');
+
+    if (searchIcon) {
+      searchIcon.addEventListener('click', () => {
+        searchModal.classList.add('active');
+        modalOverlay.classList.add('active');
+      });
+    }
+
+    if (modalClose) {
+      modalClose.addEventListener('click', () => {
+        searchModal.classList.remove('active');
+        modalOverlay.classList.remove('active');
+        modalOverlay.classList.remove('active');
+      });
+    }
+
+    if (modalOverlay) {
+      modalOverlay.addEventListener('click', () => {
+        searchModal.classList.remove('active');
+        modalOverlay.classList.remove('active');
+      });
+    }
+  }
 }
 
 customElements.define('side-bar', SideBar);
