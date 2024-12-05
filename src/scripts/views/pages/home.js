@@ -1,14 +1,15 @@
-const Home = {
+const Explore = {
   async render() {
     return `
-
-    `;
+    <div class="container">
+        <post-home></post-home>
+        </div>
+      `;
   },
 
   async afterRender() {
-    // Tambahkan logika interaksi jika diperlukan
-    console.log('Home page rendered');
-  },
+    // Kosong karena hanya fokus pada render
+  }
 };
 
-export default Home;
+export default Explore;
