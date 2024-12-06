@@ -27,6 +27,7 @@ const API_ENDPOINT = {
 
   POST_BY_ID: (postId) => `${CONFIG.BASE_URL}posts/${postId}`, // GET/PUT
   POST_LIKES: (postId) => `${CONFIG.BASE_URL}posts/${postId}/likes`, // GET&POST
+  CREATE: `${CONFIG.BASE_URL}posts`,
 };
 
 export default API_ENDPOINT;

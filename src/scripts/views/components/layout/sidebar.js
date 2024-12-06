@@ -205,7 +205,7 @@ class SideBar extends HTMLElement {
             </a>
           </li>
           <li>
-            <a href="#/add-post">
+            <a href="#/create">
               <i class="fa-solid fa-square-plus"></i>
               <span class="nav-item">Add Post</span>
             </a>
