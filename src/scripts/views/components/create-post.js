@@ -117,7 +117,6 @@ class CreatePost extends HTMLElement {
         box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
       }
       
-      /* TODO */
       .form-group .validation-message {
         display: none;
         font-size: 14px;
@@ -222,6 +221,9 @@ class CreatePost extends HTMLElement {
         background: #5d87ff;
         font-weight: 600;
         color: #fff;
+      }
+      
+      #submit-button {
         margin-top: 20px;
       }
 
@@ -268,6 +270,28 @@ class CreatePost extends HTMLElement {
       .modal.show {
         display: flex;
       }
+      
+      .mobile-submit-button {
+        display: none;
+      }
+      
+      @media (max-width: 690px) {
+        .container {
+          grid-template-columns: 1fr;
+        }
+      
+        .image-container {
+          order: -1;
+        }
+        
+        .mobile-submit-button {
+          display: block;
+        }
+        
+        #submit-button {
+          display: none;
+        }
+      }
     `;
   }
 
@@ -304,6 +328,7 @@ class CreatePost extends HTMLElement {
     const titleInput = this._shadowRoot.querySelector('#title');
     const descInput = this._shadowRoot.querySelector('#description');
     const submitButton = this._shadowRoot.querySelector('#submit-button');
+    const mobileSubmitButton = this._shadowRoot.querySelector('#mobile-submit-button');
     const fileInput = this._shadowRoot.querySelector('#file-input');
 
     const titleValidationMessage = this._shadowRoot.querySelector('.title-validation');
@@ -339,7 +364,9 @@ class CreatePost extends HTMLElement {
         }
       }
 
-      submitButton.disabled = !(titleValid && descValid && imageValid);
+      const isValid = titleValid && descValid && imageValid;
+      submitButton.disabled = !isValid;
+      mobileSubmitButton.disabled = !isValid;
     };
 
     [titleInput, descInput, fileInput].forEach((input) => {
@@ -355,7 +382,6 @@ class CreatePost extends HTMLElement {
 
     validateInputs();
   }
-
 
   _triggerFileInput(fileInput) {
     fileInput.click();
@@ -399,7 +425,7 @@ class CreatePost extends HTMLElement {
       <div class="header-content">
         <div class="header-title">
           <h1>Buat Postingan</h1>
-          <p>Create</p>
+          <p>Buat postingan Anda untuk berbagi karya seni dengan dunia</p>
         </div>
         <div class="header-image">
           <img src="./images/image-create.png" alt="image-create">
@@ -408,7 +434,6 @@ class CreatePost extends HTMLElement {
       
       <div class="container">
         <div class="form-container">
-<!--          <h1>Buat Postingan Anda Sekarang Juga</h1>-->
           <form>
             <div class="form-group">
               <label for="title">Judul</label>
@@ -432,7 +457,6 @@ class CreatePost extends HTMLElement {
         
         <div class="image-container">
           <div class="image-container-wrapper">
-<!--            <h1>Buat Postingan Anda Sekarang Juga</h1>-->
             <div class="image-container-form" id="image-image-container-from">
               <img id="image-preview" alt="Thumbnail Preview">
               <div class="upload-instructions">
@@ -450,6 +474,9 @@ class CreatePost extends HTMLElement {
             <button id="submit-button" disabled>Submit</button>
           </div>
         </div>
+        
+        <!--    Button For Mobile    -->
+        <button id="mobile-submit-button" class="mobile-submit-button" disabled>Submit</button>
       </div>
       
       <div class="modal">

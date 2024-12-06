@@ -1,4 +1,4 @@
-import CreatePostSource from '../../data/create-source';  // Assume this module is for API interaction
+import CreatePostSource from '../../data/create-source';
 import Swal from 'sweetalert2';
 
 const Create = {
@@ -13,8 +13,9 @@ const Create = {
   async afterRender() {
     const createPostElement = document.querySelector('create-post');
     const submitButton = createPostElement.shadowRoot.querySelector('#submit-button');
+    const mobileSubmitButton = createPostElement.shadowRoot.querySelector('#mobile-submit-button');
 
-    submitButton.addEventListener('click', async (event) => {
+    const handleSubmit = async (event) => {
       event.preventDefault();
 
       const title = createPostElement.shadowRoot.querySelector('#title').value;
@@ -72,8 +73,12 @@ const Create = {
           text: error.message,
         });
       }
-    });
-  },
+    };
+
+    submitButton.addEventListener('click', handleSubmit);
+    mobileSubmitButton.addEventListener('click', handleSubmit);
+  }
+
 };
 
 export default Create;
