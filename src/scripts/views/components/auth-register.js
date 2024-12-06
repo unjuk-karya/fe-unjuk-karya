@@ -131,7 +131,8 @@ class AuthRegister extends HTMLElement {
       
       .form-group .validation-message i {
         margin-right: 4px;
-        font-size: 18px;
+        font-size: 14px;
+        margin-top: 2px
       }
       
       .input-container {
@@ -157,7 +158,7 @@ class AuthRegister extends HTMLElement {
         top: 50%;
         transform: translateY(-50%);
         cursor: pointer;
-        font-size: 18px;
+        font-size: 14px;
         color: #5a6a85;
       }
       
