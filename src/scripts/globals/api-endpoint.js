@@ -19,6 +19,7 @@ const API_ENDPOINT = {
   POST: (postId) => `${CONFIG.BASE_URL}posts/${postId}`, // DELETE/PUT,
   COMMENT: (postId, commentId) =>
     `${CONFIG.BASE_URL}posts/${postId}/comments/${commentId}`, // DELETE
+  CREATE: `${CONFIG.BASE_URL}posts`, // CREATE
 
 };
 
