@@ -4,7 +4,30 @@ class PostSource {
   static async getAllPosts(page = 1, pageSize = 8) {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(API_ENDPOINT.ALL_POST(page, pageSize), {
+    const response = await fetch(API_ENDPOINT.GET_ALL_POSTS(page, pageSize), {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw {
+        status: response.status,
+        data: responseData
+      };
+    }
+
+    return responseData.data;
+  }
+
+  static async getFeedPosts(page = 1, pageSize = 8) {
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(API_ENDPOINT.GET_FEED_POSTS(page, pageSize), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -50,7 +73,7 @@ class PostSource {
   static async getCommentsByPostId(postId, page = 1, pageSize = 5) {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(API_ENDPOINT.COMMENTS_BY_POST_ID(postId, page, pageSize), {
+    const response = await fetch(API_ENDPOINT.GET_COMMENTS_BY_POST_ID(postId, page, pageSize), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -166,7 +189,7 @@ class PostSource {
   static async likeComment(postId, commentId) {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(API_ENDPOINT.COMMENT_LIKES(postId, commentId), {
+    const response = await fetch(API_ENDPOINT.POST_COMMENT_LIKES(postId, commentId), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -212,7 +235,7 @@ class PostSource {
   static async deleteComment(postId, commentId) {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(API_ENDPOINT.COMMENT(postId, commentId), {
+    const response = await fetch(API_ENDPOINT.DELETE_COMMENTS(postId, commentId), {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

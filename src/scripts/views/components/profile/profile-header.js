@@ -39,12 +39,35 @@ class ProfileHeader extends HTMLElement {
     }
   }
 
+  async showFollowers() {
+    try {
+      const followersData = await ProfileSource.getFollowers(this._profileData.id);
+      this.showUserListModal(followersData, 'Pengikut');
+    } catch (error) {
+      console.error('Error fetching followers:', error);
+    }
+  }
+
+  async showFollowings() {
+    try {
+      const followingsData = await ProfileSource.getFollowings(this._profileData.id);
+      this.showUserListModal(followingsData, 'Mengikuti');
+    } catch (error) {
+      console.error('Error fetching followings:', error);
+    }
+  }
+
+  showUserListModal(users, title) {
+    const userListModal = document.createElement('user-list-modal');
+    userListModal.data = users;
+    userListModal.setType(title.toLowerCase());
+    document.body.appendChild(userListModal);
+  }
+
   render() {
     if (!this._profileData) return;
     const coverPhoto = this._profileData.coverPhoto || 'https://picsum.photos/800/400';
-
     const avatar = this._profileData.avatar || 'https://picsum.photos/200';
-
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -126,6 +149,14 @@ class ProfileHeader extends HTMLElement {
           text-align: center;
         }
 
+        .stat-item.clickable {
+          cursor: pointer;
+        }
+
+        .stat-item.clickable:hover {
+          text-decoration: underline;
+        }
+
         .stat-item h3 {
           font-size: 20px;
           font-weight: bold;
@@ -183,18 +214,20 @@ class ProfileHeader extends HTMLElement {
           color: #fff;
           border-radius: 4px;
         }
-  
-        follow-button:hover {
-            background-color: #0056b3;
+
+        .follow-button:hover {
+          background-color: #0056b3;
         }
+
         .follow-button.following {
           background-color: #fff;
           color: #1D77E6;
         }
 
         .follow-button.following:hover {
-            background-color: #f8f9fa;
+          background-color: #f8f9fa;
         }
+
         @media screen and (max-width: 768px) {
           .header {
             height: 280px;
@@ -284,13 +317,13 @@ class ProfileHeader extends HTMLElement {
 
       <div class="profile-container">
         <header class="header">
-          <img src="${avatar}" alt="Profile Picture" class="profile-pic">
+          <img src="${avatar}" alt="Foto Profil" class="profile-pic">
         </header>
 
         <div class="profile-info">
           <h2>${this._profileData.username}</h2>
           <h3>${this._profileData.name || ''}</h3>
-          <p>${this._profileData.bio || 'No bio available'}</p>
+          <p>${this._profileData.bio || 'Tidak ada bio'}</p>
         </div>
       </div>
 
@@ -298,15 +331,15 @@ class ProfileHeader extends HTMLElement {
         <div class="stats">
           <div class="stat-item">
             <h3>${this._profileData.postsCount}</h3>
-            <p>Posts</p>
+            <p>Postingan</p>
           </div>
-          <div class="stat-item">
+          <div class="stat-item clickable" id="followers">
             <h3>${this._profileData.followersCount}</h3>
-            <p>Followers</p>
+            <p>Pengikut</p>
           </div>
-          <div class="stat-item">
+          <div class="stat-item clickable" id="followings">
             <h3>${this._profileData.followingCount}</h3>
-            <p>Following</p>
+            <p>Mengikuti</p>
           </div>
         </div>
         <div class="buttons">
@@ -323,6 +356,9 @@ class ProfileHeader extends HTMLElement {
     if (!this._profileData.isMyself) {
       this.shadowRoot.querySelector('.follow-button').addEventListener('click', () => this.toggleFollow());
     }
+
+    this.shadowRoot.querySelector('#followers').addEventListener('click', () => this.showFollowers());
+    this.shadowRoot.querySelector('#followings').addEventListener('click', () => this.showFollowings());
   }
 }
 

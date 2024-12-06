@@ -1,7 +1,5 @@
 import PostSource from '../../../data/post-source.js';
 import ProfileSource from '../../../data/profile-source.js';
-import './post-detail-comment.js';
-import './post-detail-action.js';
 import Swal from 'sweetalert2';
 
 class PostDetail extends HTMLElement {
@@ -79,9 +77,10 @@ class PostDetail extends HTMLElement {
   async showLikesModal() {
     try {
       const likesData = await PostSource.getPostLikes(this._postId);
-      const likeModal = document.createElement('post-detail-like');
-      likeModal.data = likesData;
-      document.body.appendChild(likeModal);
+      const postDetailLike = document.createElement('user-list-modal');
+      postDetailLike.data = likesData;
+      postDetailLike.setType('likes');
+      document.body.appendChild(postDetailLike);
     } catch (error) {
       console.error('Error fetching likes:', error);
     }
@@ -327,7 +326,9 @@ class PostDetail extends HTMLElement {
         }
   
         .username {
+          font-weight: 600;
           color: #000;
+          margin-right: 4px;
           text-decoration: none;
         }
 
@@ -525,7 +526,7 @@ class PostDetail extends HTMLElement {
           <div class="post-sidebar">
             <div class="post-header">
               <img class="user-avatar" src="${this._post.user.avatar || 'https://via.placeholder.com/32'}" alt="">
-              <a href="#/search/${this._post.user.id}" class="username">${this._post.user.username}</a>
+              <a href="#/profile/${this._post.user.id}" class="username">${this._post.user.username}</a>
               ${this._post.isMyself ? `
                 <button class="more-options-button">
                   <i class="fas fa-ellipsis-h"></i>

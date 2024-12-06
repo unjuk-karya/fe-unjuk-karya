@@ -2,9 +2,7 @@ const NotFound = {
   async render() {
     return `
         <div class="container">
-          <h1>404</h1>
-          <p>Halaman tidak ditemukan</p>
-          <a href="#/" class="btn btn-primary">Kembali ke Beranda</a>
+         <not-found></not-found>
         </div>
       `;
   },
