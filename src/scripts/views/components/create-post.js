@@ -117,6 +117,7 @@ class CreatePost extends HTMLElement {
         box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
       }
       
+      /* TODO */
       .form-group .validation-message {
         display: none;
         font-size: 14px;
@@ -273,6 +274,7 @@ class CreatePost extends HTMLElement {
   connectedCallback() {
     this.render();
     this._attachEventListeners();
+    this._setupValidation();
   }
 
   _attachEventListeners() {
@@ -297,6 +299,63 @@ class CreatePost extends HTMLElement {
       modal.classList.remove('show');
     });
   }
+
+  _setupValidation() {
+    const titleInput = this._shadowRoot.querySelector('#title');
+    const descInput = this._shadowRoot.querySelector('#description');
+    const submitButton = this._shadowRoot.querySelector('#submit-button');
+    const fileInput = this._shadowRoot.querySelector('#file-input');
+
+    const titleValidationMessage = this._shadowRoot.querySelector('.title-validation');
+    const descValidationMessage = this._shadowRoot.querySelector('.description-validation');
+
+    const titleFocused = { value: false };
+    const descFocused = { value: false };
+
+    const validateInputs = () => {
+      const titleValid = titleInput.value.trim().length >= 3;
+      const descValid = descInput.value.trim().length >= 8;
+      const imageValid = fileInput && fileInput.files.length > 0;
+
+      if (titleValidationMessage) {
+        if (titleFocused.value && !titleValid) {
+          titleValidationMessage.style.display = 'flex';
+          titleValidationMessage.querySelector('.validation-message-p').textContent = 'Judul harus lebih dari 3 karakter';
+          titleInput.style.borderColor = 'red';
+        } else {
+          titleValidationMessage.style.display = 'none';
+          titleInput.style.borderColor = '#dfe5ef';
+        }
+      }
+
+      if (descValidationMessage) {
+        if (descFocused.value && !descValid) {
+          descValidationMessage.style.display = 'flex';
+          descValidationMessage.querySelector('.validation-message-p').textContent = 'Deskripsi harus lebih dari 10 karakter';
+          descInput.style.borderColor = 'red';
+        } else {
+          descValidationMessage.style.display = 'none';
+          descInput.style.borderColor = '#dfe5ef';
+        }
+      }
+
+      submitButton.disabled = !(titleValid && descValid && imageValid);
+    };
+
+    [titleInput, descInput, fileInput].forEach((input) => {
+      input.addEventListener('input', () => {
+        if (input === titleInput) titleFocused.value = true;
+        if (input === descInput) descFocused.value = true;
+        validateInputs();
+      });
+    });
+
+    titleInput.addEventListener('focus', () => (titleFocused.value = true));
+    descInput.addEventListener('focus', () => (descFocused.value = true));
+
+    validateInputs();
+  }
+
 
   _triggerFileInput(fileInput) {
     fileInput.click();
@@ -349,7 +408,7 @@ class CreatePost extends HTMLElement {
       
       <div class="container">
         <div class="form-container">
-          <h1>Buat Postingan Anda Sekarang Juga</h1>
+<!--          <h1>Buat Postingan Anda Sekarang Juga</h1>-->
           <form>
             <div class="form-group">
               <label for="title">Judul</label>
@@ -373,7 +432,7 @@ class CreatePost extends HTMLElement {
         
         <div class="image-container">
           <div class="image-container-wrapper">
-            <h1>Buat Postingan Anda Sekarang Juga</h1>
+<!--            <h1>Buat Postingan Anda Sekarang Juga</h1>-->
             <div class="image-container-form" id="image-image-container-from">
               <img id="image-preview" alt="Thumbnail Preview">
               <div class="upload-instructions">
@@ -388,7 +447,7 @@ class CreatePost extends HTMLElement {
           </div>
           
           <div class="submit-button-wrapper">
-            <button id="submit-button">Submit</button>
+            <button id="submit-button" disabled>Submit</button>
           </div>
         </div>
       </div>
