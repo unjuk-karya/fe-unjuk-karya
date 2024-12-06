@@ -1,5 +1,4 @@
 import Swal from 'sweetalert2';
-import './search-modal.js';
 
 class SideBar extends HTMLElement {
   connectedCallback() {

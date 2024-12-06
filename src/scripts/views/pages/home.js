@@ -1,7 +1,9 @@
 const Home = {
   async render() {
     return `
-
+    <div class="container">
+      <home-index></home-index>
+    </div>
     `;
   },
 

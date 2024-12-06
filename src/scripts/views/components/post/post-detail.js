@@ -1,7 +1,5 @@
 import PostSource from '../../../data/post-source.js';
 import ProfileSource from '../../../data/profile-source.js';
-import './post-detail-comment.js';
-import './post-detail-action.js';
 import Swal from 'sweetalert2';
 
 class PostDetail extends HTMLElement {

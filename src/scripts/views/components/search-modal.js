@@ -1,5 +1,4 @@
 import SearchSource from '../../data/search-soure.js';
-import '../components/loading-indicator.js';
 
 class SearchModal extends HTMLElement {
   constructor() {

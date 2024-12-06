@@ -9,9 +9,11 @@ const API_ENDPOINT = {
   USER_LIKED_POSTS: (userId, page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}users/${userId}/liked-posts?page=${page}&pageSize=${pageSize}`, // GET
   FOLLOW_USER: (userId) => `${CONFIG.BASE_URL}users/${userId}/follow`, // POST
-  ALL_POST: (page = 1, pageSize = 8) =>
+  ALL_POSTS: (page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}posts?page=${page}&pageSize=${pageSize}`, // GET
-  POST_BY_ID: (postId) => `${CONFIG.BASE_URL}posts/${postId}`, // GET
+  FEED_POSTS: (page = 1, pageSize = 8) =>
+    `${CONFIG.BASE_URL}posts/feed?page=${page}&pageSize=${pageSize}`, // GET
+  POST_BY_ID: (postId) => `${CONFIG.BASE_URL}posts/${postId}`, // GET/PUT/DELETE
   COMMENTS_BY_POST_ID: (postId, page = 1, pageSize = 5) =>
     `${CONFIG.BASE_URL}posts/${postId}/comments?page=${page}&pageSize=${pageSize}`, // GET
   POST_LIKES: (postId) => `${CONFIG.BASE_URL}posts/${postId}/likes`, // GET&POST
@@ -19,8 +21,7 @@ const API_ENDPOINT = {
   POST_COMMENTS: (postId) => `${CONFIG.BASE_URL}posts/${postId}/comments`, // POST
   COMMENT_LIKES: (postId, commentId) =>
     `${CONFIG.BASE_URL}posts/${postId}/comments/${commentId}/likes`, // POST
-  POST: (postId) => `${CONFIG.BASE_URL}posts/${postId}`, // DELETE/PUT,
-  COMMENT: (postId, commentId) =>
+  COMMENTS: (postId, commentId) =>
     `${CONFIG.BASE_URL}posts/${postId}/comments/${commentId}`, // DELETE
   SEARCH_USER: (query) => `${CONFIG.BASE_URL}users/search?q=${query}`, // GET
 

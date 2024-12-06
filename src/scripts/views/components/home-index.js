@@ -1,6 +1,6 @@
 import PostSource from '../../data/post-source.js';
 
-class ExploreIndex extends HTMLElement {
+class HomeIndex extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -15,7 +15,6 @@ class ExploreIndex extends HTMLElement {
 
     this.handleRetry = this.handleRetry.bind(this);
     this.handleNextPageRetry = this.handleNextPageRetry.bind(this);
-    this.handlePostClick = this.handlePostClick.bind(this);
   }
 
   async connectedCallback() {
@@ -23,25 +22,18 @@ class ExploreIndex extends HTMLElement {
     this.render();
     this.setupIntersectionObserver();
     this.setupEventListeners();
-    this.shadowRoot.addEventListener('post-click', this.handlePostClick);
   }
 
   setupEventListeners() {
     const mainStateHandler = this.shadowRoot.querySelector('content-state-handler');
+    const nextPageStateHandler = this.shadowRoot.querySelector('#next-page-state-handler');
+
     if (mainStateHandler) {
       mainStateHandler.addEventListener('retry', this.handleRetry);
     }
-
-    const nextPageStateHandler = this.shadowRoot.querySelector('#next-page-state-handler');
     if (nextPageStateHandler) {
       nextPageStateHandler.addEventListener('retry', this.handleNextPageRetry);
     }
-  }
-
-  handlePostClick(e) {
-    const postDetail = document.createElement('post-detail');
-    postDetail.postId = e.detail.postId;
-    document.body.appendChild(postDetail);
   }
 
   async handleRetry() {
@@ -69,7 +61,6 @@ class ExploreIndex extends HTMLElement {
     if (this.observer) {
       this.observer.disconnect();
     }
-    this.shadowRoot.removeEventListener('post-click', this.handlePostClick);
   }
 
   setupIntersectionObserver() {
@@ -95,7 +86,7 @@ class ExploreIndex extends HTMLElement {
     }
   }
 
-  async fetchPosts(pageSize = 12) {
+  async fetchPosts(pageSize = 8) {
     if (this.isLoading) return;
 
     try {
@@ -103,7 +94,7 @@ class ExploreIndex extends HTMLElement {
       this.error = null;
       this.render();
 
-      const response = await PostSource.getAllPosts(1, pageSize);
+      const response = await PostSource.getFeedPosts(1, pageSize);
       this.posts = response.posts;
       this.currentPage = response.pagination.currentPage;
       this.totalPages = response.pagination.totalPages;
@@ -126,7 +117,7 @@ class ExploreIndex extends HTMLElement {
       this.nextPageError = null;
       this.render();
 
-      const response = await PostSource.getAllPosts(this.currentPage + 1, 12);
+      const response = await PostSource.getFeedPosts(this.currentPage + 1, 8);
       this.posts = [...this.posts, ...response.posts];
       this.currentPage = response.pagination.currentPage;
       this.totalPages = response.pagination.totalPages;
@@ -147,8 +138,8 @@ class ExploreIndex extends HTMLElement {
 
     container.innerHTML = '';
     this.posts.forEach((post) => {
-      const postCard = document.createElement('post-card-explore');
-      postCard.post = post;
+      const postCard = document.createElement('post-card-home');
+      postCard.data = post;
       container.appendChild(postCard);
     });
   }
@@ -168,7 +159,7 @@ class ExploreIndex extends HTMLElement {
     if (!this.isLoading && this.posts.length === 0) {
       return {
         state: 'empty',
-        message: 'Belum ada postingan untuk ditampilkan.'
+        message: 'Belum ada postingan. Ikuti lebih banyak orang untuk melihat postingan mereka.'
       };
     }
 
@@ -187,30 +178,23 @@ class ExploreIndex extends HTMLElement {
           margin: 0;
         }
 
-        .container-explore {
+        .container-home {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 16px;
-          margin: 0;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 32px;
+          width: 100%;
+          box-sizing: border-box;
         }
 
-        @media screen and (min-width: 1400px) {
-          .container-explore {
-            grid-template-columns: repeat(4, 1fr);
-          }
-        }
-
-        @media screen and (max-width: 900px) {
-          .container-explore {
-            grid-template-columns: repeat(2, 1fr);
-          }
+        post-card-home {
+          width: 100%;
         }
 
         @media screen and (max-width: 600px) {
-          .container-explore {
-            grid-template-columns: repeat(1, 1fr);
-            gap: 1px;
+          .container-home {
+            grid-template-columns: 1fr;
             padding: 0;
+            gap: 1px;
           }
         }
 
@@ -223,7 +207,7 @@ class ExploreIndex extends HTMLElement {
 
       <content-state-handler state="${state}" message="${message}">
         ${state === 'success' ? `
-          <div class="container-explore" id="postsContainer"></div>
+          <div class="container-home" id="postsContainer"></div>
           ${this.currentPage < this.totalPages ? `
             <div id="sentinel"></div>
             <content-state-handler 
@@ -245,4 +229,4 @@ class ExploreIndex extends HTMLElement {
   }
 }
 
-customElements.define('explore-index', ExploreIndex);
+customElements.define('home-index', HomeIndex);
