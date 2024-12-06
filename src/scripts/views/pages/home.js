@@ -9,7 +9,6 @@ const Home = {
 
   async afterRender() {
     // Tambahkan logika interaksi jika diperlukan
-    console.log('Home page rendered');
   },
 };
 
