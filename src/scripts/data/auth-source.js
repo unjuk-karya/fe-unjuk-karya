@@ -2,7 +2,7 @@ import API_ENDPOINT from '../globals/api-endpoint';
 
 class AuthSource {
   static async register(data) {
-    const response = await fetch(API_ENDPOINT.REGISTER, {
+    const response = await fetch(API_ENDPOINT.POST_REGISTER, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -23,7 +23,7 @@ class AuthSource {
   }
 
   static async login(data) {
-    const response = await fetch(API_ENDPOINT.LOGIN, {
+    const response = await fetch(API_ENDPOINT.POST_LOGIN, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

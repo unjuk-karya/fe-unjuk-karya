@@ -1,14 +1,20 @@
-import ProfileSource from '../../../data/profile-source';
+import ProfileSource from '../../data/profile-source';
 
-class PostDetailLike extends HTMLElement {
+class UserListModal extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
     this.likes = [];
+    this.type = 'likes';
   }
 
   set data(likesData) {
     this.likes = likesData;
+    this.render();
+  }
+
+  setType(type) {
+    this.type = type;
     this.render();
   }
 
@@ -27,6 +33,8 @@ class PostDetailLike extends HTMLElement {
   }
 
   render() {
+    const headerText = this.type === 'likes' ? 'Suka' : this.type === 'followers' ? 'Pengikut' : 'Mengikuti';
+
     this.shadowRoot.innerHTML = `
           <style>
             @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
@@ -121,27 +129,25 @@ class PostDetailLike extends HTMLElement {
               color: #1D77E6;
             }
       
-.modal-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 24px;
-  color: #666;
-  cursor: pointer;
-  background: none;
-  border: none;
-  padding: 5px;
-  line-height: 1;
-  z-index: 10; /* Pastikan tombol berada di atas */
-}
-
-
+            .modal-close {
+              position: absolute;
+              top: 10px;
+              right: 10px;
+              font-size: 24px;
+              color: #666;
+              cursor: pointer;
+              background: none;
+              border: none;
+              padding: 5px;
+              line-height: 1;
+              z-index: 10;
+            }
           </style>
       
           <div class="modal-overlay">
             <div class="modal-content">
               <button class="modal-close">&times;</button>
-              <div class="modal-header">Suka</div>
+              <div class="modal-header">${headerText}</div>
               <div class="modal-body">
                 ${this.likes
     .map(
@@ -193,4 +199,4 @@ class PostDetailLike extends HTMLElement {
 
 }
 
-customElements.define('post-detail-like', PostDetailLike);
+customElements.define('user-list-modal', UserListModal);

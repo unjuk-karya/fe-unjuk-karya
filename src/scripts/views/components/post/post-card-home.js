@@ -44,8 +44,9 @@ class PostCardHome extends HTMLElement {
   async handleLikesCountClick() {
     try {
       const likesData = await PostSource.getPostLikes(this.post.id);
-      const postDetailLike = document.createElement('post-detail-like');
+      const postDetailLike = document.createElement('user-list-modal');
       postDetailLike.data = likesData;
+      postDetailLike.setType('likes');
       document.body.appendChild(postDetailLike);
     } catch (error) {
       console.error('Error fetching likes:', error);

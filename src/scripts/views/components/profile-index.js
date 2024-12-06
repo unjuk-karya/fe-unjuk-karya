@@ -7,6 +7,10 @@ class ProfileIndex extends HTMLElement {
 
     this._userId = null;
     this.error = null;
+    this.postsError = null;
+    this.likedPostsError = null;
+    this.nextPostsError = null;
+    this.nextLikedPostsError = null;
 
     this.activeTab = 'posts';
     this.posts = [];
@@ -27,6 +31,11 @@ class ProfileIndex extends HTMLElement {
 
     this.handlePostClick = this.handlePostClick.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
+    this.handleRetry = this.handleRetry.bind(this);
+    this.handlePostsRetry = this.handlePostsRetry.bind(this);
+    this.handleLikedPostsRetry = this.handleLikedPostsRetry.bind(this);
+    this.handleNextPostsRetry = this.handleNextPostsRetry.bind(this);
+    this.handleNextLikedPostsRetry = this.handleNextLikedPostsRetry.bind(this);
   }
 
   get userId() {
@@ -39,6 +48,34 @@ class ProfileIndex extends HTMLElement {
       this.resetAndRefetch();
     }
   }
+
+  async handleRetry() {
+    this.error = null;
+    this.isLoadingInitialData = true;
+    this.render();
+    await this.fetchInitialData();
+  }
+
+  async handlePostsRetry() {
+    this.postsError = null;
+    await this.fetchPosts(1);
+  }
+
+  async handleLikedPostsRetry() {
+    this.likedPostsError = null;
+    await this.fetchLikedPosts(1);
+  }
+
+  async handleNextPostsRetry() {
+    this.nextPostsError = null;
+    await this.fetchPosts(this.postsPage + 1);
+  }
+
+  async handleNextLikedPostsRetry() {
+    this.nextLikedPostsError = null;
+    await this.fetchLikedPosts(this.likedPostsPage + 1);
+  }
+
 
   createTemplate() {
     return `
@@ -105,53 +142,64 @@ class ProfileIndex extends HTMLElement {
       </style>
 
       <content-state-handler 
+        id="main-state-handler"
         state="${this.isLoadingInitialData ? 'loading' : this.error ? 'error' : 'success'}"
         message="${this.error ? 'Gagal memuat profil. Silakan coba lagi.' : 'Memuat profil...'}"
       >
-        ${!this.isLoadingInitialData && !this.error ? `
-          <profile-header></profile-header>
-          <profile-tabs active-tab="${this.activeTab}"></profile-tabs>
-          
-          <div class="tabs-content">
-            <div id="posts" class="tab-content ${this.activeTab === 'posts' ? 'active' : ''}">
-              ${!this.hasLoadedPosts ? `
-                <content-state-handler state="loading" message="Memuat postingan...">
+        ${!this.isLoadingInitialData ? `
+          ${this.error ? '' : `
+            <profile-header></profile-header>
+            <profile-tabs active-tab="${this.activeTab}"></profile-tabs>
+            
+            <div class="tabs-content">
+              <div id="posts" class="tab-content ${this.activeTab === 'posts' ? 'active' : ''}">
+                <content-state-handler
+                  id="posts-state-handler"
+                  state="${this.postsError ? 'error' : !this.hasLoadedPosts ? 'loading' : this.posts.length === 0 ? 'empty' : 'success'}"
+                  message="${this.postsError ? 'Gagal memuat postingan. Silakan coba lagi.' : !this.hasLoadedPosts ? 'Memuat postingan...' : 'Belum ada postingan yang dibuat.'}"
+                >
+                  ${!this.postsError && this.hasLoadedPosts && this.posts.length > 0 ? `
+                    <div class="grid"></div>
+                    <div class="sentinel" id="posts-sentinel"></div>
+                    ${this.postsPage < this.postsTotalPages ? `
+                      <content-state-handler 
+                        id="next-posts-handler"
+                        state="${this.isLoadingPosts ? 'loading' : this.nextPostsError ? 'error' : 'success'}"
+                        message="${this.nextPostsError ? 'Gagal memuat postingan berikutnya. Silakan coba lagi.' : 'Memuat lebih banyak postingan...'}"
+                      >
+                      </content-state-handler>
+                    ` : ''}
+                  ` : ''}
                 </content-state-handler>
-              ` : this.posts.length === 0 ? `
-                <content-state-handler state="empty" message="Belum ada postingan yang dibuat.">
-                </content-state-handler>
-              ` : `
-                <div class="grid"></div>
-                <div class="sentinel" id="posts-sentinel"></div>
-                ${this.isLoadingPosts ? `
-                  <content-state-handler state="loading" message="Memuat lebih banyak postingan...">
-                  </content-state-handler>
-                ` : ''}
-              `}
-            </div>
+              </div>
 
-            <div id="etalase" class="tab-content ${this.activeTab === 'etalase' ? 'active' : ''}">
-              <content-state-handler state="empty" message="Etalase masih kosong.">
-              </content-state-handler>
-            </div>
+              <div id="etalase" class="tab-content ${this.activeTab === 'etalase' ? 'active' : ''}">
+                <content-state-handler state="empty" message="Etalase masih kosong.">
+                </content-state-handler>
+              </div>
 
-            <div id="liked" class="tab-content ${this.activeTab === 'liked' ? 'active' : ''}">
-              ${!this.hasLoadedLikedPosts && this.activeTab === 'liked' ? `
-                <content-state-handler state="loading" message="Memuat postingan yang disukai...">
+              <div id="liked" class="tab-content ${this.activeTab === 'liked' ? 'active' : ''}">
+                <content-state-handler
+                  id="liked-state-handler"
+                  state="${this.likedPostsError ? 'error' : !this.hasLoadedLikedPosts && this.activeTab === 'liked' ? 'loading' : this.hasLoadedLikedPosts && this.likedPosts.length === 0 ? 'empty' : 'success'}"
+                  message="${this.likedPostsError ? 'Gagal memuat postingan yang disukai. Silakan coba lagi.' : !this.hasLoadedLikedPosts ? 'Memuat postingan yang disukai...' : 'Belum ada postingan yang disukai.'}"
+                >
+                  ${!this.likedPostsError && this.hasLoadedLikedPosts && this.likedPosts.length > 0 ? `
+                    <div class="grid"></div>
+                    <div class="sentinel" id="liked-posts-sentinel"></div>
+                    ${this.likedPostsPage < this.likedPostsTotalPages ? `
+                      <content-state-handler 
+                        id="next-liked-handler"
+                        state="${this.isLoadingLikedPosts ? 'loading' : this.nextLikedPostsError ? 'error' : 'success'}"
+                        message="${this.nextLikedPostsError ? 'Gagal memuat postingan berikutnya. Silakan coba lagi.' : 'Memuat lebih banyak postingan...'}"
+                      >
+                      </content-state-handler>
+                    ` : ''}
+                  ` : ''}
                 </content-state-handler>
-              ` : this.hasLoadedLikedPosts && this.likedPosts.length === 0 ? `
-                <content-state-handler state="empty" message="Belum ada postingan yang disukai.">
-                </content-state-handler>
-              ` : `
-                <div class="grid"></div>
-                <div class="sentinel" id="liked-posts-sentinel"></div>
-                ${this.isLoadingLikedPosts ? `
-                  <content-state-handler state="loading" message="Memuat lebih banyak postingan...">
-                  </content-state-handler>
-                ` : ''}
-              `}
+              </div>
             </div>
-          </div>
+          `}
         ` : ''}
       </content-state-handler>
     `;
@@ -164,6 +212,8 @@ class ProfileIndex extends HTMLElement {
     this.likedPostsPage = 1;
     this.isLoadingInitialData = true;
     this.error = null;
+    this.postsError = null;
+    this.likedPostsError = null;
     this.profileData = null;
     this.hasLoadedLikedPosts = false;
     this.hasLoadedPosts = false;
@@ -228,7 +278,10 @@ class ProfileIndex extends HTMLElement {
 
     this.postsObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting && !this.isLoadingPosts && this.postsPage < this.postsTotalPages) {
+        if (entry.isIntersecting &&
+          !this.isLoadingPosts &&
+          !this.nextPostsError &&        // Add this check
+          this.postsPage < this.postsTotalPages) {
           this.fetchPosts(this.postsPage + 1);
         }
       });
@@ -236,7 +289,10 @@ class ProfileIndex extends HTMLElement {
 
     this.likedPostsObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting && !this.isLoadingLikedPosts && this.likedPostsPage < this.likedPostsTotalPages) {
+        if (entry.isIntersecting &&
+          !this.isLoadingLikedPosts &&
+          !this.nextLikedPostsError &&    // Add this check
+          this.likedPostsPage < this.likedPostsTotalPages) {
           this.fetchLikedPosts(this.likedPostsPage + 1);
         }
       });
@@ -254,13 +310,22 @@ class ProfileIndex extends HTMLElement {
 
     const userId = this.getCurrentUserId();
     if (!userId) {
-      this.error = new Error('User ID not found');
+      if (page === 1) {
+        this.postsError = new Error('User ID not found');
+      } else {
+        this.nextPostsError = new Error('User ID not found');
+      }
       this.render();
       return;
     }
 
     try {
       this.isLoadingPosts = true;
+      if (page === 1) {
+        this.postsError = null;
+      } else {
+        this.nextPostsError = null;
+      }
       this.render();
 
       const response = await ProfileSource.getUserPosts(userId, page);
@@ -278,7 +343,9 @@ class ProfileIndex extends HTMLElement {
     } catch (error) {
       console.error('Failed to fetch posts:', error);
       if (page === 1) {
-        this.error = error;
+        this.postsError = error;
+      } else {
+        this.nextPostsError = error;
       }
     } finally {
       this.isLoadingPosts = false;
@@ -292,13 +359,22 @@ class ProfileIndex extends HTMLElement {
 
     const userId = this.getCurrentUserId();
     if (!userId) {
-      this.error = new Error('User ID not found');
+      if (page === 1) {
+        this.likedPostsError = new Error('User ID not found');
+      } else {
+        this.nextLikedPostsError = new Error('User ID not found');
+      }
       this.render();
       return;
     }
 
     try {
       this.isLoadingLikedPosts = true;
+      if (page === 1) {
+        this.likedPostsError = null;
+      } else {
+        this.nextLikedPostsError = null;
+      }
       this.render();
 
       const response = await ProfileSource.getUserLikedPosts(userId, page);
@@ -316,7 +392,9 @@ class ProfileIndex extends HTMLElement {
     } catch (error) {
       console.error('Failed to fetch liked posts:', error);
       if (page === 1) {
-        this.error = error;
+        this.likedPostsError = error;
+      } else {
+        this.nextLikedPostsError = error;
       }
     } finally {
       this.isLoadingLikedPosts = false;
@@ -400,18 +478,69 @@ class ProfileIndex extends HTMLElement {
         }
       }
     }
+
+    this.setupEventListeners(); // Add this line to ensure event listeners are setup after render
+    this.setupIntersectionObserver();
   }
 
   setupEventListeners() {
     this.shadowRoot.addEventListener('post-click', this.handlePostClick);
     this.shadowRoot.addEventListener('tabChange', this.handleTabChange);
+
+    const mainStateHandler = this.shadowRoot.querySelector('#main-state-handler');
+    const postsStateHandler = this.shadowRoot.querySelector('#posts-state-handler');
+    const likedStateHandler = this.shadowRoot.querySelector('#liked-state-handler');
+    const nextPostsHandler = this.shadowRoot.querySelector('#next-posts-handler');
+    const nextLikedHandler = this.shadowRoot.querySelector('#next-liked-handler');
+
+    if (mainStateHandler) {
+      mainStateHandler.addEventListener('retry', this.handleRetry);
+    }
+    if (postsStateHandler) {
+      postsStateHandler.addEventListener('retry', this.handlePostsRetry);
+    }
+    if (likedStateHandler) {
+      likedStateHandler.addEventListener('retry', this.handleLikedPostsRetry);
+    }
+    if (nextPostsHandler) {
+      nextPostsHandler.addEventListener('retry', this.handleNextPostsRetry);
+    }
+    if (nextLikedHandler) {
+      nextLikedHandler.addEventListener('retry', this.handleNextLikedPostsRetry);
+    }
+  }
+
+  cleanupEventListeners() {
+    const mainStateHandler = this.shadowRoot.querySelector('#main-state-handler');
+    const postsStateHandler = this.shadowRoot.querySelector('#posts-state-handler');
+    const likedStateHandler = this.shadowRoot.querySelector('#liked-state-handler');
+    const nextPostsHandler = this.shadowRoot.querySelector('#next-posts-handler');
+    const nextLikedHandler = this.shadowRoot.querySelector('#next-liked-handler');
+
+    if (mainStateHandler) {
+      mainStateHandler.removeEventListener('retry', this.handleRetry);
+    }
+    if (postsStateHandler) {
+      postsStateHandler.removeEventListener('retry', this.handlePostsRetry);
+    }
+    if (likedStateHandler) {
+      likedStateHandler.removeEventListener('retry', this.handleLikedPostsRetry);
+    }
+    if (nextPostsHandler) {
+      nextPostsHandler.removeEventListener('retry', this.handleNextPostsRetry);
+    }
+    if (nextLikedHandler) {
+      nextLikedHandler.removeEventListener('retry', this.handleNextLikedPostsRetry);
+    }
+
+    this.shadowRoot.removeEventListener('post-click', this.handlePostClick);
+    this.shadowRoot.removeEventListener('tabChange', this.handleTabChange);
   }
 
   disconnectedCallback() {
     if (this.postsObserver) this.postsObserver.disconnect();
     if (this.likedPostsObserver) this.likedPostsObserver.disconnect();
-    this.shadowRoot.removeEventListener('post-click', this.handlePostClick);
-    this.shadowRoot.removeEventListener('tabChange', this.handleTabChange);
+    this.cleanupEventListeners();
   }
 
   static get observedAttributes() {
