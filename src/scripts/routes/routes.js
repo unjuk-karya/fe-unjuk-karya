@@ -5,6 +5,7 @@ import Explore from '../views/pages/explore';
 import Profile from '../views/pages/profile';
 import NotFound from '../views/pages/not-found';
 import Create from '../views/pages/create';
+import Marketplace from '../views/pages/marketplace';
 
 const routes = {
   '/': Home,
@@ -14,6 +15,7 @@ const routes = {
   '/create': Create,
   '/profile': Profile,
   '/profile/:id': Profile,
+  '/marketplace': Marketplace,
   '/not-found': NotFound,
 };
 
