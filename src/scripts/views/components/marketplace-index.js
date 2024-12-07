@@ -81,8 +81,8 @@ class MarketplaceIndex extends HTMLElement {
 
       const response = await ProductSource.getAllProducts(1);
       this.products = response.products.map((product) => ({
-        image: product.image || 'https://via.placeholder.com/150',
-        category: 'Barang Antik',
+        image: product.image,
+        category: product.category.name,
         rating: '4.5',
         name: product.name,
         price: `Rp ${product.price.toLocaleString('id-ID')}`,
@@ -111,8 +111,8 @@ class MarketplaceIndex extends HTMLElement {
 
       const response = await ProductSource.getAllProducts(this.currentPage + 1);
       const newProducts = response.products.map((product) => ({
-        image: product.image || 'https://via.placeholder.com/150',
-        category: 'Barang Antik',
+        image: product.image,
+        category: product.category.name,
         rating: '4.5',
         name: product.name,
         price: `Rp ${product.price.toLocaleString('id-ID')}`,

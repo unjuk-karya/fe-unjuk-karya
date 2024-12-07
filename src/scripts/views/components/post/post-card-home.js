@@ -84,7 +84,6 @@ class PostCardHome extends HTMLElement {
             width: 100%;
             background: white;
             border-radius: 10px;
-            font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             overflow: hidden;
           }
