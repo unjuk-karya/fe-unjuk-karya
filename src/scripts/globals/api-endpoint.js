@@ -29,6 +29,7 @@ const API_ENDPOINT = {
   POST_LIKES: (postId) => `${CONFIG.BASE_URL}posts/${postId}/likes`, // GET&POST
   GET_ALL_PRODUCTS: (page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}products?page=${page}&pageSize=${pageSize}`, // GET
+  GET_PRODUCT_DETAIL: (productId) => `${CONFIG.BASE_URL}products/${productId}`, // GET
   GET_USER_PRODUCTS: (userId, page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}users/${userId}/products?page=${page}&pageSize=${pageSize}`, // GET
 

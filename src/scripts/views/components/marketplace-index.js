@@ -81,6 +81,7 @@ class MarketplaceIndex extends HTMLElement {
 
       const response = await ProductSource.getAllProducts(1);
       this.products = response.products.map((product) => ({
+        id: product.id,
         image: product.image,
         category: product.category.name,
         rating: '4.5',
@@ -111,6 +112,7 @@ class MarketplaceIndex extends HTMLElement {
 
       const response = await ProductSource.getAllProducts(this.currentPage + 1);
       const newProducts = response.products.map((product) => ({
+        id: product.id,
         image: product.image,
         category: product.category.name,
         rating: '4.5',
@@ -210,6 +212,7 @@ class MarketplaceIndex extends HTMLElement {
                name="${product.name}"
                price="${product.price}"
                sold="${product.sold}"
+               product-id="${product.id}"
              ></product-card>
            `).join('')}
          </div>

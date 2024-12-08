@@ -14,6 +14,7 @@ class ProductCard extends HTMLElement {
           box-shadow: 0 2px 8px rgba(0,0,0,0.08);
           transition: all 0.2s;
           position: relative;
+          cursor: pointer;
         }
  
         .card:hover {
@@ -63,42 +64,42 @@ class ProductCard extends HTMLElement {
           gap: 4px;
         }
  
-.love-button {
- position: absolute;
- bottom: 70px;
- right: 12px;
- width: 35px;
- height: 35px;
- background: #1a73e8;
- border-radius: 50%;
- display: flex;
- align-items: center;
- justify-content: center;
- cursor: pointer;
- box-shadow: 0 2px 8px rgba(0,0,0,0.2);
- border: none;
- outline: none;
- z-index: 10;
- transition: all 0.2s;
-}
+        .love-button {
+          position: absolute;
+          bottom: 70px;
+          right: 12px;
+          width: 35px;
+          height: 35px;
+          background: #1a73e8;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+          border: none;
+          outline: none;
+          z-index: 10;
+          transition: all 0.2s;
+        }
 
-.love-button i {
- font-size: 16px;
- color: white;
- transition: color 0.2s;
-}
+        .love-button i {
+          font-size: 16px;
+          color: white;
+          transition: color 0.2s;
+        }
 
-.love-button:hover {
- transform: scale(1.1);
-}
+        .love-button:hover {
+          transform: scale(1.1);
+        }
 
-.love-button.active {
- background: #1a73e8;
-}
+        .love-button.active {
+          background: #1a73e8;
+        }
 
-.love-button.active i {
- color: #ff4444;
-}
+        .love-button.active i {
+          color: #ff4444;
+        }
  
         .content {
           padding: 12px;
@@ -148,13 +149,20 @@ class ProductCard extends HTMLElement {
     shadow.appendChild(template.content.cloneNode(true));
 
     const loveButton = shadow.querySelector('.love-button');
-    loveButton.addEventListener('click', () => {
+    loveButton.addEventListener('click', (event) => {
+      event.stopPropagation();
       loveButton.classList.toggle('active');
+    });
+
+    const card = shadow.querySelector('.card');
+    card.addEventListener('click', () => {
+      const productId = this.getAttribute('product-id');
+      window.location.href = `#/product/${productId}`;
     });
   }
 
   static get observedAttributes() {
-    return ['image', 'category', 'rating', 'name', 'price', 'sold'];
+    return ['image', 'category', 'rating', 'name', 'price', 'sold', 'product-id'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
