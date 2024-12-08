@@ -62,7 +62,7 @@ class ProductDetailIndex extends HTMLElement {
     } catch (error) {
       console.error('Error fetching product:', error);
       this.state.contentState = 'error';
-      this.state.errorMessage = 'Failed to load product details';
+      this.state.errorMessage = 'Gagal memuat data produk.';
 
       if (error.status === 404) {
         window.location.href = '#/not-found';
@@ -81,8 +81,11 @@ class ProductDetailIndex extends HTMLElement {
 
   disconnectedCallback() {
     this.removeEventListeners();
+    const contentStateHandler = this.shadowRoot.querySelector('content-state-handler');
+    if (contentStateHandler) {
+      contentStateHandler.removeEventListener('retry', this.handleRetry);
+    }
   }
-
   removeEventListeners() {
     const decrementBtn = this.shadowRoot.querySelector('.decrement');
     const incrementBtn = this.shadowRoot.querySelector('.increment');
@@ -653,11 +656,14 @@ class ProductDetailIndex extends HTMLElement {
 
       <content-state-handler 
         state="${contentState}"
-        message="${errorMessage}"
-        @retry="${this.handleRetry}">
+        message="${errorMessage}">
         ${contentState === 'success' ? this.renderProduct() : ''}
       </content-state-handler>
     `;
+    const contentStateHandler = this.shadowRoot.querySelector('content-state-handler');
+    if (contentStateHandler) {
+      contentStateHandler.addEventListener('retry', this.handleRetry);
+    }
 
     if (contentState === 'success') {
       this.setupEventListeners();
