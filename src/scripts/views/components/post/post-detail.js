@@ -62,7 +62,7 @@ class PostDetail extends HTMLElement {
   // TODO Edit Post
   async handleEdit() {
     try {
-      window.location.href = `#/create-post/${this._postId}`;
+      window.location.href = `#/edit-post/${this._postId}`;
     } catch (error) {
       console.error('Error editing post:', error);
     }

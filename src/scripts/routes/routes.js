@@ -20,7 +20,7 @@ const routes = {
   '/marketplace': Marketplace,
   '/product/:id': ProductDetail,
   '/not-found': NotFound,
-  '/create-post/:id': EditPost,
+  '/edit-post/:id': EditPost,
 };
 
 export default routes;
