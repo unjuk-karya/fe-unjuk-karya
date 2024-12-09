@@ -35,12 +35,10 @@ const EditPost = {
       console.error('Gagal mengambil data:', error);
     }
 
-    // Validation function
     const validateInputs = () => {
       const titleValid = titleForm.value.trim().length >= 3;
       const descValid = descriptionForm.value.trim().length >= 8;
 
-      // Title Validation
       if (!titleValid) {
         titleValidationMessage.style.display = 'flex';
         titleValidationMessage.querySelector('.validation-message-p').textContent = 'Judul harus lebih dari 3 karakter';
@@ -50,7 +48,6 @@ const EditPost = {
         titleForm.style.borderColor = '#dfe5ef';
       }
 
-      // Description Validation
       if (!descValid) {
         descriptionValidationMessage.style.display = 'flex';
         descriptionValidationMessage.querySelector('.validation-message-p').textContent = 'Deskripsi harus lebih dari 10 karakter';
@@ -60,17 +57,14 @@ const EditPost = {
         descriptionForm.style.borderColor = '#dfe5ef';
       }
 
-      // Enable/Disable Submit Button
       const isValid = titleValid && descValid;
       submitButton.disabled = !isValid;
       mobileSubmitButton.disabled = !isValid;
     };
 
-    // Trigger validation when the user types in the input fields
     titleForm.addEventListener('input', validateInputs);
     descriptionForm.addEventListener('input', validateInputs);
 
-    // Initial validation (on page load)
     validateInputs();
 
     const handleSubmit = async (event) => {
