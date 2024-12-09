@@ -85,15 +85,10 @@ class PostDetail extends HTMLElement {
   }
 
   async showLikesModal() {
-    try {
-      const likesData = await PostSource.getPostLikes(this._postId);
-      const postDetailLike = document.createElement('user-list-modal');
-      postDetailLike.data = likesData;
-      postDetailLike.setType('likes');
-      document.body.appendChild(postDetailLike);
-    } catch (error) {
-      console.error('Error fetching likes:', error);
-    }
+    const postDetailLike = document.createElement('user-list-modal');
+    postDetailLike.setAttribute('post-id', this._postId);
+    postDetailLike.setType('likes');
+    document.body.appendChild(postDetailLike);
   }
 
   async handleLike() {

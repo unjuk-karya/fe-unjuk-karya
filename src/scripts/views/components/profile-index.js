@@ -9,44 +9,43 @@ class ProfileIndex extends HTMLElement {
     this.error = null;
     this.postsError = null;
     this.likedPostsError = null;
-    this.productsError = null; // New
+    this.productsError = null;
     this.nextPostsError = null;
     this.nextLikedPostsError = null;
-    this.nextProductsError = null; // New
+    this.nextProductsError = null;
 
     this.activeTab = 'posts';
     this.posts = [];
     this.likedPosts = [];
-    this.products = []; // New
+    this.products = [];
     this.postsPage = 1;
     this.postsTotalPages = 1;
     this.likedPostsPage = 1;
     this.likedPostsTotalPages = 1;
-    this.productsPage = 1; // New
-    this.productsTotalPages = 1; // New
+    this.productsPage = 1;
+    this.productsTotalPages = 1;
     this.isLoadingPosts = false;
     this.isLoadingLikedPosts = false;
-    this.isLoadingProducts = false; // New
+    this.isLoadingProducts = false;
     this.isLoadingInitialData = true;
     this.profileData = null;
     this.hasLoadedLikedPosts = false;
     this.hasLoadedPosts = false;
-    this.hasLoadedProducts = false; // New
+    this.hasLoadedProducts = false;
 
     this.postsObserver = null;
     this.likedPostsObserver = null;
-    this.productsObserver = null; // New
+    this.productsObserver = null;
 
-    // Bind methods
     this.handlePostClick = this.handlePostClick.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
     this.handleRetry = this.handleRetry.bind(this);
     this.handlePostsRetry = this.handlePostsRetry.bind(this);
     this.handleLikedPostsRetry = this.handleLikedPostsRetry.bind(this);
-    this.handleProductsRetry = this.handleProductsRetry.bind(this); // New
+    this.handleProductsRetry = this.handleProductsRetry.bind(this);
     this.handleNextPostsRetry = this.handleNextPostsRetry.bind(this);
     this.handleNextLikedPostsRetry = this.handleNextLikedPostsRetry.bind(this);
-    this.handleNextProductsRetry = this.handleNextProductsRetry.bind(this); // New
+    this.handleNextProductsRetry = this.handleNextProductsRetry.bind(this);
   }
 
   get userId() {
@@ -244,19 +243,19 @@ class ProfileIndex extends HTMLElement {
   async resetAndRefetch() {
     this.posts = [];
     this.likedPosts = [];
-    this.products = []; // New
+    this.products = [];
     this.postsPage = 1;
     this.likedPostsPage = 1;
-    this.productsPage = 1; // New
+    this.productsPage = 1;
     this.isLoadingInitialData = true;
     this.error = null;
     this.postsError = null;
     this.likedPostsError = null;
-    this.productsError = null; // New
+    this.productsError = null;
     this.profileData = null;
     this.hasLoadedLikedPosts = false;
     this.hasLoadedPosts = false;
-    this.hasLoadedProducts = false; // New
+    this.hasLoadedProducts = false;
 
     this.render();
     await this.fetchInitialData();
@@ -324,7 +323,7 @@ class ProfileIndex extends HTMLElement {
       entries.forEach((entry) => {
         if (entry.isIntersecting &&
           !this.isLoadingPosts &&
-          !this.nextPostsError &&        // Add this check
+          !this.nextPostsError &&
           this.postsPage < this.postsTotalPages) {
           this.fetchPosts(this.postsPage + 1);
         }
@@ -335,7 +334,7 @@ class ProfileIndex extends HTMLElement {
       entries.forEach((entry) => {
         if (entry.isIntersecting &&
           !this.isLoadingLikedPosts &&
-          !this.nextLikedPostsError &&    // Add this check
+          !this.nextLikedPostsError &&
           this.likedPostsPage < this.likedPostsTotalPages) {
           this.fetchLikedPosts(this.likedPostsPage + 1);
         }
@@ -562,7 +561,6 @@ class ProfileIndex extends HTMLElement {
         profileHeader.profileData = this.profileData;
       }
 
-      // Render posts grid
       if (this.posts.length > 0) {
         const postsGrid = this.shadowRoot.querySelector('#posts .grid');
         if (postsGrid) {
@@ -574,7 +572,6 @@ class ProfileIndex extends HTMLElement {
         }
       }
 
-      // Render products grid
       if (this.products.length > 0) {
         const productsGrid = this.shadowRoot.querySelector('#etalase .grid');
         if (productsGrid) {
@@ -588,11 +585,11 @@ class ProfileIndex extends HTMLElement {
             card.setAttribute('price', `Rp ${product.price.toLocaleString('id-ID')}`);
             card.setAttribute('rating', '4.5');
             card.setAttribute('sold', '10');
+            card.setAttribute('product-id', product.id);
           });
         }
       }
 
-      // Render liked posts grid
       if (this.likedPosts.length > 0) {
         const likedGrid = this.shadowRoot.querySelector('#liked .grid');
         if (likedGrid) {

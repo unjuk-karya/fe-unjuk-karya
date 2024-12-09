@@ -27,6 +27,8 @@ class PostDetailActions extends HTMLElement {
           gap: 16px;
         }
 
+        
+
         .action-button {
           background: none;
           border: none;
@@ -35,6 +37,10 @@ class PostDetailActions extends HTMLElement {
           font-size: 24px;
           color: #262626;
         }
+
+                  .action-button:hover {
+            transform: scale(1.1);
+          }
 
         .action-button.liked i {
           color: #ed4956;

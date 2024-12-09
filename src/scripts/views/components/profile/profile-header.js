@@ -40,28 +40,29 @@ class ProfileHeader extends HTMLElement {
   }
 
   async showFollowers() {
+    if (!this._profileData?.id) return;
+
     try {
-      const followersData = await ProfileSource.getFollowers(this._profileData.id);
-      this.showUserListModal(followersData, 'Pengikut');
+      const userListModal = document.createElement('user-list-modal');
+      userListModal.setType('followers'); // Set tipe dulu
+      userListModal.setAttribute('user-id', this._profileData.id);
+      document.body.appendChild(userListModal);
     } catch (error) {
-      console.error('Error fetching followers:', error);
+      console.error('Error showing followers:', error);
     }
   }
 
   async showFollowings() {
-    try {
-      const followingsData = await ProfileSource.getFollowings(this._profileData.id);
-      this.showUserListModal(followingsData, 'Mengikuti');
-    } catch (error) {
-      console.error('Error fetching followings:', error);
-    }
-  }
+    if (!this._profileData?.id) return;
 
-  showUserListModal(users, title) {
-    const userListModal = document.createElement('user-list-modal');
-    userListModal.data = users;
-    userListModal.setType(title.toLowerCase());
-    document.body.appendChild(userListModal);
+    try {
+      const userListModal = document.createElement('user-list-modal');
+      userListModal.setType('following'); // Set tipe dulu
+      userListModal.setAttribute('user-id', this._profileData.id);
+      document.body.appendChild(userListModal);
+    } catch (error) {
+      console.error('Error showing following:', error);
+    }
   }
 
   render() {
