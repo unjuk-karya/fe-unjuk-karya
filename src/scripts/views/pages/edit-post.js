@@ -19,6 +19,9 @@ const EditPost = {
     const titleForm = editPostElement.shadowRoot.querySelector('#title');
     const descriptionForm = editPostElement.shadowRoot.querySelector('#description');
     const imagePreview = editPostElement.shadowRoot.querySelector('#image-preview');
+    const fileInput = editPostElement.shadowRoot.querySelector('#file-input');
+
+    let imageFile = null;
 
     const titleValidationMessage = editPostElement.shadowRoot.querySelector('.title-validation');
     const descriptionValidationMessage = editPostElement.shadowRoot.querySelector('.description-validation');
@@ -34,6 +37,17 @@ const EditPost = {
     } catch (error) {
       console.error('Gagal mengambil data:', error);
     }
+
+    fileInput.addEventListener('change', (event) => {
+      imageFile = event.target.files[0];
+      if (imageFile) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          imagePreview.src = reader.result;
+        };
+        reader.readAsDataURL(imageFile);
+      }
+    });
 
     const validateInputs = () => {
       const titleValid = titleForm.value.trim().length >= 3;
@@ -85,6 +99,10 @@ const EditPost = {
       const formData = new FormData();
       formData.append('title', title);
       formData.append('content', description);
+
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
 
       const loadingAlert = Swal.fire({
         title: 'Memperbarui postingan...',

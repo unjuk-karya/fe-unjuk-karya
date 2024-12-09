@@ -14,13 +14,13 @@ const routes = {
   '/login': Login,
   '/register': Register,
   '/explore': Explore,
-  '/create': Create,
+  '/create-post': Create,
   '/profile': Profile,
   '/profile/:id': Profile,
   '/marketplace': Marketplace,
   '/product/:id': ProductDetail,
   '/not-found': NotFound,
-  '/edit-post/:id': EditPost,
+  '/create-post/:id': EditPost,
 };
 
 export default routes;

@@ -165,6 +165,45 @@ class EditPost extends HTMLElement {
         margin-top: 8px;
       }
 
+      /* TODO */
+      .upload-instructions {
+        font-size: 14px;
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+      
+      .upload-instructions p {
+        color: white;
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      .delete-icon {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+
+      .delete-icon:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+
+      .image-container-form.show-delete .delete-icon {
+        display: flex;
+      }
+
       button {
         display: flex;
         justify-content: center;
@@ -261,10 +300,16 @@ class EditPost extends HTMLElement {
   }
 
   _attachEventListeners() {
+    const fileInput = this._shadowRoot.querySelector('#file-input');
     const imageContainer = this._shadowRoot.querySelector('.image-container-form');
+    const deleteIcon = this._shadowRoot.querySelector('#delete-icon');
     const modal = this._shadowRoot.querySelector('.modal');
     const modalImage = this._shadowRoot.querySelector('.modal img');
     const closeModal = this._shadowRoot.querySelector('.modal');
+
+    imageContainer.addEventListener('click', () => this._triggerFileInput(fileInput));
+    fileInput.addEventListener('change', (event) => this._previewImage(event));
+    deleteIcon.addEventListener('click', (event) => this._removeImage(event));
 
     imageContainer.querySelector('img').addEventListener('click', (event) => {
       event.stopPropagation();
@@ -275,6 +320,41 @@ class EditPost extends HTMLElement {
     closeModal.addEventListener('click', () => {
       modal.classList.remove('show');
     });
+  }
+
+  _triggerFileInput(fileInput) {
+    fileInput.click();
+  }
+
+  _previewImage(event) {
+    const file = event.target.files[0];
+    const imagePreview = this._shadowRoot.querySelector('#image-preview');
+    const deleteIcon = this._shadowRoot.querySelector('#delete-icon');
+    const uploadInstructions = this._shadowRoot.querySelector('#upload-sign');
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        imagePreview.src = reader.result;
+        imagePreview.style.display = 'block';
+        deleteIcon.style.display = 'flex';
+
+        uploadInstructions.textContent = 'Untuk melihat detail klik gambar preview';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  _removeImage(event) {
+    event.stopPropagation();
+    const imagePreview = this._shadowRoot.querySelector('#image-preview');
+    const deleteIcon = this._shadowRoot.querySelector('#delete-icon');
+    const fileInput = this._shadowRoot.querySelector('#file-input');
+
+    imagePreview.src = '';
+    imagePreview.style.display = 'none';
+    deleteIcon.style.display = 'none';
+    fileInput.value = '';
   }
 
   render() {
@@ -318,6 +398,13 @@ class EditPost extends HTMLElement {
           <div class="image-container-wrapper">
             <div class="image-container-form" id="image-image-container-from">
               <img id="image-preview" alt="Thumbnail Preview">
+              <div class="upload-instructions">
+                <p>Klik di sini untuk mengunggah</p>
+              </div>
+              <input type="file" id="file-input" accept="image/png, image/jpeg, image/jpg">
+              <div class="delete-icon" id="delete-icon">
+                <i class="fa fa-times"></i>
+              </div>
             </div>
             <p id="upload-sign">Untuk melihat detail klik gambar preview</p>
           </div>
@@ -326,7 +413,7 @@ class EditPost extends HTMLElement {
             <button id="submit-button" disabled>Ubah Postingan</button>
           </div>
         </div>
-        
+       
         <!--    Button For Mobile    -->
         <button id="mobile-submit-button" class="mobile-submit-button" disabled>Ubah Postingan</button>
       </div>
