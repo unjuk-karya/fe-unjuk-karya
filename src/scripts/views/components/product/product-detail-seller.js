@@ -1,23 +1,23 @@
 // product-detail-seller.js
 class ProductDetailSeller extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-    }
-  
-    static get observedAttributes() {
-      return ['seller-data', 'stats'];
-    }
-  
-    connectedCallback() {
-      this.render();
-    }
-  
-    render() {
-      const seller = JSON.parse(this.getAttribute('seller-data'));
-      const stats = JSON.parse(this.getAttribute('stats'));
-  
-      this.shadowRoot.innerHTML = `
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
+  static get observedAttributes() {
+    return ['seller-data', 'stats'];
+  }
+
+  connectedCallback() {
+    this.render();
+  }
+
+  render() {
+    const seller = JSON.parse(this.getAttribute('seller-data'));
+    const stats = JSON.parse(this.getAttribute('stats'));
+
+    this.shadowRoot.innerHTML = `
         <style>
                 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
 
@@ -179,21 +179,21 @@ class ProductDetailSeller extends HTMLElement {
           </div>
         </div>
       `;
-  
-      this.setupEventListeners();
-    }
-  
-    setupEventListeners() {
-      const profileMain = this.shadowRoot.querySelector('.profile-main');
-      profileMain?.addEventListener('click', () => {
-        this.dispatchEvent(new CustomEvent('seller-profile-click'));
-      });
-    }
-  
-    disconnectedCallback() {
-      const profileMain = this.shadowRoot.querySelector('.profile-main');
-      profileMain?.removeEventListener('click', () => {});
-    }
+
+    this.setupEventListeners();
   }
-  
-  customElements.define('product-detail-seller', ProductDetailSeller);
+
+  setupEventListeners() {
+    const profileMain = this.shadowRoot.querySelector('.profile-main');
+    profileMain?.addEventListener('click', () => {
+      this.dispatchEvent(new CustomEvent('seller-profile-click'));
+    });
+  }
+
+  disconnectedCallback() {
+    const profileMain = this.shadowRoot.querySelector('.profile-main');
+    profileMain?.removeEventListener('click', () => {});
+  }
+}
+
+customElements.define('product-detail-seller', ProductDetailSeller);

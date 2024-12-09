@@ -93,10 +93,10 @@ class PostSource {
     return responseData.data;
   }
 
-  static async getPostLikes(postId) {
+  static async getPostLikes(postId, page = 1, pageSize = 10) {
     const token = localStorage.getItem('token');
 
-    const response = await fetch(API_ENDPOINT.POST_LIKES(postId), {
+    const response = await fetch(API_ENDPOINT.GET_POST_LIKES(postId, page, pageSize), {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

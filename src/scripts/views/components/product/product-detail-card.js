@@ -1,38 +1,38 @@
 // product-detail-card.js
 class ProductDetailCard extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
+  static get observedAttributes() {
+    return ['product', 'quantity'];
+  }
+
+  connectedCallback() {
+    this.render();
+  }
+
+  formatNumber(num) {
+    if (num >= 1000000) {
+      return `${(num/1000000).toFixed(1)}JT`;
     }
-  
-    static get observedAttributes() {
-      return ['product', 'quantity'];
+    if (num >= 1000) {
+      return `${(num/1000).toFixed(1)}RB`;
     }
-  
-    connectedCallback() {
-      this.render();
-    }
-  
-    formatNumber(num) {
-      if (num >= 1000000) {
-        return `${(num/1000000).toFixed(1)}JT`;
-      }
-      if (num >= 1000) {
-        return `${(num/1000).toFixed(1)}RB`;
-      }
-      return num.toString();
-    }
-  
-    render() {
-      const productData = JSON.parse(this.getAttribute('product'));
-      const quantity = parseInt(this.getAttribute('quantity'));
-      const defaultStats = {
-        rating: 4.5,
-        totalRatings: 49400,
-        totalPurchases: 1234
-      };
-  
-      this.shadowRoot.innerHTML = `
+    return num.toString();
+  }
+
+  render() {
+    const productData = JSON.parse(this.getAttribute('product'));
+    const quantity = parseInt(this.getAttribute('quantity'));
+    const defaultStats = {
+      rating: 4.5,
+      totalRatings: 49400,
+      totalPurchases: 1234
+    };
+
+    this.shadowRoot.innerHTML = `
         <style>
                 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
 
@@ -342,38 +342,38 @@ class ProductDetailCard extends HTMLElement {
           </div>
         </div>
       `;
-  
-      this.setupEventListeners();
-    }
-  
-    setupEventListeners() {
-      const decrementBtn = this.shadowRoot.querySelector('.decrement');
-      const incrementBtn = this.shadowRoot.querySelector('.increment');
-      const buyBtn = this.shadowRoot.querySelector('.buy-button');
-  
-      decrementBtn?.addEventListener('click', () => {
-        this.dispatchEvent(new CustomEvent('quantity-change', { detail: 'decrease' }));
-      });
-  
-      incrementBtn?.addEventListener('click', () => {
-        this.dispatchEvent(new CustomEvent('quantity-change', { detail: 'increase' }));
-      });
-  
-      buyBtn?.addEventListener('click', () => {
-        this.dispatchEvent(new CustomEvent('buy-now'));
-      });
-    }
-  
-    disconnectedCallback() {
-      // Clean up event listeners if needed
-      const decrementBtn = this.shadowRoot.querySelector('.decrement');
-      const incrementBtn = this.shadowRoot.querySelector('.increment');
-      const buyBtn = this.shadowRoot.querySelector('.buy-button');
-  
-      decrementBtn?.removeEventListener('click', () => {});
-      incrementBtn?.removeEventListener('click', () => {});
-      buyBtn?.removeEventListener('click', () => {});
-    }
+
+    this.setupEventListeners();
   }
-  
-  customElements.define('product-detail-card', ProductDetailCard);
+
+  setupEventListeners() {
+    const decrementBtn = this.shadowRoot.querySelector('.decrement');
+    const incrementBtn = this.shadowRoot.querySelector('.increment');
+    const buyBtn = this.shadowRoot.querySelector('.buy-button');
+
+    decrementBtn?.addEventListener('click', () => {
+      this.dispatchEvent(new CustomEvent('quantity-change', { detail: 'decrease' }));
+    });
+
+    incrementBtn?.addEventListener('click', () => {
+      this.dispatchEvent(new CustomEvent('quantity-change', { detail: 'increase' }));
+    });
+
+    buyBtn?.addEventListener('click', () => {
+      this.dispatchEvent(new CustomEvent('buy-now'));
+    });
+  }
+
+  disconnectedCallback() {
+    // Clean up event listeners if needed
+    const decrementBtn = this.shadowRoot.querySelector('.decrement');
+    const incrementBtn = this.shadowRoot.querySelector('.increment');
+    const buyBtn = this.shadowRoot.querySelector('.buy-button');
+
+    decrementBtn?.removeEventListener('click', () => {});
+    incrementBtn?.removeEventListener('click', () => {});
+    buyBtn?.removeEventListener('click', () => {});
+  }
+}
+
+customElements.define('product-detail-card', ProductDetailCard);
