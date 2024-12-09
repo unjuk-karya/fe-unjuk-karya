@@ -1,4 +1,4 @@
-class CreatePost extends HTMLElement {
+class EditPost extends HTMLElement {
   _shadowRoot = null;
   _style = null;
 
@@ -134,7 +134,7 @@ class CreatePost extends HTMLElement {
         position: relative;
         width: 100%;
         min-height: 290px;
-        border: 2px dashed #dfe5ef;
+        border: 2px dashed white;
         border-radius: 8px;
         background-color: #5d87ff;
         display: flex;
@@ -152,7 +152,6 @@ class CreatePost extends HTMLElement {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        display: none;
       }
 
       .image-container-form:hover {
@@ -164,45 +163,6 @@ class CreatePost extends HTMLElement {
         font-size: 14px;
         text-align: center;
         margin-top: 8px;
-      }
-
-      .upload-instructions {
-        font-size: 14px;
-        color: white;
-        padding: 20px;
-        text-align: center;
-      }
-      
-      .upload-instructions p {
-        color: white;
-      }
-
-      input[type="file"] {
-        display: none;
-      }
-
-      .delete-icon {
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background-color: rgba(0, 0, 0, 0.6);
-        color: white;
-        border-radius: 50%;
-        width: 24px;
-        height: 24px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        display: none;
-      }
-
-      .delete-icon:hover {
-        background-color: rgba(0, 0, 0, 0.8);
-      }
-
-      .image-container-form.show-delete .delete-icon {
-        display: flex;
       }
 
       button {
@@ -298,20 +258,13 @@ class CreatePost extends HTMLElement {
   connectedCallback() {
     this.render();
     this._attachEventListeners();
-    this._setupValidation();
   }
 
   _attachEventListeners() {
-    const fileInput = this._shadowRoot.querySelector('#file-input');
     const imageContainer = this._shadowRoot.querySelector('.image-container-form');
-    const deleteIcon = this._shadowRoot.querySelector('#delete-icon');
     const modal = this._shadowRoot.querySelector('.modal');
     const modalImage = this._shadowRoot.querySelector('.modal img');
     const closeModal = this._shadowRoot.querySelector('.modal');
-
-    imageContainer.addEventListener('click', () => this._triggerFileInput(fileInput));
-    fileInput.addEventListener('change', (event) => this._previewImage(event));
-    deleteIcon.addEventListener('click', (event) => this._removeImage(event));
 
     imageContainer.querySelector('img').addEventListener('click', (event) => {
       event.stopPropagation();
@@ -324,108 +277,14 @@ class CreatePost extends HTMLElement {
     });
   }
 
-  _setupValidation() {
-    const titleInput = this._shadowRoot.querySelector('#title');
-    const descInput = this._shadowRoot.querySelector('#description');
-    const submitButton = this._shadowRoot.querySelector('#submit-button');
-    const mobileSubmitButton = this._shadowRoot.querySelector('#mobile-submit-button');
-    const fileInput = this._shadowRoot.querySelector('#file-input');
-
-    const titleValidationMessage = this._shadowRoot.querySelector('.title-validation');
-    const descValidationMessage = this._shadowRoot.querySelector('.description-validation');
-
-    const titleFocused = { value: false };
-    const descFocused = { value: false };
-
-    const validateInputs = () => {
-      const titleValid = titleInput.value.trim().length >= 3;
-      const descValid = descInput.value.trim().length >= 8;
-      const imageValid = fileInput && fileInput.files.length > 0;
-
-      if (titleValidationMessage) {
-        if (titleFocused.value && !titleValid) {
-          titleValidationMessage.style.display = 'flex';
-          titleValidationMessage.querySelector('.validation-message-p').textContent = 'Judul harus lebih dari 3 karakter';
-          titleInput.style.borderColor = 'red';
-        } else {
-          titleValidationMessage.style.display = 'none';
-          titleInput.style.borderColor = '#dfe5ef';
-        }
-      }
-
-      if (descValidationMessage) {
-        if (descFocused.value && !descValid) {
-          descValidationMessage.style.display = 'flex';
-          descValidationMessage.querySelector('.validation-message-p').textContent = 'Deskripsi harus lebih dari 10 karakter';
-          descInput.style.borderColor = 'red';
-        } else {
-          descValidationMessage.style.display = 'none';
-          descInput.style.borderColor = '#dfe5ef';
-        }
-      }
-
-      const isValid = titleValid && descValid && imageValid;
-      submitButton.disabled = !isValid;
-      mobileSubmitButton.disabled = !isValid;
-    };
-
-    [titleInput, descInput, fileInput].forEach((input) => {
-      input.addEventListener('input', () => {
-        if (input === titleInput) titleFocused.value = true;
-        if (input === descInput) descFocused.value = true;
-        validateInputs();
-      });
-    });
-
-    titleInput.addEventListener('focus', () => (titleFocused.value = true));
-    descInput.addEventListener('focus', () => (descFocused.value = true));
-
-    validateInputs();
-  }
-
-  _triggerFileInput(fileInput) {
-    fileInput.click();
-  }
-
-  _previewImage(event) {
-    const file = event.target.files[0];
-    const imagePreview = this._shadowRoot.querySelector('#image-preview');
-    const deleteIcon = this._shadowRoot.querySelector('#delete-icon');
-    const uploadInstructions = this._shadowRoot.querySelector('#upload-sign');
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        imagePreview.src = reader.result;
-        imagePreview.style.display = 'block';
-        deleteIcon.style.display = 'flex';
-
-        uploadInstructions.textContent = 'Untuk melihat detail klik gambar preview';
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  _removeImage(event) {
-    event.stopPropagation();
-    const imagePreview = this._shadowRoot.querySelector('#image-preview');
-    const deleteIcon = this._shadowRoot.querySelector('#delete-icon');
-    const fileInput = this._shadowRoot.querySelector('#file-input');
-
-    imagePreview.src = '';
-    imagePreview.style.display = 'none';
-    deleteIcon.style.display = 'none';
-    fileInput.value = '';
-  }
-
   render() {
     this._shadowRoot.appendChild(this._style);
 
     this._shadowRoot.innerHTML += `
       <div class="header-content">
         <div class="header-title">
-          <h1>Buat Postingan</h1>
-          <p>Buat postingan Anda untuk berbagi karya seni dengan dunia</p>
+          <h1>Ubah Postingan</h1>
+          <p>Ubah postingan Anda untuk memperbarui karya seni yang telah dibagikan</p>
         </div>
         <div class="header-image">
           <img src="./images/image-create.png" alt="image-create">
@@ -459,24 +318,17 @@ class CreatePost extends HTMLElement {
           <div class="image-container-wrapper">
             <div class="image-container-form" id="image-image-container-from">
               <img id="image-preview" alt="Thumbnail Preview">
-              <div class="upload-instructions">
-                <p>Klik di sini untuk mengunggah</p>
-              </div>
-              <input type="file" id="file-input" accept="image/png, image/jpeg, image/jpg">
-              <div class="delete-icon" id="delete-icon">
-                <i class="fa fa-times"></i>
-              </div>
             </div>
-            <p id="upload-sign">Hanya file gambar *.png, *.jpg, dan *.jpeg yang diterima (Max 5MB)</p>
+            <p id="upload-sign">Untuk melihat detail klik gambar preview</p>
           </div>
           
           <div class="submit-button-wrapper">
-            <button id="submit-button" disabled>Buat Postingan</button>
+            <button id="submit-button" disabled>Ubah Postingan</button>
           </div>
         </div>
         
         <!--    Button For Mobile    -->
-        <button id="mobile-submit-button" class="mobile-submit-button" disabled>Buat Postingan</button>
+        <button id="mobile-submit-button" class="mobile-submit-button" disabled>Ubah Postingan</button>
       </div>
       
       <div class="modal">
@@ -488,4 +340,4 @@ class CreatePost extends HTMLElement {
   }
 }
 
-customElements.define('create-post', CreatePost);
+customElements.define('edit-post', EditPost);

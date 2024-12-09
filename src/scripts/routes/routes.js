@@ -7,6 +7,7 @@ import NotFound from '../views/pages/not-found';
 import Create from '../views/pages/create';
 import Marketplace from '../views/pages/marketplace';
 import ProductDetail from '../views/pages/product-detail';
+import EditPost from '../views/pages/edit-post';
 
 const routes = {
   '/': Home,
@@ -19,6 +20,7 @@ const routes = {
   '/marketplace': Marketplace,
   '/product/:id': ProductDetail,
   '/not-found': NotFound,
+  '/edit-post/:id': EditPost,
 };
 
 export default routes;

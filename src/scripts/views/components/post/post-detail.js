@@ -59,6 +59,16 @@ class PostDetail extends HTMLElement {
     }
   }
 
+  // TODO Edit Post
+  async handleEdit() {
+    try {
+      window.location.href = `#/edit-post/${this._postId}`;
+    } catch (error) {
+      console.error('Error editing post:', error);
+    }
+  }
+
+
   async fetchAndRender() {
     try {
       const [postData, commentsData] = await Promise.all([
@@ -379,7 +389,7 @@ class PostDetail extends HTMLElement {
           z-index: 10;
         }
 
-        .delete-button {
+        .delete-button, .edit-button {
           width: 100%;
           padding: 12px 16px;
           display: flex;
@@ -391,9 +401,10 @@ class PostDetail extends HTMLElement {
           cursor: pointer;
           font-size: 14px;
           white-space: nowrap;
+          font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
-        .delete-button:hover {
+        .delete-button:hover, .edit-button:hover {
           background: #fafafa;
         }
   
@@ -536,6 +547,10 @@ class PostDetail extends HTMLElement {
                     <i class="far fa-trash-alt"></i>
                     <span>Hapus</span>
                   </button>
+                  <button class="edit-button">
+                    <i class="far fa-edit"></i>
+                    <span>Edit</span>
+                  </button>
                 </div>
               ` : `
               <button class="follow-button ${this._post.isFollowing ? 'following' : ''}" id="follow-button">
@@ -605,6 +620,14 @@ class PostDetail extends HTMLElement {
       deleteButton.addEventListener('click', (e) => {
         e.stopPropagation();
         this.handleDelete();
+      });
+
+      // TODO Edit Post
+      const editButton = this.shadowRoot.querySelector('.edit-button');
+      editButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.handleEdit();
+        this.remove();
       });
 
       document.addEventListener('click', () => {

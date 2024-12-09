@@ -26,8 +26,8 @@ const Create = {
       if (!title || !description || !imageFile) {
         Swal.fire({
           icon: 'error',
-          title: 'Oops...',
-          text: 'All fields are required.',
+          title: 'Ups...',
+          text: 'Semua kolom harus diisi.',
         });
         return;
       }
@@ -38,8 +38,8 @@ const Create = {
       formData.append('image', imageFile);
 
       const loadingAlert = Swal.fire({
-        title: 'Creating post...',
-        text: 'Please wait while we create your post.',
+        title: 'Membuat postingan...',
+        text: 'Tunggu sebentar sementara kami membuat postingan Anda.',
         didOpen: () => {
           Swal.showLoading();
         },
@@ -54,8 +54,8 @@ const Create = {
           loadingAlert.close();
           Swal.fire({
             icon: 'success',
-            title: 'Post Created',
-            text: 'Your post has been successfully created.',
+            title: 'Postingan Dibuat',
+            text: 'Postingan Anda telah berhasil dibuat.',
           }).then(() => {
             window.location.href = '#/';
           });
@@ -63,7 +63,7 @@ const Create = {
           createPostElement.shadowRoot.querySelector('form').reset();
           fileInput.value = '';
         } else {
-          throw new Error(response.message || 'Post creation failed');
+          throw new Error(response.message || 'Pembuatan postingan gagal');
         }
       } catch (error) {
         loadingAlert.close();
@@ -78,7 +78,6 @@ const Create = {
     submitButton.addEventListener('click', handleSubmit);
     mobileSubmitButton.addEventListener('click', handleSubmit);
   }
-
 };
 
 export default Create;

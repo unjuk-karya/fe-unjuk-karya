@@ -32,8 +32,8 @@ const API_ENDPOINT = {
   GET_PRODUCT_DETAIL: (productId) => `${CONFIG.BASE_URL}products/${productId}`, // GET
   GET_USER_PRODUCTS: (userId, page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}users/${userId}/products?page=${page}&pageSize=${pageSize}`, // GET
-
   CREATE: `${CONFIG.BASE_URL}posts`,
+  EDIT_POST: (postId) => `${CONFIG.BASE_URL}posts/${postId}`,
 };
 
 export default API_ENDPOINT;
