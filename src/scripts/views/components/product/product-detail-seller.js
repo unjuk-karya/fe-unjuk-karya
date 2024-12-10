@@ -6,7 +6,7 @@ class ProductDetailSeller extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['seller-data', 'stats'];
+    return ['seller-data'];
   }
 
   connectedCallback() {
@@ -15,11 +15,10 @@ class ProductDetailSeller extends HTMLElement {
 
   render() {
     const seller = JSON.parse(this.getAttribute('seller-data'));
-    const stats = JSON.parse(this.getAttribute('stats'));
 
     this.shadowRoot.innerHTML = `
         <style>
-                @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+          @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
 
           :host {
             display: block;
@@ -42,6 +41,10 @@ class ProductDetailSeller extends HTMLElement {
             color: #333;
             border-bottom: 1px solid var(--border-color);
           }
+
+          .card-title i {
+            color: #666;
+          }
   
           .seller-info {
             padding: 24px;
@@ -59,8 +62,26 @@ class ProductDetailSeller extends HTMLElement {
             align-items: center;
             gap: 16px;
             cursor: pointer;
+            transition: all 0.2s;
           }
-  
+
+.seller-username {
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.username-text {
+    transition: all 0.2s;
+}
+
+.profile-main:hover .username-text {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
           .seller-avatar {
             width: 48px;
             height: 48px;
@@ -78,21 +99,9 @@ class ProductDetailSeller extends HTMLElement {
           .seller-details {
             display: flex;
             flex-direction: column;
+            gap: 4px;
           }
   
-          .seller-name {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 4px;
-          }
-  
-          .seller-username {
-            color: var(--text-gray);
-            font-size: 14px;
-          }
   
           .seller-stats {
             display: flex;
@@ -139,40 +148,39 @@ class ProductDetailSeller extends HTMLElement {
           }
   
           @media screen and (max-width: 480px) {
-            .seller-card {
-              margin: 0 8px;
+            .card-title {
+              padding: 12px 16px;
             }
           }
         </style>
   
         <div class="seller-card">
           <div class="card-title">
-            <i class="fas fa-store"></i>
+            <i class="fa-solid fa-store"></i>
             Informasi Penjual
           </div>
           <div class="seller-info">
             <div class="seller-profile">
               <div class="profile-main">
                 <div class="seller-avatar">
-                  <img src="${seller.avatar}" alt="${seller.name}">
+                  <img src="${seller.avatar}" alt="${seller.username}">
                 </div>
                 <div class="seller-details">
-                  <div class="seller-name">
-                    <span>${seller.name}</span>
-                    <i class="fas fa-chevron-right"></i>
-                  </div>
-                  <div class="seller-username">@${seller.username}</div>
+<div class="seller-username">
+    <span class="username-text">${seller.username}</span>
+    <i class="fas fa-chevron-right"></i>
+</div>
                 </div>
               </div>
               <div class="seller-stats">
                 <div class="stat-item">
                   <i class="fas fa-box-open"></i>
-                  <span>${stats.totalProducts} Produk</span>
+                  <span>${seller.totalProducts} Produk</span>
                 </div>
                 <div class="stat-divider"></div>
                 <div class="stat-item">
                   <i class="fas fa-star"></i>
-                  <span>${stats.sellerRating} Rating</span>
+                  <span>${seller.sellerRating} Rating</span>
                 </div>
               </div>
             </div>

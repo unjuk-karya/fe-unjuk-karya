@@ -5,7 +5,7 @@ const EditPostSource = {
     const token = localStorage.getItem('token');
 
     try {
-      const response = await fetch(API_ENDPOINT.EDIT_POST(postId), {
+      const response = await fetch(API_ENDPOINT.POST_BY_ID(postId), {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

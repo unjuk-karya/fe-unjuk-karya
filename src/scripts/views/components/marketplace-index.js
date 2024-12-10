@@ -84,10 +84,10 @@ class MarketplaceIndex extends HTMLElement {
         id: product.id,
         image: product.image,
         category: product.category.name,
-        rating: '4.5',
+        rating: product.rating,
         name: product.name,
         price: `Rp ${product.price.toLocaleString('id-ID')}`,
-        sold: `${Math.floor(Math.random() * 100)}`,
+        sold: product.sold,
       }));
       this.currentPage = response.pagination.currentPage;
       this.totalPages = response.pagination.totalPages;
@@ -115,10 +115,10 @@ class MarketplaceIndex extends HTMLElement {
         id: product.id,
         image: product.image,
         category: product.category.name,
-        rating: '4.5',
+        rating: product.rating,
         name: product.name,
         price: `Rp ${product.price.toLocaleString('id-ID')}`,
-        sold: `${Math.floor(Math.random() * 100)}`,
+        sold: product.sold,
       }));
 
       this.products = [...this.products, ...newProducts];

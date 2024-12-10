@@ -7,11 +7,7 @@ class ProductDetailIndex extends HTMLElement {
     this.state = {
       product: null,
       contentState: 'loading',
-      errorMessage: '',
-      defaultStats: {
-        sellerRating: 4.9,
-        totalProducts: 23,
-      }
+      errorMessage: ''
     };
 
     this.quantity = 1;
@@ -32,12 +28,12 @@ class ProductDetailIndex extends HTMLElement {
     } else {
       this.state.contentState = 'error';
       this.state.errorMessage = 'Product ID not found';
+      this.render();
     }
-    this.render();
   }
 
   async attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'product-id' && newValue && oldValue !== newValue) {
+    if (name === 'product-id' && oldValue !== null && oldValue !== newValue) {
       await this.fetchProductDetail(newValue);
     }
   }
@@ -67,13 +63,6 @@ class ProductDetailIndex extends HTMLElement {
     this.render();
   }
 
-  async handleRetry() {
-    const productId = this.getAttribute('product-id');
-    if (productId) {
-      await this.fetchProductDetail(productId);
-    }
-  }
-
   handleQuantityChange(action) {
     if (action === 'decrease' && this.quantity > 1) {
       this.quantity--;
@@ -97,12 +86,21 @@ class ProductDetailIndex extends HTMLElement {
     }
   }
 
+  async handleRetry() {
+    const productId = this.getAttribute('product-id');
+    if (productId) {
+      await this.fetchProductDetail(productId);
+    }
+  }
+
   render() {
     const { contentState, errorMessage, product } = this.state;
+    const productId = this.getAttribute('product-id');
 
     this.shadowRoot.innerHTML = `
+    
       <style>
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+              @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
 
         :host {
           display: block;
@@ -156,7 +154,6 @@ class ProductDetailIndex extends HTMLElement {
           }
 
           .description-card {
-            border-radius: var(--card-radius);
             box-shadow: 0 1px 4px rgba(0,0,0,0.05);
           }
 
@@ -170,8 +167,8 @@ class ProductDetailIndex extends HTMLElement {
             padding: 8px;
           }
 
-          .description-card {
-            margin: 0 8px;
+          .card-title {
+padding: 12px 16px;
           }
         }
       </style>
@@ -187,8 +184,7 @@ class ProductDetailIndex extends HTMLElement {
             </product-detail-card>
 
             <product-detail-seller
-              seller-data='${JSON.stringify(product.user)}'
-              stats='${JSON.stringify(this.state.defaultStats)}'>
+              seller-data='${JSON.stringify(product.user)}'>
             </product-detail-seller>
 
             <div class="description-card">
@@ -200,6 +196,10 @@ class ProductDetailIndex extends HTMLElement {
                 <p>${product.description || 'Tidak ada deskripsi produk.'}</p>
               </div>
             </div>
+
+            <product-reviews 
+              product-id="${productId}">
+            </product-reviews>
           </div>
         ` : ''}
       </content-state-handler>
@@ -211,23 +211,23 @@ class ProductDetailIndex extends HTMLElement {
   setupEventListeners() {
     const productCard = this.shadowRoot.querySelector('product-detail-card');
     const sellerCard = this.shadowRoot.querySelector('product-detail-seller');
-    const contentStateHandler = this.shadowRoot.querySelector('content-state-handler');
+    const mainContentHandler = this.shadowRoot.querySelector('content-state-handler');
 
     productCard?.addEventListener('quantity-change', (e) => this.handleQuantityChange(e.detail));
     productCard?.addEventListener('buy-now', this.handleBuyNow);
     sellerCard?.addEventListener('seller-profile-click', this.handleSellerProfile);
-    contentStateHandler?.addEventListener('retry', this.handleRetry);
+    mainContentHandler?.addEventListener('retry', this.handleRetry);
   }
 
   disconnectedCallback() {
     const productCard = this.shadowRoot.querySelector('product-detail-card');
     const sellerCard = this.shadowRoot.querySelector('product-detail-seller');
-    const contentStateHandler = this.shadowRoot.querySelector('content-state-handler');
+    const mainContentHandler = this.shadowRoot.querySelector('content-state-handler');
 
     productCard?.removeEventListener('quantity-change', this.handleQuantityChange);
     productCard?.removeEventListener('buy-now', this.handleBuyNow);
     sellerCard?.removeEventListener('seller-profile-click', this.handleSellerProfile);
-    contentStateHandler?.removeEventListener('retry', this.handleRetry);
+    mainContentHandler?.removeEventListener('retry', this.handleRetry);
   }
 }
 

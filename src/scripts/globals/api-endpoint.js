@@ -13,7 +13,7 @@ const API_ENDPOINT = {
     `${CONFIG.BASE_URL}posts?page=${page}&pageSize=${pageSize}`, // GET
   GET_FEED_POSTS: (page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}posts/feed?page=${page}&pageSize=${pageSize}`, // GET
-  GET_COMMENTS_BY_POST_ID: (postId, page = 1, pageSize = 5) =>
+  GET_COMMENTS_BY_POST_ID: (postId, page = 1, pageSize = 10) =>
     `${CONFIG.BASE_URL}posts/${postId}/comments?page=${page}&pageSize=${pageSize}`, // GET
   POST_SAVES: (postId) => `${CONFIG.BASE_URL}posts/${postId}/saves`, // POST
   POST_COMMENTS: (postId) => `${CONFIG.BASE_URL}posts/${postId}/comments`, // POST
@@ -25,15 +25,17 @@ const API_ENDPOINT = {
   GET_FOLLOWERS: (userId) => `${CONFIG.BASE_URL}users/${userId}/followers`, // GET
   GET_FOLLOWINGS: (userId) => `${CONFIG.BASE_URL}users/${userId}/followings`, // GET
 
-  POST_BY_ID: (postId) => `${CONFIG.BASE_URL}posts/${postId}`, // GET/PUT
+  POST_BY_ID: (postId) => `${CONFIG.BASE_URL}posts/${postId}`, // GET/PUT/DELETE
   POST_LIKES: (postId) => `${CONFIG.BASE_URL}posts/${postId}/likes`, // POST&GET
   GET_ALL_PRODUCTS: (page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}products?page=${page}&pageSize=${pageSize}`, // GET
   GET_PRODUCT_DETAIL: (productId) => `${CONFIG.BASE_URL}products/${productId}`, // GET
+  GET_PRODUCT_REVIEWS: (productId, page = 1, pageSize = 5) =>
+    `${CONFIG.BASE_URL}products/${productId}/reviews?page=${page}&pageSize=${pageSize}`, // GET
   GET_USER_PRODUCTS: (userId, page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}users/${userId}/products?page=${page}&pageSize=${pageSize}`, // GET
+
   CREATE: `${CONFIG.BASE_URL}posts`,
-  EDIT_POST: (postId) => `${CONFIG.BASE_URL}posts/${postId}`,
 };
 
 export default API_ENDPOINT;
