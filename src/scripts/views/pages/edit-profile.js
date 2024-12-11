@@ -124,38 +124,36 @@ const EditProfile = {
         appendFormData(formData);
 
         try {
-          // Show loading alert
           Swal.fire({
-            title: 'Updating profile...',
-            text: 'Please wait while we update your profile.',
+            title: 'Memperbarui profil...',
+            text: 'Harap tunggu sementara kami memperbarui profil Anda.',
             icon: 'info',
             allowOutsideClick: false,
             didOpen: () => Swal.showLoading(),
           });
 
-          // Call API to update profile
           const updatedProfile = await ProfileSource.editUserProfile(formData);
 
-          // Close loading alert and show success message
           Swal.close();
           Swal.fire({
-            title: 'Success!',
-            text: 'Your profile has been updated successfully.',
+            title: 'Berhasil!',
+            text: 'Profil Anda telah berhasil diperbarui.',
             icon: 'success',
-            confirmButtonText: 'Great!',
+            confirmButtonText: 'Luar biasa!',
           }).then(() => {
             window.location.href = '#/profile';
           });
 
           console.log(updatedProfile);
         } catch (error) {
-          // Close loading alert and show error message
           Swal.close();
+
+          const errorMessage = error.message;
           Swal.fire({
-            title: 'Error!',
-            text: 'There was an issue updating your profile.',
+            title: 'Terjadi Kesalahan!',
+            text: errorMessage,
             icon: 'error',
-            confirmButtonText: 'Okay',
+            confirmButtonText: 'Oke',
           });
 
           console.log(error);
