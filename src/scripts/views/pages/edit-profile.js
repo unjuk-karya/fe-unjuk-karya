@@ -148,7 +148,21 @@ const EditProfile = {
         } catch (error) {
           Swal.close();
 
-          const errorMessage = error.message;
+          let errorMessage = 'Terjadi kesalahan. Silakan coba lagi';
+
+          if (error.status === 422 && error.data?.errors) {
+            const validationErrors = [];
+
+            if (error.data.errors.avatar) {
+              validationErrors.push(`Avatar: ${error.data.errors.avatar.join(', ')}`);
+            }
+            if (error.data.errors.username) {
+              validationErrors.push(`Username: ${error.data.errors.username.join(', ')}`);
+            }
+
+            errorMessage = validationErrors.join('\n');
+          }
+
           Swal.fire({
             title: 'Terjadi Kesalahan!',
             text: errorMessage,

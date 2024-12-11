@@ -165,28 +165,26 @@ class ProfileSource {
   static async editUserProfile(formData) {
     const token = localStorage.getItem('token');
 
-    try {
-      const response = await fetch(API_ENDPOINT.EDIT_PROFILE, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
-      });
+    const response = await fetch(API_ENDPOINT.EDIT_PROFILE, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
 
-      const data = await response.json();
+    const responseData = await response.json();
 
-      console.log('Response:', data);
+    console.log('Response:', responseData);
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to edit post');
-      }
-
-      return data;
-    } catch (error) {
-      console.error('Error:', error.message);
-      throw new Error(error.message || 'Something went wrong!');
+    if (!response.ok) {
+      throw {
+        status: response.status,
+        data: responseData
+      };
     }
+
+    return responseData;
   }
 }
 
