@@ -144,7 +144,7 @@ class CreatePost extends HTMLElement {
         cursor: pointer;
         overflow: hidden;
       }
-
+      
       .image-container-form img {
         position: absolute;
         top: 0;
@@ -249,6 +249,7 @@ class CreatePost extends HTMLElement {
         justify-content: center;
         align-items: center;
         overflow: hidden;
+        z-index: 1000;
       }
       
       .modal-content {
@@ -276,6 +277,10 @@ class CreatePost extends HTMLElement {
       }
       
       @media (max-width: 690px) {
+        .header-image {
+          display: none;
+        }
+      
         .container {
           grid-template-columns: 1fr;
         }

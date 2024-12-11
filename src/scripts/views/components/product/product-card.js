@@ -48,10 +48,10 @@ class ProductCard extends HTMLElement {
           font-size: 12px;
           font-weight: 500;
         }
- 
+        
         .rating {
           position: absolute;
-          top: 12px;
+          bottom: 12px;
           left: 12px;
           background: rgba(26,115,232,0.95);
           color: white;

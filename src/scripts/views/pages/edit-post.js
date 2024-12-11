@@ -1,148 +1,197 @@
-import EditPostSource from '../../data/edit-post-source';
-import PostSource from '../../data/post-source';
 import Swal from 'sweetalert2';
+import ProfileSource from '../../data/profile-source';
 
-const EditPost = {
+const EditProfile = {
   async render() {
     return `
       <div class="container">
-        <edit-post></edit-post>
+        <edit-profile></edit-profile>
       </div>
     `;
   },
 
   async afterRender() {
-    const editPostElement = document.querySelector('edit-post');
-    const submitButton = editPostElement.shadowRoot.querySelector('#submit-button');
-    const mobileSubmitButton = editPostElement.shadowRoot.querySelector('#mobile-submit-button');
+    const editProfileElement = document.querySelector('edit-profile');
+    const shadowRoot = editProfileElement.shadowRoot;
 
-    const titleForm = editPostElement.shadowRoot.querySelector('#title');
-    const descriptionForm = editPostElement.shadowRoot.querySelector('#description');
-    const imagePreview = editPostElement.shadowRoot.querySelector('#image-preview');
-    const fileInput = editPostElement.shadowRoot.querySelector('#file-input');
+    // Profile Picture Elements
+    const profilePicturePreview = shadowRoot.querySelector('#profile-picture-preview');
+    const profilePictureInput = shadowRoot.querySelector('#profile-picture-input');
+    const profilePictureDelete = shadowRoot.querySelector('#profile-picture-delete-icon');
+    const profilePictureFile = null;
 
-    let imageFile = null;
+    // Cover Picture Elements
+    const coverPicturePreview = shadowRoot.querySelector('#cover-picture-preview');
+    const coverPictureInput = shadowRoot.querySelector('#cover-picture-input');
+    const coverPictureDelete = shadowRoot.querySelector('#cover-picture-delete-icon');
+    const coverPictureFile = null;
 
-    const titleValidationMessage = editPostElement.shadowRoot.querySelector('.title-validation');
-    const descriptionValidationMessage = editPostElement.shadowRoot.querySelector('.description-validation');
+    // Personal Details Elements
+    const nameInput = shadowRoot.querySelector('#name');
+    const usernameInput = shadowRoot.querySelector('#username');
+    const emailInput = shadowRoot.querySelector('#email');
+    const phoneInput = shadowRoot.querySelector('#phone-number');
+    const addressInput = shadowRoot.querySelector('#address');
+    const bioInput = shadowRoot.querySelector('#bio');
+    const submitButton = shadowRoot.querySelector('#submit-btn');
 
-    const url = window.location.hash;
-    const postId = url.split('/')[2];
+    const postId = window.location.hash.split('/')[2];
 
-    try {
-      const postDetails = await PostSource.getPostById(postId);
-      titleForm.value = postDetails.title;
-      descriptionForm.value = postDetails.content;
-      imagePreview.src = postDetails.image;
-    } catch (error) {
-      console.error('Gagal mengambil data:', error);
-    }
-
-    fileInput.addEventListener('change', (event) => {
-      imageFile = event.target.files[0];
-      if (imageFile) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          imagePreview.src = reader.result;
-        };
-        reader.readAsDataURL(imageFile);
-      }
-    });
-
+    // Initialize Input Validation
     const validateInputs = () => {
-      const titleValid = titleForm.value.trim().length >= 3;
-      const descValid = descriptionForm.value.trim().length >= 8;
-
-      if (!titleValid) {
-        titleValidationMessage.style.display = 'flex';
-        titleValidationMessage.querySelector('.validation-message-p').textContent = 'Judul harus lebih dari 3 karakter';
-        titleForm.style.borderColor = 'red';
-      } else {
-        titleValidationMessage.style.display = 'none';
-        titleForm.style.borderColor = '#dfe5ef';
-      }
-
-      if (!descValid) {
-        descriptionValidationMessage.style.display = 'flex';
-        descriptionValidationMessage.querySelector('.validation-message-p').textContent = 'Deskripsi harus lebih dari 10 karakter';
-        descriptionForm.style.borderColor = 'red';
-      } else {
-        descriptionValidationMessage.style.display = 'none';
-        descriptionForm.style.borderColor = '#dfe5ef';
-      }
-
-      const isValid = titleValid && descValid;
-      submitButton.disabled = !isValid;
-      mobileSubmitButton.disabled = !isValid;
+      const nameValid = nameInput.value.trim().length > 3;
+      const usernameValid = usernameInput.value.trim().length > 3;
+      const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim());
+      submitButton.disabled = !(nameValid && usernameValid && emailValid);
     };
 
-    titleForm.addEventListener('input', validateInputs);
-    descriptionForm.addEventListener('input', validateInputs);
+    // Set up Input Event Listeners for Validation
+    nameInput.addEventListener('input', validateInputs);
+    usernameInput.addEventListener('input', validateInputs);
+    emailInput.addEventListener('input', validateInputs);
 
-    validateInputs();
+    // Handle Profile Data Fetching and UI Updates
+    try {
+      const profileData = await ProfileSource.getUserProfile(postId);
 
-    const handleSubmit = async (event) => {
-      event.preventDefault();
-
-      const title = titleForm.value.trim();
-      const description = descriptionForm.value.trim();
-
-      if (!title || !description) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Ups...',
-          text: 'Semua kolom harus diisi.',
-        });
-        return;
+      if (!profileData.isMyself) {
+        window.location.href = '#/not-found';
+      } else {
+        updateProfileUI(profileData);
+        validateInputs();
       }
 
+      // Handle Profile Form Submit
+      submitButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const formData = createFormData(profilePictureFile, coverPictureFile);
+        await submitProfileForm(formData);
+      });
+
+    } catch (error) {
+      console.error('Failed to fetch profile:', error);
+      if (error.status === 404) {
+        window.location.hash = '#/not-found';
+      }
+    }
+
+    // Helper function to update UI with fetched profile data
+    function updateProfileUI(profileData) {
+      setProfilePictureUI(profileData.avatar, profilePicturePreview, profilePictureDelete);
+      setCoverPictureUI(profileData.coverPhoto, coverPicturePreview, coverPictureDelete);
+      fillFormFields(profileData);
+    }
+
+    // Helper function to set Profile Picture UI
+    function setProfilePictureUI(avatar, previewElement, deleteElement) {
+      if (avatar) {
+        previewElement.src = avatar;
+        previewElement.style.display = 'block';
+        deleteElement.style.display = 'flex';
+      } else {
+        previewElement.src = '';
+        previewElement.style.display = 'none';
+        deleteElement.style.display = 'none';
+      }
+    }
+
+    // Helper function to set Cover Picture UI
+    function setCoverPictureUI(coverPhoto, previewElement, deleteElement) {
+      if (coverPhoto) {
+        previewElement.src = coverPhoto;
+        previewElement.style.display = 'block';
+        deleteElement.style.display = 'flex';
+      } else {
+        previewElement.src = '';
+        previewElement.style.display = 'none';
+        deleteElement.style.display = 'none';
+      }
+    }
+
+    // Helper function to fill form fields with profile data
+    function fillFormFields(profileData) {
+      nameInput.value = profileData.name || '';
+      usernameInput.value = profileData.username || '';
+      emailInput.value = profileData.email || '';
+      phoneInput.value = profileData.phone || '';
+      addressInput.value = profileData.address || '';
+      bioInput.value = profileData.bio || '';
+    }
+
+    // Handle Profile Picture Input Change
+    profilePictureInput.addEventListener('change', (event) => handleFileInputChange(event, profilePicturePreview, profilePictureDelete, profilePictureFile));
+    profilePictureDelete.addEventListener('click', () => clearFileInput(profilePicturePreview, profilePictureDelete, profilePictureInput, profilePictureFile));
+
+    // Handle Cover Picture Input Change
+    coverPictureInput.addEventListener('change', (event) => handleFileInputChange(event, coverPicturePreview, coverPictureDelete, coverPictureFile));
+    coverPictureDelete.addEventListener('click', () => clearFileInput(coverPicturePreview, coverPictureDelete, coverPictureInput, coverPictureFile));
+
+    // Helper function to handle file input change (both profile and cover picture)
+    function handleFileInputChange(event, previewElement, deleteElement) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewElement.src = e.target.result;
+          previewElement.style.display = 'block';
+          deleteElement.style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Helper function to clear file input (both profile and cover picture)
+    function clearFileInput(previewElement, deleteElement, inputElement) {
+      previewElement.src = '';
+      previewElement.style.display = 'none';
+      deleteElement.style.display = 'none';
+      inputElement.value = '';
+    }
+
+    // Create FormData from input values and files
+    function createFormData(profilePictureFile, coverPictureFile) {
       const formData = new FormData();
-      formData.append('title', title);
-      formData.append('content', description);
+      formData.append('name', nameInput.value.trim());
+      formData.append('username', usernameInput.value.trim());
+      formData.append('email', emailInput.value.trim());
+      formData.append('phone', phoneInput.value.trim());
+      formData.append('address', addressInput.value.trim());
+      formData.append('bio', bioInput.value.trim());
+      formData.append('avatar', profilePictureFile);
+      formData.append('coverPhoto', coverPictureFile);
 
-      if (imageFile) {
-        formData.append('image', imageFile);
-      }
+      return formData;
+    }
 
+    // Button Submit Profile
+    async function submitProfileForm(formData) {
       const loadingAlert = Swal.fire({
-        title: 'Memperbarui postingan...',
-        text: 'Tunggu sebentar sementara kami memperbarui postingan Anda.',
-        didOpen: () => {
-          Swal.showLoading();
-        },
+        title: 'Memperbarui profil...',
+        text: 'Tunggu sebentar sementara kami memperbarui profil Anda.',
+        didOpen: () => Swal.showLoading(),
         allowOutsideClick: false,
         showConfirmButton: false,
       });
 
       try {
-        const response = await EditPostSource.editPost(postId, formData);
+        const updatedProfile = await ProfileSource.editUserProfile(formData);
 
-        if (response.status === 200) {
+        if (updatedProfile.status === 200) {
           loadingAlert.close();
           Swal.fire({
             icon: 'success',
-            title: 'Postingan Diperbarui',
-            text: 'Postingan Anda telah berhasil diperbarui.',
+            title: 'Profil Diperbarui',
+            text: 'Profil Anda telah berhasil diperbarui.',
           }).then(() => {
             window.location.href = '#/';
           });
-
-          editPostElement.shadowRoot.querySelector('form').reset();
-        } else if (response.status === 422) {
+        } else {
           loadingAlert.close();
-          const { errors } = response;
-          const errorMessages = [];
-
-          if (errors.title) errorMessages.push(`Title: ${errors.title.join(', ')}`);
-          if (errors.content) errorMessages.push(`Content: ${errors.content.join(', ')}`);
-
           Swal.fire({
             icon: 'error',
-            title: 'Validasi Gagal',
-            html: errorMessages.join('<br>'),
+            title: 'Gagal Memperbarui Profil',
+            text: 'Terjadi kesalahan saat memperbarui profil.',
           });
-        } else {
-          throw new Error(response.message || 'Pembaruan postingan gagal');
         }
       } catch (error) {
         loadingAlert.close();
@@ -152,11 +201,8 @@ const EditPost = {
           text: error.message,
         });
       }
-    };
-
-    submitButton.addEventListener('click', handleSubmit);
-    mobileSubmitButton.addEventListener('click', handleSubmit);
-  },
+    }
+  }
 };
 
-export default EditPost;
+export default EditProfile;

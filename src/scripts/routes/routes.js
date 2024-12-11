@@ -8,6 +8,7 @@ import Create from '../views/pages/create';
 import Marketplace from '../views/pages/marketplace';
 import ProductDetail from '../views/pages/product-detail';
 import EditPost from '../views/pages/edit-post';
+import EditProfile from '../views/pages/edit-profile';
 
 const routes = {
   '/': Home,
@@ -21,6 +22,7 @@ const routes = {
   '/product/:id': ProductDetail,
   '/not-found': NotFound,
   '/edit-post/:id': EditPost,
+  '/edit-profile/:id': EditProfile,
 };
 
 export default routes;

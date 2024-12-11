@@ -203,7 +203,7 @@ class EditPost extends HTMLElement {
       .image-container-form.show-delete .delete-icon {
         display: flex;
       }
-
+      
       button {
         display: flex;
         justify-content: center;
@@ -248,6 +248,7 @@ class EditPost extends HTMLElement {
         justify-content: center;
         align-items: center;
         overflow: hidden;
+        z-index: 1000;
       }
       
       .modal-content {
@@ -275,6 +276,10 @@ class EditPost extends HTMLElement {
       }
       
       @media (max-width: 690px) {
+        .header-image {
+          display: none;
+        }
+      
         .container {
           grid-template-columns: 1fr;
         }

@@ -34,8 +34,8 @@ const API_ENDPOINT = {
     `${CONFIG.BASE_URL}products/${productId}/reviews?page=${page}&pageSize=${pageSize}`, // GET
   GET_USER_PRODUCTS: (userId, page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}users/${userId}/products?page=${page}&pageSize=${pageSize}`, // GET
-
   CREATE: `${CONFIG.BASE_URL}posts`,
+  EDIT_PROFILE: `${CONFIG.BASE_URL}users/profile`,
 };
 
 export default API_ENDPOINT;

@@ -68,7 +68,6 @@ class PostDetail extends HTMLElement {
     }
   }
 
-
   async fetchAndRender() {
     try {
       const [postData, commentsData] = await Promise.all([
