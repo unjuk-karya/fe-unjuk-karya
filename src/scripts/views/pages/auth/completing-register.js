@@ -111,12 +111,25 @@ const CompletingRegister = {
       // Handle Cover Picture File Input
       coverPictureInput.addEventListener('change', (event) => {
         coverPictureFile = event.target.files[0];
+
+        if (coverPictureFile && coverPictureFile.size > 5 * 1024 * 1024) {
+          Swal.fire({
+            title: 'Ukuran File Terlalu Besar!',
+            text: 'Foto latar belakang harus lebih kecil dari 5MB.',
+            icon: 'error',
+            confirmButtonText: 'Oke',
+          });
+          coverPictureInput.value = '';
+          return;
+        }
+
         const reader = new FileReader();
         reader.onload = function () {
           coverPicturePreview.src = reader.result;
           coverPicturePreview.style.display = 'block';
           coverPictureDelete.style.display = 'flex';
         };
+
         if (coverPictureFile) {
           reader.readAsDataURL(coverPictureFile);
         }
