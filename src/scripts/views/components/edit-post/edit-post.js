@@ -413,7 +413,7 @@ class EditPost extends HTMLElement {
             </div>
             <p id="upload-sign">Untuk melihat detail klik gambar preview</p>
           </div>
-          
+           
           <div class="submit-button-wrapper">
             <button id="submit-button" disabled>Ubah Postingan</button>
           </div>

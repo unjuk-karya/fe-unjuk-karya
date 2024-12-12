@@ -1,4 +1,4 @@
-import AuthSource from '../../data/auth-source';
+import AuthSource from '../../../data/auth-source';
 import Swal from 'sweetalert2';
 
 const Register = {
@@ -38,6 +38,16 @@ const Register = {
       try {
         await AuthSource.register(formData);
 
+        const loginData = {
+          identifier: formData.email,
+          password: formData.password,
+        };
+
+        const response = await AuthSource.login(loginData);
+
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response));
+
         Swal.close();
 
         Swal.fire({
@@ -45,7 +55,7 @@ const Register = {
           title: 'Pendaftaran Berhasil',
           text: 'Selamat datang di komunitas!',
         }).then(() => {
-          window.location.href = '#/login';
+          window.location.href = `#/completing-register/${response.id}`;
         });
       } catch (error) {
         Swal.close();

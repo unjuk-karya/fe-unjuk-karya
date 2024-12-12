@@ -19,6 +19,8 @@ class AuthSource {
       };
     }
 
+    console.log('API Success Response:', responseData);
+
     return responseData;
   }
 
@@ -39,6 +41,8 @@ class AuthSource {
         data: responseData
       };
     }
+
+    console.log('API Success Response:', responseData);
 
     return responseData.data;
   }

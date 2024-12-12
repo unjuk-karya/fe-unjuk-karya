@@ -22,7 +22,7 @@ class App {
         return;
       }
 
-      if (url === '/login' || url === '/register') {
+      if (url === '/login' || url === '/register' || url === '/completing-register/:id') {
         document.body.innerHTML = '<main id="mainContent"></main>';
         this._content = document.querySelector('#mainContent');
       } else if (!document.querySelector('app-layout')) {

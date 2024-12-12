@@ -1,4 +1,4 @@
-import AuthSource from '../../data/auth-source';
+import AuthSource from '../../../data/auth-source';
 import Swal from 'sweetalert2';
 
 const Login = {
