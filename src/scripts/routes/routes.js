@@ -10,6 +10,7 @@ import ProductDetail from '../views/pages/product-detail';
 import EditPost from '../views/pages/edit-post';
 import EditProfile from '../views/pages/edit-profile';
 import CompletingRegister from '../views/pages/auth/completing-register';
+import TransactionHistory from '../views/pages/transaction-history';
 
 const routes = {
   '/': Home,
@@ -25,6 +26,7 @@ const routes = {
   '/not-found': NotFound,
   '/edit-post/:id': EditPost,
   '/edit-profile/:id': EditProfile,
+  '/transaction-history': TransactionHistory
 };
 
 export default routes;

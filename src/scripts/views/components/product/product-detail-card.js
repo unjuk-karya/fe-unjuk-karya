@@ -1,3 +1,6 @@
+import OrderSource from '../../../data/order.source';
+import Swal from 'sweetalert2';
+
 class ProductDetailCard extends HTMLElement {
   constructor() {
     super();
@@ -316,7 +319,7 @@ class ProductDetailCard extends HTMLElement {
 
           <div class="price">
             <span class="price-currency">Rp</span>
-            <span>${productData.price.toLocaleString()}</span>
+            <span>${productData.price.toLocaleString('id-ID')}</span>
           </div>
 
           <div class="stock-info">
@@ -358,8 +361,57 @@ class ProductDetailCard extends HTMLElement {
       this.dispatchEvent(new CustomEvent('quantity-change', { detail: 'increase' }));
     });
 
-    buyBtn?.addEventListener('click', () => {
-      this.dispatchEvent(new CustomEvent('buy-now'));
+    buyBtn?.addEventListener('click', async () => {
+      const productData = JSON.parse(this.getAttribute('product'));
+      const quantity = parseInt(this.getAttribute('quantity'));
+
+      try {
+        const result = await Swal.fire({
+          title: 'Konfirmasi Pembelian',
+          text: `Apakah Anda yakin ingin membeli ${quantity} ${productData.name}?`,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#1D77E6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Ya, Beli Sekarang',
+          cancelButtonText: 'Batal'
+        });
+
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Memproses Pembelian...',
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
+
+          const orderData = {
+            productId: productData.id,
+            quantity: quantity,
+          };
+
+          await OrderSource.createOrder(orderData);
+
+          await Swal.fire({
+            title: 'Pembelian Berhasil!',
+            text: 'Anda akan diarahkan ke halaman riwayat transaksi',
+            icon: 'success',
+            confirmButtonColor: '#1D77E6'
+          });
+
+          window.location.href = '#/transaction-history';
+        }
+      } catch (error) {
+        console.error('Failed to create order:', error);
+
+        await Swal.fire({
+          title: 'Gagal Membuat Pesanan',
+          text: error.data?.message || 'Terjadi kesalahan saat memproses pesanan',
+          icon: 'error',
+          confirmButtonColor: '#1D77E6'
+        });
+      }
     });
   }
 
@@ -368,9 +420,9 @@ class ProductDetailCard extends HTMLElement {
     const incrementBtn = this.shadowRoot.querySelector('.increment');
     const buyBtn = this.shadowRoot.querySelector('.buy-button');
 
-    decrementBtn?.removeEventListener('click', () => { });
-    incrementBtn?.removeEventListener('click', () => { });
-    buyBtn?.removeEventListener('click', () => { });
+    decrementBtn?.removeEventListener('click', () => {});
+    incrementBtn?.removeEventListener('click', () => {});
+    buyBtn?.removeEventListener('click', () => {});
   }
 }
 
