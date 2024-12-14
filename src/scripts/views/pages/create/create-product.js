@@ -1,4 +1,5 @@
 import CreateSource from '../../../data/create-source';
+import { categoriesProduct } from '../../../utils/categories-product';
 import Swal from 'sweetalert2';
 
 const CreateProduct = {
@@ -16,7 +17,7 @@ const CreateProduct = {
     const mobileSubmitButton = createProductElement.shadowRoot.querySelector('#mobile-submit-button');
 
     // Get Category
-    await this.populateCategories(createProductElement);
+    await categoriesProduct(createProductElement);
 
     // Handle Submit Button
     submitButton.addEventListener('click', (event) => {
@@ -25,27 +26,6 @@ const CreateProduct = {
     mobileSubmitButton.addEventListener('click', (event) => {
       this.handleSubmit(createProductElement, event);
     });
-  },
-
-  // Get Category
-  async populateCategories(createProductElement) {
-    try {
-      const categoriesData = await CreateSource.getCategories();
-
-      const categorySelect = createProductElement.shadowRoot.querySelector('#category');
-
-      categorySelect.innerHTML = '<option value="" disabled selected>-- Pilih kategori produk --</option>';
-
-      categoriesData.data.forEach((category) => {
-        const option = document.createElement('option');
-        option.value = category.id;
-        option.textContent = category.name;
-        categorySelect.appendChild(option);
-      });
-
-    } catch (error) {
-      console.error('Error fetching categories:', error.message);
-    }
   },
 
   // Handle Submit Button

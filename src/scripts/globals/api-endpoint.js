@@ -42,6 +42,7 @@ const API_ENDPOINT = {
   EDIT_PROFILE: `${CONFIG.BASE_URL}users/profile`,
   CREATE_PRODUCT: `${CONFIG.BASE_URL}products`,
   CATEGORIES_PRODUCT: `${CONFIG.BASE_URL}categories`,
+  EDIT_PRODUCT: (productId) => `${CONFIG.BASE_URL}products/${productId}`,
 };
 
 export default API_ENDPOINT;

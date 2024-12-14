@@ -285,7 +285,7 @@ class CreateProduct extends HTMLElement {
         display: none;
       }
       
-      @media (max-width: 840px) {
+      @media (max-width: 885px) {
         .header-image {
           display: none;
         }
@@ -455,6 +455,7 @@ class CreateProduct extends HTMLElement {
     const descInput = this._shadowRoot.querySelector('#description');
     const submitButton = this._shadowRoot.querySelector('#submit-button');
     const mobileSubmitButton = this._shadowRoot.querySelector('#mobile-submit-button');
+    const imagePreview = this._shadowRoot.querySelector('#image-preview');
     const fileInput = this._shadowRoot.querySelector('#file-input');
 
     const titleValidationMessage = this._shadowRoot.querySelector('.name-validation');
@@ -546,7 +547,7 @@ class CreateProduct extends HTMLElement {
         }
       }
 
-      const isValid = titleValid && descValid && priceValid && stockValid && categoryValid && imageValid;
+      const isValid = titleValid && descValid && priceValid && stockValid && categoryValid && (imageValid || imagePreview.src !== null);
       submitButton.disabled = !isValid;
       mobileSubmitButton.disabled = !isValid;
     };

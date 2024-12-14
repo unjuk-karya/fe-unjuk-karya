@@ -8,10 +8,11 @@ import CreatePost from '../views/pages/create/create-post';
 import CreateProduct from '../views/pages/create/create-product';
 import Marketplace from '../views/pages/marketplace';
 import ProductDetail from '../views/pages/product-detail';
-import EditPost from '../views/pages/edit-post';
-import EditProfile from '../views/pages/edit-profile';
+import EditPost from '../views/pages/edit/edit-post';
+import EditProfile from '../views/pages/edit/edit-profile';
 import CompletingRegister from '../views/pages/auth/completing-register';
 import TransactionHistory from '../views/pages/transaction-history';
+import EditProduct from '../views/pages/edit/edit-product';
 
 const routes = {
   '/': Home,
@@ -27,6 +28,7 @@ const routes = {
   '/product/:id': ProductDetail,
   '/not-found': NotFound,
   '/edit-post/:id': EditPost,
+  '/edit-product/:id': EditProduct,
   '/edit-profile/:id': EditProfile,
   '/transaction-history': TransactionHistory
 };

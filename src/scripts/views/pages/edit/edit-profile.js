@@ -1,4 +1,4 @@
-import ProfileSource from '../../data/profile-source';
+import ProfileSource from '../../../data/profile-source';
 import Swal from 'sweetalert2';
 
 const EditProfile = {
