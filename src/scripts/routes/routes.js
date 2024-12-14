@@ -4,7 +4,8 @@ import Home from '../views/pages/home';
 import Explore from '../views/pages/explore';
 import Profile from '../views/pages/profile';
 import NotFound from '../views/pages/not-found';
-import Create from '../views/pages/create';
+import CreatePost from '../views/pages/create/create-post';
+import CreateProduct from '../views/pages/create/create-product';
 import Marketplace from '../views/pages/marketplace';
 import ProductDetail from '../views/pages/product-detail';
 import EditPost from '../views/pages/edit-post';
@@ -18,7 +19,8 @@ const routes = {
   '/register': Register,
   '/completing-register/:id': CompletingRegister,
   '/explore': Explore,
-  '/create-post': Create,
+  '/create-post': CreatePost,
+  '/create-product': CreateProduct,
   '/profile': Profile,
   '/profile/:id': Profile,
   '/marketplace': Marketplace,

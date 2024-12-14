@@ -1,7 +1,7 @@
-import CreatePostSource from '../../data/create-source';
+import CreatePostSource from '../../../data/create-source';
 import Swal from 'sweetalert2';
 
-const Create = {
+const CreatePost = {
   async render() {
     return `
       <div class="container">
@@ -80,4 +80,4 @@ const Create = {
   }
 };
 
-export default Create;
+export default CreatePost;

@@ -1,4 +1,4 @@
-class CreatePost extends HTMLElement {
+class CreateProduct extends HTMLElement {
   _shadowRoot = null;
   _style = null;
 
@@ -89,10 +89,19 @@ class CreatePost extends HTMLElement {
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       }
       
+      form {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
       form .form-group {
         display: flex;
         flex-direction: column;
-        margin-bottom: 16px;
+      }
+      
+      form .form-group:nth-child(5) {
+        grid-column: span 2;
       }
       
       form .form-group label {
@@ -102,7 +111,7 @@ class CreatePost extends HTMLElement {
         margin-bottom: 8px;
       }
       
-      form .form-group input, textarea {
+      form .form-group input, textarea, select {
         min-height: 40px;
         padding: 8px 16px;
         font-size: 14px;
@@ -133,7 +142,7 @@ class CreatePost extends HTMLElement {
       .image-container-form {
         position: relative;
         width: 100%;
-        min-height: 290px;
+        min-height: 350px;
         border: 2px dashed #dfe5ef;
         border-radius: 8px;
         background-color: #5d87ff;
@@ -276,13 +285,24 @@ class CreatePost extends HTMLElement {
         display: none;
       }
       
-      @media (max-width: 690px) {
+      @media (max-width: 840px) {
         .header-image {
           display: none;
         }
       
         .container {
           grid-template-columns: 1fr;
+        }
+        
+        form {
+          display: block;
+          gap: 0;
+        }
+        
+        form .form-group {
+          display: flex;
+          flex-direction: column;
+          margin-bottom: 16px;
         }
       
         .image-container {
@@ -297,6 +317,104 @@ class CreatePost extends HTMLElement {
           display: none;
         }
       }
+    `;
+  }
+
+  render() {
+    this._shadowRoot.appendChild(this._style);
+
+    this._shadowRoot.innerHTML += `
+      <div class="header-content">
+        <div class="header-title">
+          <h1>Buat Produk</h1>
+          <p>Wujudkan karya seni Anda menjadi produk yang dapat dijual</p>
+        </div>
+        <div class="header-image">
+          <img src="./images/image-create.png" alt="image-create">
+        </div>
+      </div>
+      
+      <div class="container">
+        <div class="form-container">
+          <form>
+            <div class="form-group">
+              <label for="name">Nama</label>
+              <input type="text" id="name" placeholder="Masukkan nama produk">
+              <div class="validation-message name-validation">
+                <i class="fa fa-times"></i>
+                <p class="validation-message-p"></p>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="price">Harga</label>
+              <input type="text" id="price" placeholder="Masukkan harga produk">
+              <div class="validation-message price-validation">
+                <i class="fa fa-times"></i>
+                <p class="validation-message-p"></p>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="stock">Stok</label>
+              <input type="text" id="stock" placeholder="Masukkan stock produk">
+              <div class="validation-message stock-validation">
+                <i class="fa fa-times"></i>
+                <p class="validation-message-p"></p>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="category">Kategori</label>
+              <select id="category" placeholder="Pilih kategori produk">
+                <option value="" disabled selected>-- Pilih kategori produk --</option>
+              </select>
+              <div class="validation-message category-validation">
+                <i class="fa fa-times"></i>
+                <p class="validation-message-p"></p>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="description">Deskripsi</label>
+              <textarea id="description" name="description" placeholder="Masukkan deskripsi produk" cols="30" rows="11"></textarea>
+              <div class="validation-message description-validation">
+                <i class="fa fa-times"></i>
+                <p class="validation-message-p"></p>
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <div class="image-container">
+          <div class="image-container-wrapper">
+            <div class="image-container-form" id="image-image-container-from">
+              <img id="image-preview" alt="Thumbnail Preview">
+              <div class="upload-instructions">
+                <p>Klik di sini untuk mengunggah</p>
+              </div>
+              <input type="file" id="file-input" accept="image/png, image/jpeg, image/jpg">
+              <div class="delete-icon" id="delete-icon">
+                <i class="fa fa-times"></i>
+              </div>
+            </div>
+            <p id="upload-sign">Hanya file gambar *.png, *.jpg, dan *.jpeg yang diterima (Max 5MB)</p>
+          </div>
+          
+          <div class="submit-button-wrapper">
+            <button id="submit-button" disabled>Buat Produk</button>
+          </div>
+        </div>
+        
+        <!--    Button For Mobile    -->
+        <button id="mobile-submit-button" class="mobile-submit-button" disabled>Buat Produk</button>
+      </div>
+      
+      <div class="modal">
+        <div class="modal-content">
+          <img src="" alt="Modal Image">
+        </div>
+      </div>
     `;
   }
 
@@ -330,27 +448,49 @@ class CreatePost extends HTMLElement {
   }
 
   _setupValidation() {
-    const titleInput = this._shadowRoot.querySelector('#title');
+    const titleInput = this._shadowRoot.querySelector('#name');
+    const priceInput = this._shadowRoot.querySelector('#price');
+    const stockInput = this._shadowRoot.querySelector('#stock');
+    const categoryInput = this._shadowRoot.querySelector('#category');
     const descInput = this._shadowRoot.querySelector('#description');
     const submitButton = this._shadowRoot.querySelector('#submit-button');
     const mobileSubmitButton = this._shadowRoot.querySelector('#mobile-submit-button');
     const fileInput = this._shadowRoot.querySelector('#file-input');
 
-    const titleValidationMessage = this._shadowRoot.querySelector('.title-validation');
+    const titleValidationMessage = this._shadowRoot.querySelector('.name-validation');
     const descValidationMessage = this._shadowRoot.querySelector('.description-validation');
+    const priceValidationMessage = this._shadowRoot.querySelector('.price-validation');
+    const stockValidationMessage = this._shadowRoot.querySelector('.stock-validation');
+    const categoryValidationMessage = this._shadowRoot.querySelector('.category-validation');
 
     const titleFocused = { value: false };
     const descFocused = { value: false };
+    const priceFocused = { value: false };
+    const stockFocused = { value: false };
+    const categoryFocused = { value: false };
+
+    // Format price input as Indonesian IDR currency
+    const formatPriceInput = () => {
+      let priceValue = priceInput.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+      if (priceValue) {
+        priceValue = `Rp ${  priceValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}`; // Add dots for thousands and prepend Rp
+      }
+      priceInput.value = priceValue;
+    };
 
     const validateInputs = () => {
       const titleValid = titleInput.value.trim().length >= 3;
       const descValid = descInput.value.trim().length >= 8;
+      const priceValid = !isNaN(priceInput.value.replace(/[^\d]/g, '')) && parseFloat(priceInput.value.replace(/[^\d]/g, '')) > 0;
+      const stockValid = !isNaN(stockInput.value) && stockInput.value >= 0;
+      const categoryValid = categoryInput.value.trim().length > 0;
       const imageValid = fileInput && fileInput.files.length > 0;
 
+      // Title validation
       if (titleValidationMessage) {
         if (titleFocused.value && !titleValid) {
           titleValidationMessage.style.display = 'flex';
-          titleValidationMessage.querySelector('.validation-message-p').textContent = 'Judul harus lebih dari 3 karakter';
+          titleValidationMessage.querySelector('.validation-message-p').textContent = 'Nama harus lebih dari 3 karakter';
           titleInput.style.borderColor = 'red';
         } else {
           titleValidationMessage.style.display = 'none';
@@ -358,6 +498,7 @@ class CreatePost extends HTMLElement {
         }
       }
 
+      // Description validation
       if (descValidationMessage) {
         if (descFocused.value && !descValid) {
           descValidationMessage.style.display = 'flex';
@@ -369,21 +510,68 @@ class CreatePost extends HTMLElement {
         }
       }
 
-      const isValid = titleValid && descValid && imageValid;
+      // Price validation
+      if (priceValidationMessage) {
+        if (priceFocused.value && !priceValid) {
+          priceValidationMessage.style.display = 'flex';
+          priceValidationMessage.querySelector('.validation-message-p').textContent = 'Harga harus lebih dari 0';
+          priceInput.style.borderColor = 'red';
+        } else {
+          priceValidationMessage.style.display = 'none';
+          priceInput.style.borderColor = '#dfe5ef';
+        }
+      }
+
+      // Stock validation
+      if (stockValidationMessage) {
+        if (stockFocused.value && !stockValid) {
+          stockValidationMessage.style.display = 'flex';
+          stockValidationMessage.querySelector('.validation-message-p').textContent = 'Stok harus lebih dari atau sama dengan 0';
+          stockInput.style.borderColor = 'red';
+        } else {
+          stockValidationMessage.style.display = 'none';
+          stockInput.style.borderColor = '#dfe5ef';
+        }
+      }
+
+      // Category validation
+      if (categoryValidationMessage) {
+        if (categoryFocused.value && !categoryValid) {
+          categoryValidationMessage.style.display = 'flex';
+          categoryValidationMessage.querySelector('.validation-message-p').textContent = 'Kategori tidak boleh kosong';
+          categoryInput.style.borderColor = 'red';
+        } else {
+          categoryValidationMessage.style.display = 'none';
+          categoryInput.style.borderColor = '#dfe5ef';
+        }
+      }
+
+      const isValid = titleValid && descValid && priceValid && stockValid && categoryValid && imageValid;
       submitButton.disabled = !isValid;
       mobileSubmitButton.disabled = !isValid;
     };
 
-    [titleInput, descInput, fileInput].forEach((input) => {
+    // Adding event listeners
+    [titleInput, descInput, priceInput, stockInput, categoryInput, fileInput].forEach((input) => {
       input.addEventListener('input', () => {
         if (input === titleInput) titleFocused.value = true;
         if (input === descInput) descFocused.value = true;
+        if (input === priceInput) {
+          priceFocused.value = true;
+          formatPriceInput(); // Format the price input as IDR
+        }
+        if (input === stockInput) stockFocused.value = true;
+        if (input === categoryInput) categoryFocused.value = true;
         validateInputs();
       });
     });
 
+    // Adding focus events to show validation on focus
     titleInput.addEventListener('focus', () => (titleFocused.value = true));
     descInput.addEventListener('focus', () => (descFocused.value = true));
+    priceInput.addEventListener('focus', () => (priceFocused.value = true));
+    stockInput.addEventListener('focus', () => (stockFocused.value = true));
+    categoryInput.addEventListener('focus', () => (categoryFocused.value = true));
 
     validateInputs();
   }
@@ -422,75 +610,6 @@ class CreatePost extends HTMLElement {
     deleteIcon.style.display = 'none';
     fileInput.value = '';
   }
-
-  render() {
-    this._shadowRoot.appendChild(this._style);
-
-    this._shadowRoot.innerHTML += `
-      <div class="header-content">
-        <div class="header-title">
-          <h1>Buat Postingan</h1>
-          <p>Buat postingan Anda untuk berbagi karya seni dengan komunitas</p>
-        </div>
-        <div class="header-image">
-          <img src="./images/image-create.png" alt="image-create">
-        </div>
-      </div>
-      
-      <div class="container">
-        <div class="form-container">
-          <form>
-            <div class="form-group">
-              <label for="title">Judul</label>
-              <input type="text" id="title" placeholder="Masukkan judul">
-              <div class="validation-message title-validation">
-                <i class="fa fa-times"></i>
-                <p class="validation-message-p"></p>
-              </div>
-            </div>
-            
-            <div class="form-group">
-              <label for="description">Deskripsi</label>
-              <textarea id="description" name="description" placeholder="Masukkan deskripsi" cols="30" rows="13"></textarea>
-              <div class="validation-message description-validation">
-                <i class="fa fa-times"></i>
-                <p class="validation-message-p"></p>
-              </div>
-            </div>
-          </form>
-        </div>
-        
-        <div class="image-container">
-          <div class="image-container-wrapper">
-            <div class="image-container-form" id="image-image-container-from">
-              <img id="image-preview" alt="Thumbnail Preview">
-              <div class="upload-instructions">
-                <p>Klik di sini untuk mengunggah</p>
-              </div>
-              <input type="file" id="file-input" accept="image/png, image/jpeg, image/jpg">
-              <div class="delete-icon" id="delete-icon">
-                <i class="fa fa-times"></i>
-              </div>
-            </div>
-            <p id="upload-sign">Hanya file gambar *.png, *.jpg, dan *.jpeg yang diterima (Max 5MB)</p>
-          </div>
-          
-          <div class="submit-button-wrapper">
-            <button id="submit-button" disabled>Buat Postingan</button>
-          </div>
-        </div>
-        
-        <!--    Button For Mobile    -->
-        <button id="mobile-submit-button" class="mobile-submit-button" disabled>Buat Postingan</button>
-      </div>
-      
-      <div class="modal">
-        <div class="modal-content">
-          <img src="" alt="Modal Image">
-        </div>
-      </div>
-    `;
-  }
 }
 
-customElements.define('create-post', CreatePost);
+customElements.define('create-product', CreateProduct);

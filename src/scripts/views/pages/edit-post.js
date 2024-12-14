@@ -148,7 +148,7 @@ const EditProfile = {
       inputElement.value = '';
     }
 
-    // Create FormData from input values and files
+    // CreatePost FormData from input values and files
     function createFormData(profilePictureFile, coverPictureFile) {
       const formData = new FormData();
       formData.append('name', nameInput.value.trim());

@@ -4,7 +4,7 @@ class SideBar extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
       <style>
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css');
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css');
 
         .sidebar {
           position: fixed;
@@ -156,6 +156,40 @@ class SideBar extends HTMLElement {
           display: block;
         }
         
+        /* Create */
+        .create .dropdown {
+          display: none;
+          position: absolute;
+          top: 20px;
+          left: 0;
+          width: 100%;
+          background-color: #fff;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+          border-radius: 8px;
+          z-index: 200;
+          margin-left: 10px;
+          padding: 10px;
+        }
+        
+        .create .dropdown a {
+          padding: 0.3rem;
+          display: block;
+          color: #2A3547;
+          text-decoration: none;
+          font-size: 1rem;
+          transition: background-color 0.3s ease;
+          width: 90%;
+        }
+        
+        .create .dropdown a:hover {
+          background-color: #EEF3FF;
+          width: 90%;
+        }
+        
+        .create.active .dropdown {
+          display: block;
+        }
+        
         .sidebar .nav-item-dropdown {
           opacity: 0;
           visibility: hidden;
@@ -195,25 +229,29 @@ class SideBar extends HTMLElement {
           <li>
             <a href="#/">
               <i class="fa-solid fa-house"></i>
-              <span class="nav-item">Home</span>
+              <span class="nav-item">Beranda</span>
             </a>
           </li>
           <li>
             <a href="#/explore">
               <i class="fa-solid fa-compass"></i>
-              <span class="nav-item">Explore</span>
+              <span class="nav-item">Jelajahi</span>
             </a>
           </li>
-          <li>
-            <a href="#/create-post">
+          <li class="create">
+            <a href="javascript:void(0)">
               <i class="fa-solid fa-square-plus"></i>
-              <span class="nav-item">Add Post</span>
+              <span class="nav-item">Buat Postingan</span>
             </a>
+            <div class="dropdown">
+              <a href="#/create-post"><i class="fa-solid fa-file-image"></i><span class="nav-item-dropdown">Buat Post</span></a>
+              <a href="#/create-product"><i class="fa-solid fa-box"></i><span class="nav-item-dropdown">Buat Produk</span></a>
+            </div>
           </li>
           <li>
             <a href="javascript:void(0)" id="searchIcon">
               <i class="fa-solid fa-magnifying-glass"></i>
-              <span class="nav-item">Search</span>
+              <span class="nav-item">Pencarian</span>
             </a>
           </li>
           <li>
@@ -225,18 +263,18 @@ class SideBar extends HTMLElement {
           <li>
             <a href="#/profile">
               <i class="fa-solid fa-user"></i>
-              <span class="nav-item">Profile</span>
+              <span class="nav-item">Profil</span>
             </a>
           </li>
           <li class="more">
             <a href="javascript:void(0)">
               <i class="fa-solid fa-ellipsis"></i>
-              <span class="nav-item">More</span>
+              <span class="nav-item">Lainnya</span>
             </a>
             <div class="dropdown">
               <a href="#/transaction-history"><i class="fa-solid fa-clock-rotate-left"></i><span class="nav-item-dropdown">Riwayat Transaksi</span></a>
-              <a href="#/settings"><i class="fa-solid fa-gear"></i><span class="nav-item-dropdown">Settings</span></a>
-              <a href="#/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="nav-item-dropdown">Logout</span></a>
+              <a href="#/settings"><i class="fa-solid fa-gear"></i><span class="nav-item-dropdown">Pengaturan</span></a>
+              <a href="#/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="nav-item-dropdown">Keluar</span></a>
             </div>
           </li>
         </ul>
@@ -246,6 +284,7 @@ class SideBar extends HTMLElement {
     this.initToggleButton();
     this.initDropdownToggle();
     this.initSearchModal();
+    this.initCreatePostDropdown();
   }
 
   initToggleButton() {
@@ -326,6 +365,26 @@ class SideBar extends HTMLElement {
 
         const searchModal = document.createElement('search-modal');
         document.body.appendChild(searchModal);
+      });
+    }
+  }
+
+  initCreatePostDropdown() {
+    const createButton = this.querySelector('.create');
+    if (createButton) {
+      createButton.addEventListener('click', () => {
+        const isOpen = createButton.classList.contains('active');
+        const sidebar = this.querySelector('.sidebar');
+
+        if (sidebar.classList.contains('active')) {
+          createButton.classList.toggle('active', !isOpen);
+        } else {
+          createButton.classList.add('active');
+        }
+
+        if (isOpen) {
+          createButton.classList.remove('active');
+        }
       });
     }
   }

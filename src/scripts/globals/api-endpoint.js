@@ -40,6 +40,8 @@ const API_ENDPOINT = {
   CANCEL_ORDER: (orderId) => `${CONFIG.BASE_URL}orders/${orderId}/cancel`, // PUT
   CREATE: `${CONFIG.BASE_URL}posts`,
   EDIT_PROFILE: `${CONFIG.BASE_URL}users/profile`,
+  CREATE_PRODUCT: `${CONFIG.BASE_URL}products`,
+  CATEGORIES_PRODUCT: `${CONFIG.BASE_URL}categories`,
 };
 
 export default API_ENDPOINT;

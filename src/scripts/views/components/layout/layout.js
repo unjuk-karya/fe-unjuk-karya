@@ -44,7 +44,7 @@ class AppLayout extends HTMLElement {
             height: 100%; /* Tambahkan ini */
           }
         </style>
-  
+        
         <div class="container">
           <side-bar></side-bar>
           <div class="main-wrapper">
