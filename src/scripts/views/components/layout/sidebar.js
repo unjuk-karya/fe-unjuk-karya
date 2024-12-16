@@ -217,18 +217,6 @@ class SideBar extends HTMLElement {
           margin-right: 10px;
         }
 
-
-        .overlay {
-          display: none;
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.5);
-          z-index: 150;
-        }
-
         .overlay {
           display: none;
           position: fixed;
@@ -253,7 +241,7 @@ class SideBar extends HTMLElement {
           justify-content: space-between;
           padding: 0 1rem;
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-          z-index: 100;
+          z-index: 200;
         }
 
         .app-bar #btn {
@@ -268,30 +256,18 @@ class SideBar extends HTMLElement {
           }
 
           .overlay {
-            display: block;
+            display: none;
           }
 
           .sidebar {
             position: fixed;
             width: 55px;
-            left: -80px;
+            left: -100px;
           }
 
           .sidebar.active {
-            width: 200px;
+            width: 250px;
             left: 0;
-          }
-
-          .sidebar .top .logo {
-            margin-bottom: 30px;
-          }
-
-          .sidebar .top .logo img {
-            display:none;
-          }
-
-          .sidebar .top {
-            margin-top: 0;
           }
         }
 
@@ -324,7 +300,7 @@ class SideBar extends HTMLElement {
       <div class="sidebar">
         <div class="top">
           <div class="logo">
-            <img src="/images/logo.png" alt="Logo">
+            <img src="/images/logo2.png" alt="Logo">
           </div>
           <i class="fa fa-bars" id="btn"></i>
         </div>
@@ -407,66 +383,24 @@ class SideBar extends HTMLElement {
       overlay.classList.remove('active');
     });
   }
-
-  initAppBarToggle() {
-    const btn = this.querySelector('#btn-bar');
-    const sidebar = this.querySelector('.sidebar');
-    const overlay = this.querySelector('.overlay');
-  
-    btn.addEventListener('click', () => {
-      sidebar.classList.toggle('active');
-      overlay.classList.toggle('active');
-  
-      // Ubah ikon menu menjadi close
-      if (sidebar.classList.contains('active')) {
-        btn.classList.remove('fa-bars');
-        btn.classList.add('fa-xmark');
-      } else {
-        btn.classList.remove('fa-xmark');
-        btn.classList.add('fa-bars');
-      }
-    });
-  
-    overlay.addEventListener('click', () => {
-      sidebar.classList.remove('active');
-      overlay.classList.remove('active');
-  
-      // Pastikan ikon kembali ke "bars"
-      btn.classList.remove('fa-xmark');
-      btn.classList.add('fa-bars');
-    });
-  }
   
   initToggleButton() {
     const btn = this.querySelector('#btn');
     const sidebar = this.querySelector('.sidebar');
     const overlay = this.querySelector('.overlay');
-  
+
     btn.addEventListener('click', () => {
       sidebar.classList.toggle('active');
-  
-      // Tampilkan overlay di layar kecil
+
+      // Periksa ukuran layar untuk menampilkan overlay
       if (window.innerWidth < 769) {
         overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
       }
-  
-      // Ubah ikon menu menjadi close
-      if (sidebar.classList.contains('active')) {
-        btn.classList.remove('fa-bars');
-        btn.classList.add('fa-xmark');
-      } else {
-        btn.classList.remove('fa-xmark');
-        btn.classList.add('fa-bars');
-      }
     });
-  
+
     overlay.addEventListener('click', () => {
       sidebar.classList.remove('active');
       overlay.style.display = 'none';
-  
-      // Pastikan ikon kembali ke "bars"
-      btn.classList.remove('fa-xmark');
-      btn.classList.add('fa-bars');
     });
   }
   
