@@ -1,0 +1,175 @@
+import Swal from 'sweetalert2';
+
+class SideBar extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `
+      <style>
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css');
+
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0; /* Sidebar tetap muncul di desktop */
+          height: 100vh;
+          width: 250px;
+          background-color: #fff;
+          padding: 0.4rem 0.8rem;
+          z-index: 200;
+          transition: all 0.5s ease;
+        }
+
+        .sidebar.active {
+          left: 0; /* Tampil saat active */
+        }
+
+        .app-bar {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 55px;
+          background-color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 1rem;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          z-index: 300;
+        }
+
+        .app-bar #btn {
+          font-size: 1.5rem;
+          color: #2A3547;
+          cursor: pointer;
+        }
+
+        .overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 150;
+        }
+
+        .overlay.active {
+          display: block;
+        }
+
+        @media (max-width: 768px) {
+          .app-bar {
+            display: flex;
+          }
+
+          .sidebar {
+            left: -250px; /* Awalnya tersembunyi di mobile */
+          }
+
+          .sidebar.active {
+            left: 0;
+          }
+
+          .content {
+            margin-left: 0;
+          }
+        }
+
+        @media (min-width: 769px) {
+          .app-bar {
+            display: none;
+          }
+
+          .sidebar {
+            left: 0;
+          }
+
+          .overlay {
+            display: none;
+          }
+        }
+      </style>
+
+      <div class="app-bar">
+        <i class="fa fa-bars" id="btn"></i>
+      </div>
+
+      <div class="sidebar">
+        <div class="top">
+          <div class="logo">
+            <img src="/images/logo.png" alt="Logo">
+          </div>
+        </div>
+        <ul>
+          <li>
+            <a href="#/">
+              <i class="fa-solid fa-house"></i>
+              <span class="nav-item">Beranda</span>
+            </a>
+          </li>
+          <li>
+            <a href="#/explore">
+              <i class="fa-solid fa-compass"></i>
+              <span class="nav-item">Jelajahi</span>
+            </a>
+          </li>
+          <li class="create">
+            <a href="javascript:void(0)">
+              <i class="fa-solid fa-square-plus"></i>
+              <span class="nav-item">Buat Postingan</span>
+            </a>
+            <div class="dropdown">
+              <a href="#/create-post"><i class="fa-solid fa-file-image"></i><span class="nav-item-dropdown">Buat Post</span></a>
+              <a href="#/create-product"><i class="fa-solid fa-box"></i><span class="nav-item-dropdown">Buat Produk</span></a>
+            </div>
+          </li>
+          <li>
+            <a href="#/marketplace">
+              <i class="fa-solid fa-shop"></i>
+              <span class="nav-item">Marketplace</span>
+            </a>
+          </li>
+          <li>
+            <a href="#/profile">
+              <i class="fa-solid fa-user"></i>
+              <span class="nav-item">Profil</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="overlay"></div>
+    `;
+
+    this.initAppBarToggle();
+    this.initDropdownToggle();
+  }
+
+  initAppBarToggle() {
+    const btn = this.querySelector('#btn');
+    const sidebar = this.querySelector('.sidebar');
+    const overlay = this.querySelector('.overlay');
+
+    btn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+    });
+  }
+
+  initDropdownToggle() {
+    const createButton = this.querySelector('.create');
+    if (createButton) {
+      createButton.addEventListener('click', () => {
+        createButton.classList.toggle('active');
+      });
+    }
+  }
+}
+
+customElements.define('side-bar', SideBar);

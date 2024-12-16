@@ -240,7 +240,33 @@ class SideBar extends HTMLElement {
           z-index: 150;
         }
 
+        .app-bar {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 55px;
+          background-color: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 1rem;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          z-index: 100;
+        }
+
+        .app-bar #btn {
+          font-size: 1.5rem;
+          color: #2A3547;
+          cursor: pointer;
+        }
+
         @media (max-width: 768px) {
+          .app-bar {
+            display: flex;
+          }
+
           .overlay {
             display: block;
           }
@@ -248,14 +274,32 @@ class SideBar extends HTMLElement {
           .sidebar {
             position: fixed;
             width: 55px;
+            left: -80px;
           }
 
           .sidebar.active {
-            width: 250px;
+            width: 200px;
+            left: 0;
+          }
+
+          .sidebar .top .logo {
+            margin-bottom: 30px;
+          }
+
+          .sidebar .top .logo img {
+            display:none;
+          }
+
+          .sidebar .top {
+            margin-top: 0;
           }
         }
 
         @media (min-width: 769px) {
+          .app-bar {
+            display: none;
+          }
+
           .overlay {
             display: none;
           }
@@ -273,6 +317,9 @@ class SideBar extends HTMLElement {
           }
         }
       </style>
+      <div class="app-bar">
+        <i class="fa fa-bars" id="btn-bar"></i>
+      </div>
 
       <div class="sidebar">
         <div class="top">
@@ -342,27 +389,88 @@ class SideBar extends HTMLElement {
     this.initDropdownToggle();
     this.initSearchModal();
     this.initCreatePostDropdown();
+    this.initAppBarToggle();
   }
 
-  initToggleButton() {
-    const btn = this.querySelector('#btn');
+  initAppBarToggle() {
+    const btn = this.querySelector('#btn-bar');
     const sidebar = this.querySelector('.sidebar');
     const overlay = this.querySelector('.overlay');
 
     btn.addEventListener('click', () => {
       sidebar.classList.toggle('active');
-
-      // Periksa ukuran layar untuk menampilkan overlay
-      if (window.innerWidth < 769) {
-        overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
-      }
+      overlay.classList.toggle('active');
     });
 
     overlay.addEventListener('click', () => {
       sidebar.classList.remove('active');
-      overlay.style.display = 'none';
+      overlay.classList.remove('active');
     });
   }
+
+  initAppBarToggle() {
+    const btn = this.querySelector('#btn-bar');
+    const sidebar = this.querySelector('.sidebar');
+    const overlay = this.querySelector('.overlay');
+  
+    btn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+  
+      // Ubah ikon menu menjadi close
+      if (sidebar.classList.contains('active')) {
+        btn.classList.remove('fa-bars');
+        btn.classList.add('fa-xmark');
+      } else {
+        btn.classList.remove('fa-xmark');
+        btn.classList.add('fa-bars');
+      }
+    });
+  
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+  
+      // Pastikan ikon kembali ke "bars"
+      btn.classList.remove('fa-xmark');
+      btn.classList.add('fa-bars');
+    });
+  }
+  
+  initToggleButton() {
+    const btn = this.querySelector('#btn');
+    const sidebar = this.querySelector('.sidebar');
+    const overlay = this.querySelector('.overlay');
+  
+    btn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+  
+      // Tampilkan overlay di layar kecil
+      if (window.innerWidth < 769) {
+        overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+      }
+  
+      // Ubah ikon menu menjadi close
+      if (sidebar.classList.contains('active')) {
+        btn.classList.remove('fa-bars');
+        btn.classList.add('fa-xmark');
+      } else {
+        btn.classList.remove('fa-xmark');
+        btn.classList.add('fa-bars');
+      }
+    });
+  
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      overlay.style.display = 'none';
+  
+      // Pastikan ikon kembali ke "bars"
+      btn.classList.remove('fa-xmark');
+      btn.classList.add('fa-bars');
+    });
+  }
+  
+
 
   initDropdownToggle() {
     const moreButton = this.querySelector('.more');

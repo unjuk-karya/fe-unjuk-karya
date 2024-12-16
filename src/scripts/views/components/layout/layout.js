@@ -20,7 +20,7 @@ class AppLayout extends HTMLElement {
   
           .main-wrapper {
             flex: 1;      
-            margin-left: 80px;
+            margin-left: 0;
             transition: margin-left 0.5s ease;
             display: flex;        
             flex-direction: column;
