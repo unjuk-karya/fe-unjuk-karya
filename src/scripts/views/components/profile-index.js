@@ -586,6 +586,7 @@ class ProfileIndex extends HTMLElement {
             card.setAttribute('rating', product.rating);
             card.setAttribute('sold', product.sold);
             card.setAttribute('product-id', product.id);
+            card.setAttribute('is-saved', product.isSaved);
           });
         }
       }

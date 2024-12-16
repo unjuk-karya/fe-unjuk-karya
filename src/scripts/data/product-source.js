@@ -69,6 +69,29 @@ class ProductSource {
 
     return responseData.data;
   }
+
+  static async saveProduct(productId) {
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(API_ENDPOINT.PRODUCT_SAVES(productId), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw {
+        status: response.status,
+        data: responseData
+      };
+    }
+
+    return responseData.data;
+  }
 }
 
 export default ProductSource;

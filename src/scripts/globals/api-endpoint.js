@@ -15,6 +15,7 @@ const API_ENDPOINT = {
     `${CONFIG.BASE_URL}posts/feed?page=${page}&pageSize=${pageSize}`, // GET
   GET_COMMENTS_BY_POST_ID: (postId, page = 1, pageSize = 10) =>
     `${CONFIG.BASE_URL}posts/${postId}/comments?page=${page}&pageSize=${pageSize}`, // GET
+  PRODUCT_SAVES: (productId) => `${CONFIG.BASE_URL}products/${productId}/saves`, // POST
   POST_COMMENTS: (postId) => `${CONFIG.BASE_URL}posts/${postId}/comments`, // POST
   POST_COMMENT_LIKES: (postId, commentId) =>
     `${CONFIG.BASE_URL}posts/${postId}/comments/${commentId}/likes`, // POST

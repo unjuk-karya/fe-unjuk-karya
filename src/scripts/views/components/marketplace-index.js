@@ -88,6 +88,7 @@ class MarketplaceIndex extends HTMLElement {
         name: product.name,
         price: `Rp ${product.price.toLocaleString('id-ID')}`,
         sold: product.sold,
+        isSaved: product.isSaved  // Tambahkan ini
       }));
       this.currentPage = response.pagination.currentPage;
       this.totalPages = response.pagination.totalPages;
@@ -119,6 +120,7 @@ class MarketplaceIndex extends HTMLElement {
         name: product.name,
         price: `Rp ${product.price.toLocaleString('id-ID')}`,
         sold: product.sold,
+        isSaved: product.isSaved  // Tambahkan ini
       }));
 
       this.products = [...this.products, ...newProducts];
@@ -205,15 +207,16 @@ class MarketplaceIndex extends HTMLElement {
        ${state === 'success' ? `
          <div class="products-grid">
            ${this.products.map((product) => `
-             <product-card
-               image="${product.image}"
-               category="${product.category}"
-               rating="${product.rating}"
-               name="${product.name}"
-               price="${product.price}"
-               sold="${product.sold}"
-               product-id="${product.id}"
-             ></product-card>
+            <product-card
+              image="${product.image}"
+              category="${product.category}"
+              rating="${product.rating}"
+              name="${product.name}"
+              price="${product.price}"
+              sold="${product.sold}"
+              product-id="${product.id}"
+              is-saved="${product.isSaved}"  
+            ></product-card>
            `).join('')}
          </div>
          ${this.currentPage < this.totalPages ? `

@@ -1,3 +1,5 @@
+import ProductSource from "../../../data/product-source";
+
 class ProductCard extends HTMLElement {
   constructor() {
     super();
@@ -64,7 +66,7 @@ class ProductCard extends HTMLElement {
           gap: 4px;
         }
  
-        .love-button {
+        .save-button {
           position: absolute;
           bottom: 70px;
           right: 12px;
@@ -83,21 +85,21 @@ class ProductCard extends HTMLElement {
           transition: all 0.2s;
         }
 
-        .love-button i {
+        .save-button i {
           font-size: 16px;
           color: white;
           transition: color 0.2s;
         }
 
-        .love-button:hover {
+        .save-button:hover {
           transform: scale(1.1);
         }
 
-        .love-button.active {
+        .save-button.active {
           background: #1a73e8;
         }
 
-        .love-button.active i {
+        .save-button.active i {
           color: #ff4444;
         }
  
@@ -135,8 +137,8 @@ class ProductCard extends HTMLElement {
           <div class="category">${this.getAttribute('category')}</div>
           <div class="rating">⭐ ${this.getAttribute('rating')}</div>
         </div>
-        <button class="love-button">
-          <i class="fa-solid fa-heart"></i>
+        <button class="save-button ${this.getAttribute('is-saved') === 'true' ? 'active' : ''}">
+          <i class="fa-solid fa-bookmark"></i>
         </button>
         <div class="content">
           <h3 class="name">${this.getAttribute('name')}</h3>
@@ -148,10 +150,32 @@ class ProductCard extends HTMLElement {
 
     shadow.appendChild(template.content.cloneNode(true));
 
-    const loveButton = shadow.querySelector('.love-button');
-    loveButton.addEventListener('click', (event) => {
+    // Set initial state
+    const saveButton = shadow.querySelector('.save-button');
+    if (this.getAttribute('is-saved') === 'true') {
+      saveButton.classList.add('active');
+    }
+
+    saveButton.addEventListener('click', async (event) => {
       event.stopPropagation();
-      loveButton.classList.toggle('active');
+      saveButton.classList.toggle('active');
+      
+      const productId = this.getAttribute('product-id');
+      try {
+        await ProductSource.saveProduct(productId);
+      } catch (error) {
+        console.error('Failed to save product:', error);
+      }
+
+      // Dispatch custom event when save state changes
+      this.dispatchEvent(new CustomEvent('saveChange', {
+        detail: {
+          productId: this.getAttribute('product-id'),
+          isSaved: saveButton.classList.contains('active')
+        },
+        bubbles: true,
+        composed: true
+      }));
     });
 
     const card = shadow.querySelector('.card');
@@ -162,12 +186,23 @@ class ProductCard extends HTMLElement {
   }
 
   static get observedAttributes() {
-    return ['image', 'category', 'rating', 'name', 'price', 'sold', 'product-id'];
+    return ['image', 'category', 'rating', 'name', 'price', 'sold', 'product-id', 'is-saved'];
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (oldValue !== newValue) {
-      this.render();
+      if (name === 'is-saved') {
+        const saveButton = this.shadowRoot.querySelector('.save-button');
+        if (saveButton) {
+          if (newValue === 'true') {
+            saveButton.classList.add('active');
+          } else {
+            saveButton.classList.remove('active');
+          }
+        }
+      } else {
+        this.render();
+      }
     }
   }
 

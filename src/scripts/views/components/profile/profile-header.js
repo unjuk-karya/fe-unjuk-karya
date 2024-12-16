@@ -332,7 +332,7 @@ class ProfileHeader extends HTMLElement {
         <div class="stats">
           <div class="stat-item">
             <h3>${this._profileData.postsCount}</h3>
-            <p>Postingan</p>
+            <p>Post</p>
           </div>
           <div class="stat-item">
             <h3>${this._profileData.productsCount}</h3>
