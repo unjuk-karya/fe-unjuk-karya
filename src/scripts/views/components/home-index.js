@@ -180,10 +180,12 @@ class HomeIndex extends HTMLElement {
 
         .container-home {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
+          grid-template-columns: repeat(3, 1fr);
+          // grid-template-columns: 800px;
           gap: 32px;
           width: 100%;
           box-sizing: border-box;
+          justify-content: center;
         }
 
         post-card-home {

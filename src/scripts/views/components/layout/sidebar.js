@@ -14,7 +14,7 @@ class SideBar extends HTMLElement {
           width: 55px;
           background-color: #fff;
           padding: 0.4rem 0.8rem;
-          z-index: 100;
+          z-index: 200;
           transition: all 0.5s ease;
         }
 
@@ -216,6 +216,62 @@ class SideBar extends HTMLElement {
         .sidebar ul li a i {
           margin-right: 10px;
         }
+
+
+        .overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 150;
+        }
+
+        .overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 150;
+        }
+
+        @media (max-width: 768px) {
+          .overlay {
+            display: block;
+          }
+
+          .sidebar {
+            position: fixed;
+            width: 55px;
+          }
+
+          .sidebar.active {
+            width: 250px;
+          }
+        }
+
+        @media (min-width: 769px) {
+          .overlay {
+            display: none;
+          }
+
+          .content {
+            transition: margin-left 0.5s ease;
+          }
+
+          .sidebar {
+            position: relative;
+          }
+
+          .sidebar.active + .content {
+            margin-left: 20px;
+          }
+        }
       </style>
 
       <div class="sidebar">
@@ -279,6 +335,7 @@ class SideBar extends HTMLElement {
           </li>
         </ul>
       </div>
+      <div class="overlay"></div>
     `;
 
     this.initToggleButton();
@@ -290,20 +347,21 @@ class SideBar extends HTMLElement {
   initToggleButton() {
     const btn = this.querySelector('#btn');
     const sidebar = this.querySelector('.sidebar');
+    const overlay = this.querySelector('.overlay');
 
-    if (btn) {
-      btn.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
+    btn.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
 
-        this.dispatchEvent(new CustomEvent('sidebarToggle', {
-          bubbles: true,
-          composed: true,
-          detail: {
-            isActive: sidebar.classList.contains('active')
-          }
-        }));
-      });
-    }
+      // Periksa ukuran layar untuk menampilkan overlay
+      if (window.innerWidth < 769) {
+        overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
+      }
+    });
+
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      overlay.style.display = 'none';
+    });
   }
 
   initDropdownToggle() {
