@@ -81,9 +81,7 @@ class PostDetailActions extends HTMLElement {
           <button class="action-button" id="comment-button">
             <i class="far fa-comment"></i>
           </button>
-          <button class="action-button ${this._data.isSaved ? 'saved' : ''}" id="save-button" style="margin-left: auto;">
-            <i class="fa${this._data.isSaved ? 's' : 'r'} fa-bookmark"></i>
-          </button>
+         
         </div>
         
         <div class="likes-count ${this.isLikesProcessing ? 'disabled' : ''}" id="likes-count">
@@ -112,11 +110,6 @@ class PostDetailActions extends HTMLElement {
       this.dispatchEvent(new CustomEvent('comment-click'));
     });
 
-    // Save button
-    const saveButton = this.shadowRoot.querySelector('#save-button');
-    saveButton.addEventListener('click', () => {
-      this.dispatchEvent(new CustomEvent('save-click'));
-    });
 
     // Likes count
     const likesCount = this.shadowRoot.querySelector('#likes-count');
@@ -139,10 +132,6 @@ class PostDetailActions extends HTMLElement {
     this.render();
   }
 
-  updateSaveStatus(isSaved) {
-    this._data.isSaved = isSaved;
-    this.render();
-  }
 }
 
 customElements.define('post-detail-actions', PostDetailActions);

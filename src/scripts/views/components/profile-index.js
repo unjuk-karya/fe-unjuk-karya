@@ -583,8 +583,8 @@ class ProfileIndex extends HTMLElement {
             card.setAttribute('category', product.category.name);
             card.setAttribute('name', product.name);
             card.setAttribute('price', `Rp ${product.price.toLocaleString('id-ID')}`);
-            card.setAttribute('rating', '4.5');
-            card.setAttribute('sold', '10');
+            card.setAttribute('rating', product.rating);
+            card.setAttribute('sold', product.sold);
             card.setAttribute('product-id', product.id);
           });
         }

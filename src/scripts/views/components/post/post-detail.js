@@ -102,17 +102,6 @@ class PostDetail extends HTMLElement {
     }
   }
 
-  async handleSave() {
-    try {
-      this._post.isSaved = !this._post.isSaved;
-      const postActions = this.shadowRoot.querySelector('post-detail-actions');
-      postActions.updateSaveStatus(this._post.isSaved);
-      await PostSource.savePost(this._postId);
-    } catch (error) {
-      console.error('Error toggling save:', error);
-    }
-  }
-
   async handleFollow() {
     try {
       this._post.isFollowing = !this._post.isFollowing;
@@ -578,7 +567,6 @@ class PostDetail extends HTMLElement {
     const postActions = this.shadowRoot.querySelector('post-detail-actions');
     postActions.data = {
       isLiked: this._post.isLiked,
-      isSaved: this._post.isSaved,
       likesCount: this._post.likesCount,
       createdAt: this._post.createdAt
     };
@@ -637,10 +625,6 @@ class PostDetail extends HTMLElement {
     const postActions = this.shadowRoot.querySelector('post-detail-actions');
     postActions.addEventListener('like-click', () => {
       this.handleLike();
-    });
-
-    postActions.addEventListener('save-click', () => {
-      this.handleSave();
     });
 
     postActions.addEventListener('likes-click', () => {

@@ -29,18 +29,6 @@ class PostCardHome extends HTMLElement {
     }
   }
 
-  async handleSave() {
-    try {
-      this.post.isSaved = !this.post.isSaved;
-      const saveButton = this.shadowRoot.querySelector('.save-button');
-      saveButton.innerHTML = `<i class="${this.post.isSaved ? 'fas' : 'far'} fa-bookmark"></i>`;
-      saveButton.classList.toggle('saved', this.post.isSaved);
-      await PostSource.savePost(this.post.id);
-    } catch (error) {
-      console.error('Error toggling save:', error);
-    }
-  }
-
   handleLikesCountClick() {
     const postDetailLike = document.createElement('user-list-modal');
     postDetailLike.setAttribute('post-id', this.post.id);
@@ -62,13 +50,11 @@ class PostCardHome extends HTMLElement {
 
   setupEventListeners() {
     const likeButton = this.shadowRoot.querySelector('.like-button');
-    const saveButton = this.shadowRoot.querySelector('.save-button');
     const commentButton = this.shadowRoot.querySelector('.comment-button');
     const likesCount = this.shadowRoot.querySelector('.likes-count');
     const postImage = this.shadowRoot.querySelector('.post-image');
 
     if (likeButton) likeButton.addEventListener('click', () => this.handleLike());
-    if (saveButton) saveButton.addEventListener('click', () => this.handleSave());
     if (commentButton) commentButton.addEventListener('click', () => this.handleComment());
     if (likesCount) likesCount.addEventListener('click', () => this.handleLikesCountClick());
     if (postImage) postImage.addEventListener('click', () => this.handleImageClick());
@@ -269,9 +255,6 @@ class PostCardHome extends HTMLElement {
               <i class="far fa-comment"></i>
             </button>
           </div>
-          <button class="action-button save-button ${this.post.isSaved ? 'saved' : ''}" aria-label="Simpan">
-            <i class="${this.post.isSaved ? 'fas' : 'far'} fa-bookmark"></i>
-          </button>
         </div>
 
         <span class="likes-count">${this.post.likesCount} suka</span>

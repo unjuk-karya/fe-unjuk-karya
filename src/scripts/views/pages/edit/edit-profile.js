@@ -143,7 +143,7 @@ const EditProfile = {
           }).then(() => {
             window.location.href = '#/profile';
           });
-
+          localStorage.setItem('user', JSON.stringify(updatedProfile.data));
           console.log(updatedProfile);
         } catch (error) {
           Swal.close();

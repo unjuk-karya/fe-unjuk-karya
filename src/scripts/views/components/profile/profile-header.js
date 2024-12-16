@@ -334,6 +334,10 @@ class ProfileHeader extends HTMLElement {
             <h3>${this._profileData.postsCount}</h3>
             <p>Postingan</p>
           </div>
+          <div class="stat-item">
+            <h3>${this._profileData.productsCount}</h3>
+            <p>Produk</p>
+          </div>
           <div class="stat-item clickable" id="followers">
             <h3>${this._profileData.followersCount}</h3>
             <p>Pengikut</p>

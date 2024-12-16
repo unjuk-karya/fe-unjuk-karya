@@ -139,29 +139,6 @@ class PostSource {
     return responseData.data;
   }
 
-  static async savePost(postId) {
-    const token = localStorage.getItem('token');
-
-    const response = await fetch(API_ENDPOINT.POST_SAVES(postId), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-
-    const responseData = await response.json();
-
-    if (!response.ok) {
-      throw {
-        status: response.status,
-        data: responseData
-      };
-    }
-
-    return responseData.data;
-  }
-
   static async postComment(postId, content) {
     const token = localStorage.getItem('token');
 
