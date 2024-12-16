@@ -134,7 +134,7 @@ const EditProduct = {
           title: 'Produk Dibuat',
           text: 'Produk Anda telah berhasil dibuat.',
         }).then(() => {
-          window.location.href = '#/';
+          window.location.href = '#/home';
         });
 
         createPostElement.shadowRoot.querySelector('form').reset();

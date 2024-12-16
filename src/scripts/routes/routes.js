@@ -13,9 +13,11 @@ import EditProfile from '../views/pages/edit/edit-profile';
 import CompletingRegister from '../views/pages/auth/completing-register';
 import TransactionHistory from '../views/pages/transaction-history';
 import EditProduct from '../views/pages/edit/edit-product';
+import LandingPage from '../views/pages/landing-page';
 
 const routes = {
-  '/': Home,
+  '/': LandingPage,
+  '/home': Home,
   '/login': Login,
   '/register': Register,
   '/completing-register/:id': CompletingRegister,

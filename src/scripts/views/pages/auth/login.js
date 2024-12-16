@@ -46,7 +46,7 @@ const Login = {
           title: 'Login Berhasil',
           text: 'Anda telah berhasil masuk. Selamat menikmati pengalaman Anda!',
         }).then(() => {
-          window.location.href = '#/';
+          window.location.href = '#/home';
         });
       } catch (error) {
         let errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';

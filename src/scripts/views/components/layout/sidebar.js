@@ -306,7 +306,7 @@ class SideBar extends HTMLElement {
         </div>
         <ul>
           <li>
-            <a href="#/">
+            <a href="#/home">
               <i class="fa-solid fa-house"></i>
               <span class="nav-item">Beranda</span>
             </a>

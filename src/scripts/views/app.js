@@ -12,13 +12,22 @@ class App {
       const url = UrlParser.parseActiveUrlWithCombiner();
       const token = localStorage.getItem('token');
 
-      if (!token && url !== '/login' && url !== '/register') {
-        window.location.href = '#/login';
+      if (!token && url !== '/login' && url !== '/register' && url !== '/') {
+        window.location.href = '#/';
         return;
       }
 
       if (token && (url === '/login' || url === '/register')) {
-        window.location.href = '#/';
+        window.location.href = '#/home';
+        return;
+      }
+
+      if (url === '/') {
+        const landingPage = routes['/'];
+        if (landingPage) {
+          document.body.innerHTML = await landingPage.render();
+          await landingPage.afterRender();
+        }
         return;
       }
 
@@ -42,6 +51,7 @@ class App {
       }
     } catch (error) {
       console.error('Error in renderPage:', error);
+
       if (this._content) {
         this._content.innerHTML = await NotFound.render();
         await NotFound.afterRender();

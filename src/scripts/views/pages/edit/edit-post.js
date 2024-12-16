@@ -124,7 +124,7 @@ const EditPost = {
             title: 'Postingan Diperbarui',
             text: 'Postingan Anda telah berhasil diperbarui.',
           }).then(() => {
-            window.location.href = '#/';
+            window.location.href = '#/home';
           });
 
           editPostElement.shadowRoot.querySelector('form').reset();

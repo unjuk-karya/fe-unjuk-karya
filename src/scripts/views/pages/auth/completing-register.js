@@ -160,7 +160,7 @@ const CompletingRegister = {
             icon: 'success',
             confirmButtonText: 'Luar biasa!',
           }).then(() => {
-            window.location.href = '#/';
+            window.location.href = '#/home';
           });
 
           console.log(updatedProfile);
