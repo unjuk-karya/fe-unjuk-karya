@@ -8,6 +8,8 @@ const API_ENDPOINT = {
     `${CONFIG.BASE_URL}users/${userId}/posts?page=${page}&pageSize=${pageSize}`, // GET
   GET_USER_LIKED_POSTS: (userId, page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}users/${userId}/liked-posts?page=${page}&pageSize=${pageSize}`, // GET
+  GET_USER_SAVED_PRODUCTS: (userId, page = 1, pageSize = 8) =>
+    `${CONFIG.BASE_URL}users/${userId}/saved-products?page=${page}&pageSize=${pageSize}`, // GET
   POST_FOLLOW_USER: (userId) => `${CONFIG.BASE_URL}users/${userId}/follow`, // POST
   GET_ALL_POSTS: (page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}posts?page=${page}&pageSize=${pageSize}`, // GET

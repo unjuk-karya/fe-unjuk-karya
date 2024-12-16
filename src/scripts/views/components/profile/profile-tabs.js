@@ -138,9 +138,10 @@ class ProfileTabs extends HTMLElement {
       </style>
 
       <div class="tabs">
-        <div class="tab ${this.activeTab === 'posts' ? 'active' : ''}" data-target="posts">Postingan</div>        
+        <div class="tab ${this.activeTab === 'posts' ? 'active' : ''}" data-target="posts">Postingan</div>
         <div class="tab ${this.activeTab === 'etalase' ? 'active' : ''}" data-target="etalase">Etalase</div>
         <div class="tab ${this.activeTab === 'liked' ? 'active' : ''}" data-target="liked">Disukai</div>
+        <div class="tab ${this.activeTab === 'tersimpan' ? 'active' : ''}" data-target="tersimpan">Tersimpan</div>
       </div>
     `;
   }

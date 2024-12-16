@@ -10,32 +10,40 @@ class ProfileIndex extends HTMLElement {
     this.postsError = null;
     this.likedPostsError = null;
     this.productsError = null;
+    this.savedProductsError = null;
     this.nextPostsError = null;
     this.nextLikedPostsError = null;
     this.nextProductsError = null;
+    this.nextSavedProductsError = null;
 
     this.activeTab = 'posts';
     this.posts = [];
     this.likedPosts = [];
     this.products = [];
+    this.savedProducts = [];
     this.postsPage = 1;
     this.postsTotalPages = 1;
     this.likedPostsPage = 1;
     this.likedPostsTotalPages = 1;
     this.productsPage = 1;
     this.productsTotalPages = 1;
+    this.savedProductsPage = 1;
+    this.savedProductsTotalPages = 1;
     this.isLoadingPosts = false;
     this.isLoadingLikedPosts = false;
     this.isLoadingProducts = false;
+    this.isLoadingSavedProducts = false;
     this.isLoadingInitialData = true;
     this.profileData = null;
     this.hasLoadedLikedPosts = false;
     this.hasLoadedPosts = false;
     this.hasLoadedProducts = false;
+    this.hasLoadedSavedProducts = false;
 
     this.postsObserver = null;
     this.likedPostsObserver = null;
     this.productsObserver = null;
+    this.savedProductsObserver = null;
 
     this.handlePostClick = this.handlePostClick.bind(this);
     this.handleTabChange = this.handleTabChange.bind(this);
@@ -43,9 +51,11 @@ class ProfileIndex extends HTMLElement {
     this.handlePostsRetry = this.handlePostsRetry.bind(this);
     this.handleLikedPostsRetry = this.handleLikedPostsRetry.bind(this);
     this.handleProductsRetry = this.handleProductsRetry.bind(this);
+    this.handleSavedProductsRetry = this.handleSavedProductsRetry.bind(this);
     this.handleNextPostsRetry = this.handleNextPostsRetry.bind(this);
     this.handleNextLikedPostsRetry = this.handleNextLikedPostsRetry.bind(this);
     this.handleNextProductsRetry = this.handleNextProductsRetry.bind(this);
+    this.handleNextSavedProductsRetry = this.handleNextSavedProductsRetry.bind(this);
   }
 
   get userId() {
@@ -76,6 +86,16 @@ class ProfileIndex extends HTMLElement {
     await this.fetchLikedPosts(1);
   }
 
+  async handleProductsRetry() {
+    this.productsError = null;
+    await this.fetchProducts(1);
+  }
+
+  async handleSavedProductsRetry() {
+    this.savedProductsError = null;
+    await this.fetchSavedProducts(1);
+  }
+
   async handleNextPostsRetry() {
     this.nextPostsError = null;
     await this.fetchPosts(this.postsPage + 1);
@@ -86,14 +106,14 @@ class ProfileIndex extends HTMLElement {
     await this.fetchLikedPosts(this.likedPostsPage + 1);
   }
 
-  async handleProductsRetry() {
-    this.productsError = null;
-    await this.fetchProducts(1);
-  }
-
   async handleNextProductsRetry() {
     this.nextProductsError = null;
     await this.fetchProducts(this.productsPage + 1);
+  }
+
+  async handleNextSavedProductsRetry() {
+    this.nextSavedProductsError = null;
+    await this.fetchSavedProducts(this.savedProductsPage + 1);
   }
 
   createTemplate() {
@@ -192,7 +212,7 @@ class ProfileIndex extends HTMLElement {
                 </content-state-handler>
               </div>
 
-             <div id="etalase" class="tab-content ${this.activeTab === 'etalase' ? 'active' : ''}">
+              <div id="etalase" class="tab-content ${this.activeTab === 'etalase' ? 'active' : ''}">
                 <content-state-handler
                   id="products-state-handler"
                   state="${this.productsError ? 'error' : !this.hasLoadedProducts && this.activeTab === 'etalase' ? 'loading' : this.hasLoadedProducts && this.products.length === 0 ? 'empty' : 'success'}"
@@ -233,6 +253,27 @@ class ProfileIndex extends HTMLElement {
                   ` : ''}
                 </content-state-handler>
               </div>
+
+              <div id="tersimpan" class="tab-content ${this.activeTab === 'tersimpan' ? 'active' : ''}">
+                <content-state-handler
+                  id="saved-products-state-handler"
+                  state="${this.savedProductsError ? 'error' : !this.hasLoadedSavedProducts && this.activeTab === 'tersimpan' ? 'loading' : this.hasLoadedSavedProducts && this.savedProducts.length === 0 ? 'empty' : 'success'}"
+                  message="${this.savedProductsError ? 'Gagal memuat produk tersimpan. Silakan coba lagi.' : !this.hasLoadedSavedProducts ? 'Memuat produk tersimpan...' : 'Belum ada produk yang disimpan.'}"
+                >
+                  ${!this.savedProductsError && this.hasLoadedSavedProducts && this.savedProducts.length > 0 ? `
+                    <div class="grid"></div>
+                    <div class="sentinel" id="saved-products-sentinel"></div>
+                    ${this.savedProductsPage < this.savedProductsTotalPages ? `
+                      <content-state-handler 
+                        id="next-saved-products-handler"
+                        state="${this.isLoadingSavedProducts ? 'loading' : this.nextSavedProductsError ? 'error' : 'success'}"
+                        message="${this.nextSavedProductsError ? 'Gagal memuat produk berikutnya. Silakan coba lagi.' : 'Memuat lebih banyak produk...'}"
+                      >
+                      </content-state-handler>
+                    ` : ''}
+                  ` : ''}
+                </content-state-handler>
+              </div>
             </div>
           `}
         ` : ''}
@@ -244,18 +285,22 @@ class ProfileIndex extends HTMLElement {
     this.posts = [];
     this.likedPosts = [];
     this.products = [];
+    this.savedProducts = [];
     this.postsPage = 1;
     this.likedPostsPage = 1;
     this.productsPage = 1;
+    this.savedProductsPage = 1;
     this.isLoadingInitialData = true;
     this.error = null;
     this.postsError = null;
     this.likedPostsError = null;
     this.productsError = null;
+    this.savedProductsError = null;
     this.profileData = null;
     this.hasLoadedLikedPosts = false;
     this.hasLoadedPosts = false;
     this.hasLoadedProducts = false;
+    this.hasLoadedSavedProducts = false;
 
     this.render();
     await this.fetchInitialData();
@@ -295,6 +340,10 @@ class ProfileIndex extends HTMLElement {
       await this.fetchProducts(1);
     }
 
+    if (newTab === 'tersimpan' && !this.hasLoadedSavedProducts) {
+      await this.fetchSavedProducts(1);
+    }
+
     this.setupIntersectionObserver();
   }
 
@@ -312,6 +361,8 @@ class ProfileIndex extends HTMLElement {
   setupIntersectionObserver() {
     if (this.postsObserver) this.postsObserver.disconnect();
     if (this.likedPostsObserver) this.likedPostsObserver.disconnect();
+    if (this.productsObserver) this.productsObserver.disconnect();
+    if (this.savedProductsObserver) this.savedProductsObserver.disconnect();
 
     const options = {
       root: null,
@@ -352,13 +403,26 @@ class ProfileIndex extends HTMLElement {
       });
     }, options);
 
+    this.savedProductsObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting &&
+          !this.isLoadingSavedProducts &&
+          !this.nextSavedProductsError &&
+          this.savedProductsPage < this.savedProductsTotalPages) {
+          this.fetchSavedProducts(this.savedProductsPage + 1);
+        }
+      });
+    }, options);
+
     const postsSentinel = this.shadowRoot.querySelector('#posts-sentinel');
     const likedPostsSentinel = this.shadowRoot.querySelector('#liked-posts-sentinel');
     const productsSentinel = this.shadowRoot.querySelector('#products-sentinel');
+    const savedProductsSentinel = this.shadowRoot.querySelector('#saved-products-sentinel');
 
     if (postsSentinel) this.postsObserver.observe(postsSentinel);
     if (likedPostsSentinel) this.likedPostsObserver.observe(likedPostsSentinel);
     if (productsSentinel) this.productsObserver.observe(productsSentinel);
+    if (savedProductsSentinel) this.savedProductsObserver.observe(savedProductsSentinel);
   }
 
   async fetchPosts(page = 1) {
@@ -508,6 +572,55 @@ class ProfileIndex extends HTMLElement {
     }
   }
 
+  async fetchSavedProducts(page = 1) {
+    if (this.isLoadingSavedProducts) return;
+
+    const userId = this.getCurrentUserId();
+    if (!userId) {
+      if (page === 1) {
+        this.savedProductsError = new Error('User ID not found');
+      } else {
+        this.nextSavedProductsError = new Error('User ID not found');
+      }
+      this.render();
+      return;
+    }
+
+    try {
+      this.isLoadingSavedProducts = true;
+      if (page === 1) {
+        this.savedProductsError = null;
+      } else {
+        this.nextSavedProductsError = null;
+      }
+      this.render();
+
+      const response = await ProfileSource.getUserSavedProducts(userId, page);
+
+      if (page === 1) {
+        this.savedProducts = response.products;
+        this.hasLoadedSavedProducts = true;
+      } else {
+        this.savedProducts = [...this.savedProducts, ...response.products];
+      }
+
+      this.savedProductsPage = response.pagination.currentPage;
+      this.savedProductsTotalPages = response.pagination.totalPages;
+
+    } catch (error) {
+      console.error('Failed to fetch saved products:', error);
+      if (page === 1) {
+        this.savedProductsError = error;
+      } else {
+        this.nextSavedProductsError = error;
+      }
+    } finally {
+      this.isLoadingSavedProducts = false;
+      this.render();
+      this.setupIntersectionObserver();
+    }
+  }
+
   async fetchInitialData() {
     const userId = this.getCurrentUserId();
     if (!userId) {
@@ -575,8 +688,8 @@ class ProfileIndex extends HTMLElement {
       if (this.products.length > 0) {
         const productsGrid = this.shadowRoot.querySelector('#etalase .grid');
         if (productsGrid) {
-          productsGrid.innerHTML = this.products.map(() => '<product-card></product-card>').join('');
-          const cards = productsGrid.querySelectorAll('product-card');
+          productsGrid.innerHTML = this.products.map(() => '<product-card-profile-1></product-card-profile-1>').join('');
+          const cards = productsGrid.querySelectorAll('product-card-profile-1');
           cards.forEach((card, index) => {
             const product = this.products[index];
             card.setAttribute('image', product.image);
@@ -601,6 +714,25 @@ class ProfileIndex extends HTMLElement {
           });
         }
       }
+
+      if (this.savedProducts.length > 0) {
+        const savedProductsGrid = this.shadowRoot.querySelector('#tersimpan .grid');
+        if (savedProductsGrid) {
+          savedProductsGrid.innerHTML = this.savedProducts.map(() => '<product-card-profile-2></product-card-profile-2>').join('');
+          const cards = savedProductsGrid.querySelectorAll('product-card-profile-2');
+          cards.forEach((card, index) => {
+            const product = this.savedProducts[index];
+            card.setAttribute('image', product.image);
+            card.setAttribute('category', product.category.name);
+            card.setAttribute('name', product.name);
+            card.setAttribute('price', `Rp ${product.price.toLocaleString('id-ID')}`);
+            card.setAttribute('rating', product.rating);
+            card.setAttribute('sold', product.sold);
+            card.setAttribute('product-id', product.id);
+            card.setAttribute('is-saved', product.isSaved);
+          });
+        }
+      }
     }
 
     this.setupEventListeners();
@@ -614,10 +746,12 @@ class ProfileIndex extends HTMLElement {
     const mainStateHandler = this.shadowRoot.querySelector('#main-state-handler');
     const postsStateHandler = this.shadowRoot.querySelector('#posts-state-handler');
     const likedStateHandler = this.shadowRoot.querySelector('#liked-state-handler');
+    const productsStateHandler = this.shadowRoot.querySelector('#products-state-handler');
+    const savedProductsStateHandler = this.shadowRoot.querySelector('#saved-products-state-handler');
     const nextPostsHandler = this.shadowRoot.querySelector('#next-posts-handler');
     const nextLikedHandler = this.shadowRoot.querySelector('#next-liked-handler');
-    const productsStateHandler = this.shadowRoot.querySelector('#products-state-handler');
     const nextProductsHandler = this.shadowRoot.querySelector('#next-products-handler');
+    const nextSavedProductsHandler = this.shadowRoot.querySelector('#next-saved-products-handler');
 
     if (mainStateHandler) {
       mainStateHandler.addEventListener('retry', this.handleRetry);
@@ -628,17 +762,23 @@ class ProfileIndex extends HTMLElement {
     if (likedStateHandler) {
       likedStateHandler.addEventListener('retry', this.handleLikedPostsRetry);
     }
+    if (productsStateHandler) {
+      productsStateHandler.addEventListener('retry', this.handleProductsRetry);
+    }
+    if (savedProductsStateHandler) {
+      savedProductsStateHandler.addEventListener('retry', this.handleSavedProductsRetry);
+    }
     if (nextPostsHandler) {
       nextPostsHandler.addEventListener('retry', this.handleNextPostsRetry);
     }
     if (nextLikedHandler) {
       nextLikedHandler.addEventListener('retry', this.handleNextLikedPostsRetry);
     }
-    if (productsStateHandler) {
-      productsStateHandler.addEventListener('retry', this.handleProductsRetry);
-    }
     if (nextProductsHandler) {
       nextProductsHandler.addEventListener('retry', this.handleNextProductsRetry);
+    }
+    if (nextSavedProductsHandler) {
+      nextSavedProductsHandler.addEventListener('retry', this.handleNextSavedProductsRetry);
     }
   }
 
@@ -646,10 +786,12 @@ class ProfileIndex extends HTMLElement {
     const mainStateHandler = this.shadowRoot.querySelector('#main-state-handler');
     const postsStateHandler = this.shadowRoot.querySelector('#posts-state-handler');
     const likedStateHandler = this.shadowRoot.querySelector('#liked-state-handler');
+    const productsStateHandler = this.shadowRoot.querySelector('#products-state-handler');
+    const savedProductsStateHandler = this.shadowRoot.querySelector('#saved-products-state-handler');
     const nextPostsHandler = this.shadowRoot.querySelector('#next-posts-handler');
     const nextLikedHandler = this.shadowRoot.querySelector('#next-liked-handler');
-    const productsStateHandler = this.shadowRoot.querySelector('#products-state-handler');
     const nextProductsHandler = this.shadowRoot.querySelector('#next-products-handler');
+    const nextSavedProductsHandler = this.shadowRoot.querySelector('#next-saved-products-handler');
 
     if (mainStateHandler) {
       mainStateHandler.removeEventListener('retry', this.handleRetry);
@@ -660,17 +802,23 @@ class ProfileIndex extends HTMLElement {
     if (likedStateHandler) {
       likedStateHandler.removeEventListener('retry', this.handleLikedPostsRetry);
     }
+    if (productsStateHandler) {
+      productsStateHandler.removeEventListener('retry', this.handleProductsRetry);
+    }
+    if (savedProductsStateHandler) {
+      savedProductsStateHandler.removeEventListener('retry', this.handleSavedProductsRetry);
+    }
     if (nextPostsHandler) {
       nextPostsHandler.removeEventListener('retry', this.handleNextPostsRetry);
     }
     if (nextLikedHandler) {
       nextLikedHandler.removeEventListener('retry', this.handleNextLikedPostsRetry);
     }
-    if (productsStateHandler) {
-      productsStateHandler.removeEventListener('retry', this.handleProductsRetry);
-    }
     if (nextProductsHandler) {
       nextProductsHandler.removeEventListener('retry', this.handleNextProductsRetry);
+    }
+    if (nextSavedProductsHandler) {
+      nextSavedProductsHandler.removeEventListener('retry', this.handleNextSavedProductsRetry);
     }
 
     this.shadowRoot.removeEventListener('post-click', this.handlePostClick);
@@ -681,6 +829,7 @@ class ProfileIndex extends HTMLElement {
     if (this.postsObserver) this.postsObserver.disconnect();
     if (this.likedPostsObserver) this.likedPostsObserver.disconnect();
     if (this.productsObserver) this.productsObserver.disconnect();
+    if (this.savedProductsObserver) this.savedProductsObserver.disconnect();
     this.cleanupEventListeners();
   }
 

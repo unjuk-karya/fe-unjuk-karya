@@ -1,6 +1,6 @@
 import ProductSource from '../../../data/product-source';
 
-class ProductCard extends HTMLElement {
+class ProductCardProfile2 extends HTMLElement {
   constructor() {
     super();
     const shadow = this.attachShadow({ mode: 'open' });
@@ -223,4 +223,4 @@ class ProductCard extends HTMLElement {
   }
 }
 
-customElements.define('product-card', ProductCard);
+customElements.define('product-card-profile-2', ProductCardProfile2);

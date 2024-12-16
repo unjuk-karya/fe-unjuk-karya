@@ -353,15 +353,22 @@ class ProfileHeader extends HTMLElement {
               ${this._isFollowing ? 'Mengikuti' : 'Ikuti'}
             </button>
           ` : ''}
-          <button class="button button-primary" id="edit-profile">Edit Profil</button>
+          ${this._profileData.isMyself ? `
+            <button class="button button-primary" id="edit-profile">Edit Profil</button>
+          ` : ''}
         </div>
       </section>
     `;
 
     // TODO Go to Edit Profile by Muh Dila
-    this.shadowRoot.querySelector('#edit-profile').addEventListener('click', () => {
-      window.location.hash = `#/edit-profile/${this._profileData.id}`;
-    });
+    if (this._profileData.isMyself) {
+      const editProfileButton = this.shadowRoot.querySelector('#edit-profile');
+      if (editProfileButton) {
+        editProfileButton.addEventListener('click', () => {
+          window.location.hash = `#/edit-profile/${this._profileData.id}`;
+        });
+      }
+    }
 
     if (!this._profileData.isMyself) {
       this.shadowRoot.querySelector('.follow-button').addEventListener('click', () => this.toggleFollow());
