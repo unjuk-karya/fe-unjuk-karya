@@ -69,7 +69,7 @@ class ProfileSource {
 
     return responseData.data;
   }
-  
+
   static async getUserSavedProducts(userId, page = 1, pageSize = 8) {
     const token = localStorage.getItem('token');
 

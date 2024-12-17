@@ -26,7 +26,7 @@ const API_ENDPOINT = {
   SEARCH_USER: (query) => `${CONFIG.BASE_URL}users/search?q=${query}`, // GET
   GET_FOLLOWERS: (userId) => `${CONFIG.BASE_URL}users/${userId}/followers`, // GET
   GET_FOLLOWINGS: (userId) => `${CONFIG.BASE_URL}users/${userId}/followings`, // GET
-
+  REVIEW: (orderId) => `${CONFIG.BASE_URL}orders/${orderId}/reviews`, // POST/GET/PUT
   POST_BY_ID: (postId) => `${CONFIG.BASE_URL}posts/${postId}`, // GET/PUT/DELETE
   POST_LIKES: (postId) => `${CONFIG.BASE_URL}posts/${postId}/likes`, // POST&GET
   GET_ALL_PRODUCTS: (page = 1, pageSize = 8) =>

@@ -159,7 +159,7 @@ class ProductCardProfile2 extends HTMLElement {
     saveButton.addEventListener('click', async (event) => {
       event.stopPropagation();
       saveButton.classList.toggle('active');
-      
+
       const productId = this.getAttribute('product-id');
       try {
         await ProductSource.saveProduct(productId);

@@ -44,9 +44,12 @@ class TransactionCard extends HTMLElement {
     window.location.href = redirectUrl;
   }
 
-  handleReviewClick(orderId, productId, action) {
-    const path = action === 'edit' ? 'edit-review' : 'create-review';
-    window.location.href = `#/${path}/${orderId}/${productId}`;
+  handleReviewClick(orderId) {
+    const reviewModal = document.querySelector('review-modal') || document.createElement('review-modal');
+    if (!reviewModal.parentElement) {
+      document.body.appendChild(reviewModal);
+    }
+    reviewModal.show(orderId);
   }
 
   handleCancel(orderId) {
@@ -424,14 +427,14 @@ class TransactionCard extends HTMLElement {
           <div class="card-actions">
             <a class="detail-link">Lihat Detail Transaksi</a>
             <div class="actions-container">
-              ${reviewButtonState.show ? `
-                <button 
-                  class="review-btn"
-                  onclick="this.getRootNode().host.handleReviewClick('${order.orderId}', '${order.productId}', '${reviewButtonState.action}')"
-                >
-                  ${reviewButtonState.text}
-                </button>
-              ` : ''}
+            ${reviewButtonState.show ? `
+              <button 
+                class="review-btn"
+                onclick="this.getRootNode().host.handleReviewClick('${order.id}')"
+              >
+                ${reviewButtonState.text}
+              </button>
+            ` : ''}
               ${this.getActionButton(order)}
             </div>
           </div>

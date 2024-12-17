@@ -55,43 +55,60 @@ class ProductDetailCard extends HTMLElement {
           overflow: hidden;
           border-radius: 12px;
           box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-          height: 100%;
-          width: 100%;
+          aspect-ratio: 1;
+          max-height: 500px;
+          background: #f8f8f8;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .product-image img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain;
           display: block;
           transition: transform 0.3s ease;
+          padding: 16px;
         }
 
         .product-image:hover img {
           transform: scale(1.05);
         }
 
+        .product-info {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
         .category-tag {
-          display: inline-block;
-          padding: 4px 12px;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
           background: #e6f0fd;
           color: var(--primary-color);
           border-radius: 16px;
           font-size: 14px;
-          margin-bottom: 16px;
+          margin-bottom: 8px;
           width: fit-content;
+        }
+
+        .category-tag i {
+          font-size: 12px;
         }
 
         .product-title {
           font-size: 24px;
           font-weight: 600;
           color: #333;
-          margin-bottom: 16px;
+          margin: 0 0 16px 0;
           line-height: 1.4;
         }
 
         .product-stats {
-          margin-bottom: 24px;
+          margin-bottom: 20px;
           width: 100%;
         }
 
@@ -108,7 +125,7 @@ class ProductDetailCard extends HTMLElement {
         .stats-item {
           display: flex;
           align-items: center;
-          gap: 4px;
+          gap: 6px;
           font-size: 14px;
           color: var(--text-gray);
         }
@@ -138,14 +155,14 @@ class ProductDetailCard extends HTMLElement {
           font-size: 32px;
           font-weight: 700;
           color: var(--primary-color);
-          margin-bottom: 24px;
+          margin: 16px 0;
           display: flex;
           align-items: baseline;
+          gap: 4px;
         }
 
         .price-currency {
           font-size: 20px;
-          margin-right: 4px;
           font-weight: 500;
         }
 
@@ -153,7 +170,7 @@ class ProductDetailCard extends HTMLElement {
           display: flex;
           align-items: center;
           gap: 8px;
-          margin-bottom: 24px;
+          margin-bottom: 16px;
           color: #666;
           font-size: 14px;
         }
@@ -167,15 +184,15 @@ class ProductDetailCard extends HTMLElement {
           display: flex;
           align-items: center;
           gap: 8px;
-          margin-bottom: 32px;
-          width: auto;
+          margin-bottom: 24px;
+          width: fit-content;
         }
 
         .quantity-btn {
-          width: 32px;
-          height: 32px;
-          min-width: 32px;
-          border: 1px solid var(--primary-color);
+          width: 36px;
+          height: 36px;
+          min-width: 36px;
+          border: 1.5px solid var(--primary-color);
           background: white;
           color: var(--primary-color);
           border-radius: 8px;
@@ -187,7 +204,7 @@ class ProductDetailCard extends HTMLElement {
           transition: all 0.2s ease;
         }
 
-        .quantity-btn:hover {
+        .quantity-btn:hover:not(:disabled) {
           background: var(--primary-color);
           color: white;
         }
@@ -195,27 +212,30 @@ class ProductDetailCard extends HTMLElement {
         .quantity-btn:disabled {
           opacity: 0.5;
           cursor: not-allowed;
+          border-color: #ccc;
+          color: #999;
         }
 
         .quantity-input {
           width: 48px;
           min-width: 48px;
-          height: 32px;
+          height: 36px;
           text-align: center;
-          border: 1px solid #ddd;
+          border: 1.5px solid #ddd;
           border-radius: 8px;
-          font-size: 14px;
+          font-size: 15px;
           font-weight: 500;
+          color: #333;
         }
 
         .buy-button {
           width: 100%;
-          height: 56px;
+          height: 48px;
           background: var(--primary-color);
           border: none;
           border-radius: 12px;
           color: white;
-          font-size: 18px;
+          font-size: 16px;
           font-weight: 600;
           cursor: pointer;
           display: flex;
@@ -224,9 +244,10 @@ class ProductDetailCard extends HTMLElement {
           gap: 12px;
           transition: all 0.2s ease;
           box-shadow: 0 4px 12px rgba(29, 119, 230, 0.2);
+          margin-top: 8px;
         }
 
-        .buy-button:hover {
+        .buy-button:hover:not(:disabled) {
           background: var(--primary-hover);
           transform: translateY(-2px);
           box-shadow: 0 6px 16px rgba(29, 119, 230, 0.3);
@@ -235,6 +256,18 @@ class ProductDetailCard extends HTMLElement {
         .buy-button:disabled {
           opacity: 0.5;
           cursor: not-allowed;
+          background: #ccc;
+          box-shadow: none;
+        }
+
+        .buy-button i {
+          font-size: 18px;
+        }
+
+        @media screen and (max-width: 1024px) {
+          .main-product-card {
+            gap: 32px;
+          }
         }
 
         @media screen and (max-width: 768px) {
@@ -245,46 +278,107 @@ class ProductDetailCard extends HTMLElement {
           }
 
           .product-image {
-            aspect-ratio: 1;
+            max-height: 400px;
           }
 
           .product-title {
             font-size: 20px;
+            margin-bottom: 12px;
           }
 
           .product-stats {
             margin-bottom: 16px;
           }
 
+          .product-stats-wrapper {
+            width: 100%;
+            justify-content: center;
+          }
+
           .stats-item {
             font-size: 13px;
-            padding: 0;
             text-align: center;
-            flex: 1;
           }
 
           .stats-divider {
             height: 20px;
-            margin: 0;
           }
 
           .price {
             font-size: 28px;
+            margin: 12px 0;
           }
 
           .quantity-controls {
-            margin-bottom: 24px;
+            margin: 8px 0 16px 0;
           }
 
           .buy-button {
-            height: 48px;
-            font-size: 16px;
+            height: 44px;
+            font-size: 15px;
           }
         }
 
         @media screen and (max-width: 480px) {
+          .main-product-card {
+            padding: 12px;
+          }
+
+          .product-image {
+            max-height: 350px;
+          }
+
+          .category-tag {
+            font-size: 12px;
+            padding: 4px 10px;
+          }
+
+          .product-title {
+            font-size: 18px;
+          }
+
           .stats-item {
             font-size: 12px;
+            gap: 4px;
+          }
+
+          .stats-divider {
+            margin: 0 8px;
+          }
+
+          .price {
+            font-size: 24px;
+          }
+
+          .price-currency {
+            font-size: 16px;
+          }
+
+          .stock-info {
+            font-size: 13px;
+          }
+
+          .quantity-btn {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            font-size: 14px;
+          }
+
+          .quantity-input {
+            width: 44px;
+            min-width: 44px;
+            height: 32px;
+            font-size: 14px;
+          }
+
+          .buy-button {
+            height: 40px;
+            font-size: 14px;
+          }
+
+          .buy-button i {
+            font-size: 16px;
           }
         }
       </style>

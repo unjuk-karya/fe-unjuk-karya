@@ -383,7 +383,7 @@ class SideBar extends HTMLElement {
       overlay.classList.remove('active');
     });
   }
-  
+
   initToggleButton() {
     const btn = this.querySelector('#btn');
     const sidebar = this.querySelector('.sidebar');
@@ -403,7 +403,7 @@ class SideBar extends HTMLElement {
       overlay.style.display = 'none';
     });
   }
-  
+
 
 
   initDropdownToggle() {
