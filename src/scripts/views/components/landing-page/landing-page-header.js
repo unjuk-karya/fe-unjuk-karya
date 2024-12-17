@@ -189,7 +189,7 @@ class LandingPage extends HTMLElement {
 
     this._shadowRoot.innerHTML += `
       <div class="container">
-        <img src="./images/logo.png" alt="Logo">
+        <img src="./images/logo2.png" alt="Logo">
         <div class="container-anchor">
           <button>Beranda</button>
           <button>Tentang Kami</button>

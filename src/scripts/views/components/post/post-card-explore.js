@@ -40,6 +40,10 @@ class PostCardExplore extends HTMLElement {
             overflow: hidden;
             transition: transform 0.2s ease;
             cursor: pointer;
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            box-sizing: border-box;
           }
           
           .card:hover {
@@ -129,6 +133,15 @@ class PostCardExplore extends HTMLElement {
           .stats .likes i, .stats .comments i {
             font-size: 16px;
             color: #999;
+          }
+
+          .content h3 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            color: #1a1a1a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
         </style>
   

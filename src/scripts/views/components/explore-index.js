@@ -189,28 +189,46 @@ class ExploreIndex extends HTMLElement {
 
         .container-explore {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 16px;
-          margin: 0;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 24px;
+          padding: 16px;
         }
 
-        @media screen and (min-width: 1400px) {
+        @media screen and (min-width: 1200px) {
           .container-explore {
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+          }
+        }
+
+        @media screen and (max-width: 1199px) {
+          .container-explore {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
           }
         }
 
         @media screen and (max-width: 900px) {
           .container-explore {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+            padding: 8px;
           }
         }
 
         @media screen and (max-width: 600px) {
           .container-explore {
-            grid-template-columns: repeat(1, 1fr);
-            gap: 16px;
-            padding: 0;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            padding: 4px;
+          }
+        }
+
+        @media screen and (max-width: 400px) {
+          .container-explore {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px;
+            padding: 4px;
           }
         }
 
@@ -220,6 +238,7 @@ class ExploreIndex extends HTMLElement {
           visibility: hidden;
         }
       </style>
+
 
       <content-state-handler state="${state}" message="${message}">
         ${state === 'success' ? `

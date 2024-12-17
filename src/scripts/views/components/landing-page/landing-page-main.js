@@ -192,6 +192,7 @@ class LandingPageMain extends HTMLElement {
     }
     
     .member-image img {
+      height: 300px;
       width: 100%;
       object-fit: cover;
       border-radius: 12px;
@@ -262,7 +263,7 @@ class LandingPageMain extends HTMLElement {
       
       .member-image img {
         width: 320px;
-        height: auto;
+        height: 300px;
         object-fit: cover;
       }
       
@@ -276,6 +277,7 @@ class LandingPageMain extends HTMLElement {
     }
     
     @media (max-width: 768px) {
+    
       .container-welcome {
         padding: 0 16px;
       }
@@ -398,7 +400,7 @@ class LandingPageMain extends HTMLElement {
           <div class="leadership-cards">
             <div class="member">
               <div class="member-image">
-                <img src="./images/member.jpg" alt="Alex Martinez">
+                <img src="./images/kris.jpg" alt="Alex Martinez">
               </div>
               <div class="member-info">
                 <h3>Krisna Diva</h3>
@@ -408,7 +410,7 @@ class LandingPageMain extends HTMLElement {
             
             <div class="member">
               <div class="member-image">
-                <img src="./images/member.jpg" alt="Jordan Nguyen">
+                <img src="./images/muktii.jpg" alt="Jordan Nguyen">
               </div>
               <div class="member-info">
                 <h3>Mukti Prabowo</h3>
@@ -418,7 +420,7 @@ class LandingPageMain extends HTMLElement {
             
             <div class="member">
               <div class="member-image">
-                <img src="./images/member.jpg" alt="Taylor Roberts">
+                <img src="./images/bangdila.jpg" alt="Taylor Roberts">
               </div>
               <div class="member-info">
                 <h3>Muhammad Dila</h3>
@@ -428,11 +430,11 @@ class LandingPageMain extends HTMLElement {
             
             <div class="member">
               <div class="member-image">
-                <img src="./images/member.jpg" alt="Morgan Patel">
+                <img src="./images/ros.jpg" alt="Morgan Patel">
               </div>
               <div class="member-info">
                 <h3>Rosmayanti</h3>
-                <p>Project Manage</p>
+                <p>Project Manager</p>
               </div>
             </div>
           </div>

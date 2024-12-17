@@ -220,6 +220,10 @@ class PostCardHome extends HTMLElement {
           line-height: 1.4;
           color: #262626;
           margin: 0;
+          display: -webkit-box;
+          -webkit-line-clamp: 2; /* Batasi ke 2 baris */
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
 
         @media (max-width: 600px) {
@@ -236,6 +240,10 @@ class PostCardHome extends HTMLElement {
       </style>
 
       <article>
+        
+
+        <img class="post-image" src="${this.post.image}" alt="${this.post.title}">
+
         <div class="post-header">
           <img class="user-avatar" src="${this.post.user.avatar || 'https://via.placeholder.com/32'}" alt="Avatar pengguna">
           <div style="display: flex; gap: 4px; align-items: center;">
@@ -243,8 +251,11 @@ class PostCardHome extends HTMLElement {
             <span class="post-timestamp">• ${formatDate(this.post.createdAt)}</span>
           </div>
         </div>
-
-        <img class="post-image" src="${this.post.image}" alt="${this.post.title}">
+        
+        <div class="content-section">
+          <h2 class="post-title">${this.post.title}</h2>
+          <p class="post-content">${this.post.content}</p>
+        </div>
 
         <div class="post-actions">
           <div class="action-group">
@@ -257,12 +268,7 @@ class PostCardHome extends HTMLElement {
           </div>
         </div>
 
-        <span class="likes-count">${this.post.likesCount} suka</span>
-
-        <div class="content-section">
-          <h2 class="post-title">${this.post.title}</h2>
-          <p class="post-content">${this.post.content}</p>
-        </div>
+         <span class="likes-count">${this.post.likesCount} suka</span>
       </article>
     `;
 

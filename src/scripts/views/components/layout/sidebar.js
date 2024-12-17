@@ -75,7 +75,7 @@ class SideBar extends HTMLElement {
 
         .sidebar ul li {
           height: 40px;
-          width: 90%;
+          width: 100%;
           margin: 0.8rem 0;
           margin-bottom: 1.5rem;
           display: flex;
