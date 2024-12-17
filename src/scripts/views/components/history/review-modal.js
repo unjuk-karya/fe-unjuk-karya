@@ -52,6 +52,11 @@ class ReviewModal extends HTMLElement {
         star.removeEventListener('click', star._clickHandler);
       });
     }
+
+    const textarea = this.shadowRoot.querySelector('#review-comment');
+    if (textarea) {
+      textarea.removeEventListener('input', textarea._inputHandler);
+    }
   }
 
   setState(newState, message = '') {
@@ -161,6 +166,34 @@ class ReviewModal extends HTMLElement {
       });
     }
 
+    const textarea = this.shadowRoot.querySelector('#review-comment');
+    const charCount = this.shadowRoot.querySelector('.character-count');
+    const progressBar = this.shadowRoot.querySelector('.character-progress-bar');
+    
+    if (textarea && charCount && progressBar) {
+      textarea._inputHandler = () => {
+        const count = textarea.value.length;
+        const percentage = (count / 500) * 100;
+        
+        charCount.textContent = `${count}/500`;
+        progressBar.style.width = `${percentage}%`;
+
+        charCount.classList.remove('warning', 'danger');
+        progressBar.classList.remove('warning', 'danger');
+
+        if (count >= 450) {
+          charCount.classList.add('danger');
+          progressBar.classList.add('danger');
+        } else if (count >= 400) {
+          charCount.classList.add('warning');
+          progressBar.classList.add('warning');
+        }
+      };
+
+      textarea._inputHandler();
+      textarea.addEventListener('input', textarea._inputHandler);
+    }
+
     const closeButton = this.shadowRoot.querySelector('.close-button');
     const modalOverlay = this.shadowRoot.querySelector('.modal');
 
@@ -197,7 +230,6 @@ class ReviewModal extends HTMLElement {
     }
 
     try {
-      // Show loading with Swal
       Swal.fire({
         title: 'Memproses...',
         text: 'Mohon tunggu sebentar',
@@ -216,10 +248,8 @@ class ReviewModal extends HTMLElement {
         await ReviewSource.createReview(this.orderId, reviewData);
       }
 
-      // Close loading
       Swal.close();
 
-      // Show success message
       await Swal.fire({
         title: 'Berhasil',
         text: `Ulasan berhasil ${this.review ? 'diperbarui' : 'ditambahkan'}`,
@@ -236,16 +266,11 @@ class ReviewModal extends HTMLElement {
         composed: true
       }));
 
-      // Close modal immediately
       this.closeModal();
-
-      // Reload the page
       window.location.reload();
     } catch (error) {
-      // Close loading
       Swal.close();
 
-      // Show error message
       await Swal.fire({
         title: 'Error',
         text: error.data?.message || 'Gagal menyimpan ulasan',
@@ -296,211 +321,268 @@ class ReviewModal extends HTMLElement {
     const wasShown = this.shadowRoot.querySelector('.modal.show') !== null;
 
     this.shadowRoot.innerHTML = `
-      <style>
-        .modal {
-          display: none;
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.5);
-          z-index: 1000;
-          opacity: 0;
-          transition: opacity 0.3s ease-in-out;
-        }
+<style>
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
 
-        .modal.show {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          opacity: 1;
-        }
+  .modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+  }
 
-        .modal-content {
-          background: white;
-          border-radius: 8px;
-          width: 90%;
-          max-width: 500px;
-          max-height: 90vh;
-          overflow-y: auto;
-          position: relative;
-          transform: scale(0.9);
-          transition: transform 0.3s ease-in-out;
-        }
+  .modal-content {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease-in-out;
+  }
 
-        .modal.show .modal-content {
-          transform: scale(1);
-        }
+  .modal.show .modal-content {
+    transform: scale(1);
+  }
 
-        .modal-header {
-          padding: 16px;
-          border-bottom: 1px solid #e0e0e0;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          position: sticky;
-          top: 0;
-          background: white;
-          z-index: 1;
-          border-radius: 8px 8px 0 0;
-        }
+  .modal-header {
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 1;
+    border-radius: 8px 8px 0 0;
+  }
 
-        .modal-title {
-          font-size: 18px;
-          font-weight: 600;
-          margin: 0;
-          color: #333;
-        }
+  .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+  }
 
-        .close-button {
-          background: none;
-          border: none;
-          font-size: 24px;
-          cursor: pointer;
-          color: #666;
-          padding: 0;
-          line-height: 1;
-          transition: color 0.2s ease;
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 4px;
-        }
+  .close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.2s ease;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
 
-        .close-button:hover {
-          color: #333;
-          background: #f5f5f5;
-        }
+  .close-button:hover {
+    color: #333;
+    background: #f5f5f5;
+  }
 
-        .review-form {
-          padding: 16px;
-        }
+  .review-form {
+    padding: 16px;
+  }
 
-        .rating-group {
-          margin-bottom: 24px;
-        }
+  .rating-group {
+    margin-bottom: 24px;
+  }
 
-        .rating-label {
-          display: block;
-          margin-bottom: 8px;
-          font-size: 14px;
-          color: #333;
-          font-weight: 500;
-        }
+  .rating-label {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+  }
 
-        .stars {
-          display: flex;
-          flex-direction: row-reverse;
-          gap: 8px;
-          justify-content: flex-end;
-        }
+  .stars {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 8px;
+    justify-content: flex-end;
+  }
 
-        .star-radio {
-          display: none;
-        }
+  .star-radio {
+    display: none;
+  }
 
-        .star-label {
-          color: #ddd;
-          font-size: 28px;
-          cursor: pointer;
-          transition: color 0.2s ease, transform 0.2s ease;
-          user-select: none;
-        }
+  .star-label {
+    color: #ddd;
+    font-size: 32px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
 
-        .star-label:hover {
-          transform: scale(1.1);
-        }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
 
-        .star-radio:checked ~ .star-label,
-        .star-label:hover ~ .star-label,
-        .star-label:hover {
-          color: #FFD700;
-        }
+  .star-label:hover {
+    animation: pulse 0.3s ease-in-out;
+  }
 
-        .comment-group {
-          margin-bottom: 24px;
-        }
+  .star-radio:checked ~ .star-label,
+  .star-label:hover ~ .star-label,
+  .star-label:hover {
+    color: #FFD700;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+  }
 
-        .comment-label {
-          display: block;
-          margin-bottom: 8px;
-          font-size: 14px;
-          color: #333;
-          font-weight: 500;
-        }
+  .comment-group {
+    margin-bottom: 24px;
+    position: relative;
+  }
 
-        textarea {
-          width: 100%;
-          padding: 12px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          resize: vertical;
-          min-height: 120px;
-          font-family: inherit;
-          box-sizing: border-box;
-          font-size: 14px;
-          line-height: 1.5;
-          transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
+  .comment-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+  }
 
-        textarea:focus {
-          outline: none;
-          border-color: #1D77E6;
-          box-shadow: 0 0 0 2px rgba(29, 119, 230, 0.1);
-        }
+  .textarea-wrapper {
+    position: relative;
+    margin-bottom: 4px;
+  }
 
-        textarea::placeholder {
-          color: #999;
-        }
+  textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: all 0.2s ease;
+  }
 
-        .submit-button {
-          background: #1D77E6;
-          color: white;
-          border: none;
-          padding: 12px 16px;
-          border-radius: 4px;
-          font-size: 14px;
-          cursor: pointer;
-          width: 100%;
-          transition: background-color 0.2s ease, transform 0.1s ease;
-          font-weight: 500;
-        }
+  textarea:focus {
+    outline: none;
+    border-color: #1D77E6;
+    box-shadow: 0 0 0 2px rgba(29, 119, 230, 0.1);
+  }
 
-        .submit-button:hover {
-          background: #1565c0;
-          transform: translateY(-1px);
-        }
+  textarea::placeholder {
+    color: #999;
+  }
 
-        .submit-button:active {
-          transform: translateY(0);
-        }
+  .character-counter {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 6px;
+    padding: 0 2px;
+  }
 
-        @media (max-width: 480px) {
-          .modal-content {
-            width: 95%;
-            margin: 16px;
-          }
+  .character-progress {
+    width: 50px;
+    height: 4px;
+    background: #eee;
+    border-radius: 2px;
+    overflow: hidden;
+  }
 
-          .stars {
-            justify-content: center;
-          }
+  .character-progress-bar {
+    height: 100%;
+    background: #1D77E6;
+    border-radius: 2px;
+    transition: width 0.2s ease, background-color 0.2s ease;
+    width: 0;
+  }
 
-          .star-label {
-            font-size: 32px;
-          }
+  .character-progress-bar.warning {
+    background: #ffa726;
+  }
 
-          .modal-header {
-            padding: 12px 16px;
-          }
+  .character-progress-bar.danger {
+    background: #ef5350;
+  }
 
-          .review-form {
-            padding: 12px;
-          }
-        }
-      </style>
+  .character-count {
+    min-width: 65px;
+    text-align: right;
+    font-size: 12px;
+    color: #666;
+  }
+
+  .character-count.warning {
+    color: #f57c00;
+  }
+
+  .character-count.danger {
+    color: #d32f2f;
+  }
+
+  .submit-button {
+    background: #1D77E6;
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+
+  .submit-button:hover {
+    background: #1565c0;
+    transform: translateY(-1px);
+  }
+
+  .submit-button:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 480px) {
+    .modal-content {
+      width: 95%;
+      margin: 16px;
+    }
+
+    .modal-header {
+      padding: 12px 16px;
+    }
+
+    .review-form {
+      padding: 12px;
+    }
+
+    .star-label {
+      font-size: 28px;
+    }
+  }
+</style>
 
       <div class="modal">
         <div class="modal-content">
@@ -536,13 +618,21 @@ class ReviewModal extends HTMLElement {
 
                 <div class="comment-group">
                   <label class="comment-label" for="review-comment">Ulasan</label>
-                  <textarea 
-                    id="review-comment"
-                    name="comment" 
-                    placeholder="Bagikan pengalaman Anda tentang produk ini..." 
-                    required
-                    maxlength="500"
-                  >${this.review?.comment || ''}</textarea>
+                  <div class="textarea-wrapper">
+                    <textarea 
+                      id="review-comment"
+                      name="comment" 
+                      placeholder="Bagikan pengalaman Anda tentang produk ini..." 
+                      required
+                      maxlength="500"
+                    >${this.review?.comment || ''}</textarea>
+                  </div>
+                  <div class="character-counter">
+                    <div class="character-progress">
+                      <div class="character-progress-bar"></div>
+                    </div>
+                    <span class="character-count">0/500</span>
+                  </div>
                 </div>
 
                 <button type="submit" class="submit-button">

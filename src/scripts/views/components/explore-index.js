@@ -209,7 +209,7 @@ class ExploreIndex extends HTMLElement {
         @media screen and (max-width: 600px) {
           .container-explore {
             grid-template-columns: repeat(1, 1fr);
-            gap: 1px;
+            gap: 16px;
             padding: 0;
           }
         }
