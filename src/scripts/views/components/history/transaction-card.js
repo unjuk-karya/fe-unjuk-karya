@@ -1,5 +1,5 @@
 import Swal from 'sweetalert2';
-import OrderSource from '../../../data/order.source.js';
+import OrderSource from '../../../data/order-source.js';
 
 class TransactionCard extends HTMLElement {
   constructor() {
@@ -100,38 +100,41 @@ class TransactionCard extends HTMLElement {
   getActionButton(order) {
     if (order.status === 'PENDING') {
       return `
-          <div class="pending-actions">
-            <button 
-              class="cancel-btn" 
-              onclick="this.getRootNode().host.handleCancel('${order.id}')"
-            >
-              Batalkan
-            </button>
-            <button 
-              class="buy-again" 
-  onclick="window.open('${order.redirectUrl}', '_blank')"
-            >
-              Bayar
-            </button>
-          </div>
-        `;
+        <div class="pending-actions">
+          <button 
+            class="cancel-btn" 
+            onclick="this.getRootNode().host.handleCancel('${order.id}')"
+          >
+            Batalkan
+          </button>
+          <button 
+            class="buy-again" 
+            onclick="window.open('${order.redirectUrl}', '_blank')"
+          >
+            Bayar
+          </button>
+        </div>
+      `;
     }
 
     return `
-        <button 
-          class="buy-again" 
-          onclick="this.getRootNode().host.handleBuyAgain('${order.productId}')"
-        >
-          Beli Lagi
-        </button>
-      `;
+      <button 
+        class="buy-again" 
+        onclick="this.getRootNode().host.handleBuyAgain('${order.productId}')"
+      >
+        Beli Lagi
+      </button>
+    `;
   }
 
   formatDate(dateString) {
+    if (!dateString) return '-';
     const options = {
       day: 'numeric',
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric'
     };
     return new Date(dateString).toLocaleDateString('id-ID', options);
   }
@@ -145,301 +148,339 @@ class TransactionCard extends HTMLElement {
     const reviewButtonState = this.getReviewButtonState(order);
 
     this.shadowRoot.innerHTML = `
-        <style>
-          .transaction-card {
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border: 1px solid #e0e0e0;
-          }
-  
+      <style>
+        .transaction-card {
+          background: white;
+          border-radius: 8px;
+          margin-bottom: 12px;
+          border: 1px solid #e0e0e0;
+        }
+
+        .card-header {
+          padding: 8px 16px;
+          border-bottom: 1px solid #f0f0f0;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          height: 32px;
+        }
+
+        .status {
+          font-size: 12px;
+          padding: 2px 8px;
+          border-radius: 3px;
+          font-weight: 500;
+        }
+
+        .payment-date {
+          font-size: 13px;
+          color: rgb(49, 53, 59);
+          font-weight: 400;
+        }
+
+        .invoice {
+          font-size: 13px;
+          color: rgb(49, 53, 59);
+          margin-left: auto;
+          text-align: right;
+        }
+
+        .store-name {
+          font-size: 13px;
+          color: rgb(49, 53, 59);
+          padding: 8px 16px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          border-bottom: 1px solid #f0f0f0;
+          cursor: pointer;
+          transition: color 0.2s;
+        }
+
+        .store-name:hover {
+          color: #1D77E6;
+        }
+
+        .product-section {
+          padding: 12px 16px;
+          display: flex;
+          gap: 12px;
+        }
+
+        .product-image {
+          width: 48px;
+          height: 48px;
+          object-fit: cover;
+          border-radius: 4px;
+          border: 1px solid #f0f0f0;
+        }
+
+        .product-info {
+          flex: 1;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+        }
+
+        .product-details {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .product-name {
+          font-size: 13px;
+          color: rgb(49, 53, 59);
+          margin: 0;
+          cursor: pointer;
+          transition: color 0.2s;
+        }
+
+        .product-name:hover {
+          color: #1D77E6;
+        }
+
+        .product-info-row {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          font-size: 13px;
+          color: rgb(49, 53, 59);
+        }
+
+        .unit-price {
+          color: var(--primary-color);
+          font-weight: 500;
+        }
+
+        .quantity {
+          color: rgb(99, 115, 129);
+          font-size: 13px;
+        }
+
+        .order-date {
+          color: rgb(99, 115, 129);
+          font-size: 13px;
+        }
+
+        .price-section {
+          text-align: right;
+          padding: 0;
+          min-width: 180px;
+        }
+
+        .price-total {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 4px;
+          padding-top: 8px;
+        }
+
+        .price-total .label {
+          font-size: 13px;
+          color: rgb(99, 115, 129);
+        }
+
+        .price-total .amount {
+          font-size: 14px;
+          font-weight: 600;
+          color: rgb(49, 53, 59);
+        }
+
+        .card-actions {
+          padding: 8px 16px;
+          border-top: 1px solid #f0f0f0;
+          display: flex;
+          justify-content: flex-end;
+        }
+
+        .actions-container {
+          display: flex;
+          gap: 8px;
+        }
+
+        .pending-actions {
+          display: flex;
+          gap: 8px;
+        }
+
+        .cancel-btn {
+          background: white;
+          color: #EF4444;
+          border: 1px solid #EF4444;
+          padding: 10px 16px;
+          border-radius: 4px;
+          font-size: 13px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .cancel-btn:hover {
+          background: #FEE2E2;
+        }
+
+        .buy-again {
+          background: #1D77E6;
+          color: white;
+          border: none;
+          padding: 10px 16px;
+          border-radius: 4px;
+          font-size: 13px;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+
+        .buy-again:hover {
+          background: #1565c0;
+        }
+
+        .review-btn {
+          background: white;
+          color: #1D77E6;
+          border: 1px solid #1D77E6;
+          padding: 10px 16px;
+          border-radius: 4px;
+          font-size: 13px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .review-btn:hover {
+          background: #E5F0FF;
+        }
+
+        .status-PAID { background: #E5F0FF; color: #1D77E6; }
+        .status-PENDING { background: #FFF4E5; color: #FF9800; }
+        .status-CANCELED { background: #FFEBEE; color: #F44336; }
+        .status-EXPIRED { background: #EEEEEE; color: #757575; }
+
+        @media (max-width: 640px) {
           .card-header {
-            padding: 8px 16px;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            height: 32px;
+            gap: 8px;
+            flex-wrap: wrap;
+            height: auto;
+            padding: 8px 12px;
           }
-  
-          .date {
-            font-size: 13px;
-            color: rgb(49, 53, 59);
-            font-weight: 400;
+
+          .status, .payment-date {
+            order: 1;
           }
-  
-          .status {
-            font-size: 12px;
-            background: #E5F0FF;
-            color: #1D77E6;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-weight: 500;
-          }
-  
+
           .invoice {
-            font-size: 13px;
-            color: rgb(49, 53, 59);
-            margin-left: auto;
-            text-align: right;
+            font-size: 12px;
+            width: 100%;
+            text-align: left;
+            margin: 0;
+            order: 2;
           }
-  
+
           .store-name {
-            font-size: 13px;
-            color: rgb(49, 53, 59);
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            transition: color 0.2s;
+            padding: 8px 12px;
           }
-  
-          .store-name:hover {
-            color: #1D77E6;
-          }
-  
+
           .product-section {
-            padding: 12px 16px;
-            display: flex;
-            gap: 12px;
+            padding: 12px;
           }
-  
-          .product-image {
-            width: 48px;
-            height: 48px;
-            object-fit: cover;
-            border-radius: 4px;
-            border: 1px solid #f0f0f0;
-          }
-  
+
           .product-info {
-            flex: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-          }
-  
-          .product-details {
-            display: flex;
             flex-direction: column;
-            gap: 4px;
-          }
-  
-          .product-name {
-            font-size: 13px;
-            color: rgb(49, 53, 59);
-            margin: 0;
-            cursor: pointer;
-            transition: color 0.2s;
-          }
-  
-          .product-name:hover {
-            color: #1D77E6;
-          }
-  
-          .product-quantity {
-            font-size: 13px;
-            color: rgb(49, 53, 59);
-            margin: 0;
-          }
-  
-          .price-section {
-            text-align: right;
-            border: 0;
-            padding: 0;
-          }
-  
-          .price-label {
-            font-size: 13px;
-            color: rgb(49, 53, 59);
-            margin-bottom: 2px;
-          }
-  
-          .price-amount {
-            font-size: 14px;
-            font-weight: 600;
-            color: rgb(49, 53, 59);
-            white-space: nowrap;
-          }
-  
-          .card-actions {
-            padding: 8px 16px;
-            border-top: 1px solid #f0f0f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          }
-  
-          .detail-link {
-            color: #1D77E6;
-            font-size: 13px;
-            text-decoration: none;
-            cursor: pointer;
-          }
-  
-          .pending-actions {
-            display: flex;
             gap: 8px;
           }
-  
-          .cancel-btn {
-            background: white;
-            color: #EF4444;
-            border: 1px solid #EF4444;
-            padding: 10px 16px;
-            border-radius: 4px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
+
+          .product-info-row {
+            gap: 4px;
           }
-  
-          .cancel-btn:hover {
-            background: #FEE2E2;
+
+          .order-date {
+            font-size: 12px;
           }
-  
-          .buy-again {
-            background: #1D77E6;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 4px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: background 0.2s;
+
+          .price-section {
+            width: 100%;
+            min-width: unset;
+            margin-top: 12px;
           }
-  
-          .buy-again:hover {
-            background: #1565c0;
+
+          .price-total {
+            margin-top: 8px;
           }
-  
-          .review-btn {
-            background: white;
-            color: #1D77E6;
-            border: 1px solid #1D77E6;
-            padding: 10px 16px;
-            border-radius: 4px;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
+
+          .card-actions {
+            padding: 12px;
+            flex-direction: column;
           }
-  
-          .review-btn:hover {
-            background: #E5F0FF;
+
+          .actions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
           }
-  
-          .status-PAID { background: #E5F0FF; color: #1D77E6; }
-          .status-PENDING { background: #FFF4E5; color: #FF9800; }
-          .status-CANCELED { background: #FFEBEE; color: #F44336; }
-          .status-EXPIRED { background: #EEEEEE; color: #757575; }
-  
-          @media (max-width: 640px) {
-            .card-header {
-              gap: 8px;
-              flex-wrap: wrap;
-              height: auto;
-              padding: 8px 12px;
-            }
-  
-            .invoice {
-              font-size: 12px;
-              width: 100%;
-              text-align: left;
-              margin: 0;
-              order: 3;
-            }
-  
-            .store-name {
-              padding: 8px 12px;
-            }
-  
-            .product-section {
-              padding: 12px;
-            }
-  
-            .product-info {
-              flex-direction: column;
-              gap: 8px;
-            }
-  
-            .price-section {
-              width: 100%;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              padding-top: 8px;
-              margin-top: 4px;
-              border-top: 1px solid #f0f0f0;
-            }
-  
-            .card-actions {
-              padding: 12px;
-              flex-direction: column-reverse;
-              gap: 12px;
-            }
-  
-            .detail-link {
-              width: 100%;
-              text-align: center;
-            }
-  
-            .buy-again, .review-btn, .cancel-btn {
-              width: 100%;
-            }
-  
-            .actions-container, .pending-actions {
-              display: flex;
-              flex-direction: column-reverse;
-              gap: 8px;
-              width: 100%;
-            }
+
+          .pending-actions {
+            flex-direction: column-reverse;
           }
-        </style>
-  
-        <div class="transaction-card">
-          <div class="card-header">
-            <span class="date">${this.formatDate(order.createdAt)}</span>
-            <span class="status status-${order.status}">${order.status}</span>
-            <span class="invoice">${order.orderId}</span>
-          </div>
-          <div class="store-name" onclick="this.getRootNode().host.handleStoreClick('${order.storeId}')">
-            ${order.storeName}
-          </div>
-          <div class="product-section">
-            <img 
-              src="${order.productImage}" 
-              alt="${order.productName}"
-              class="product-image"
-              onerror="this.src='https://via.placeholder.com/48'"
-            >
-            <div class="product-info">
-              <div class="product-details">
-                <h3 class="product-name" onclick="this.getRootNode().host.handleProductClick('${order.productId}')">${order.productName}</h3>
-                <p class="product-quantity">${order.quantity} barang</p>
-              </div>
-              <div class="price-section">
-                <div class="price-label">Total Belanja</div>
-                <div class="price-amount">Rp${order.totalAmount.toLocaleString('id-ID')}</div>                    
+
+          .buy-again, .review-btn, .cancel-btn {
+            width: 100%;
+          }
+        }
+      </style>
+
+      <div class="transaction-card">
+        <div class="card-header">
+          <span class="status status-${order.status}">${order.status}</span>
+          ${order.paidAt ? `<span class="payment-date">Dibayar: ${this.formatDate(order.paidAt)}</span>` : ''}
+          <span class="invoice">${order.orderId}</span>
+        </div>
+
+        <div class="store-name" onclick="this.getRootNode().host.handleStoreClick('${order.storeId}')">
+          ${order.storeName}
+        </div>
+
+        <div class="product-section">
+          <img 
+            src="${order.productImage}" 
+            alt="${order.productName}"
+            class="product-image"
+            onerror="this.src='https://via.placeholder.com/48'"
+          >
+          <div class="product-info">
+            <div class="product-details">
+              <h3 class="product-name" onclick="this.getRootNode().host.handleProductClick('${order.productId}')">
+                ${order.productName}
+              </h3>
+              <div class="product-info-row">
+                <div class="unit-price">Rp${order.productPrice.toLocaleString('id-ID')}</div>
+                <div class="quantity">${order.quantity} barang</div>
+                <div class="order-date">Dipesan: ${this.formatDate(order.createdAt)}</div>
               </div>
             </div>
-          </div>
-          <div class="card-actions">
-            <a class="detail-link">Lihat Detail Transaksi</a>
-            <div class="actions-container">
-            ${reviewButtonState.show ? `
-              <button 
-                class="review-btn"
-                onclick="this.getRootNode().host.handleReviewClick('${order.id}')"
-              >
-                ${reviewButtonState.text}
-              </button>
-            ` : ''}
-              ${this.getActionButton(order)}
+            <div class="price-section">
+              <div class="price-total">
+                <span class="label">Total Belanja:</span>
+                <span class="amount">Rp${order.totalAmount.toLocaleString('id-ID')}</span>
+              </div>
             </div>
           </div>
         </div>
-      `;
+
+        <div class="card-actions">
+          <div class="actions-container">
+          ${reviewButtonState.show ? `
+            <button 
+              class="review-btn"
+              onclick="this.getRootNode().host.handleReviewClick('${order.id}')"
+            >
+              ${reviewButtonState.text}
+            </button>
+          ` : ''}
+            ${this.getActionButton(order)}
+          </div>
+        </div>
+      </div>
+    `;
   }
 }
 

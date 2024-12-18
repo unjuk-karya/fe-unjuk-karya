@@ -1,4 +1,4 @@
-import OrderSource from '../../data/order.source.js';
+import OrderSource from '../../data/order-source.js';
 
 class TransactionHistoryIndex extends HTMLElement {
   constructor() {

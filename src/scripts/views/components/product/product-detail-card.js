@@ -1,4 +1,5 @@
-import OrderSource from '../../../data/order.source';
+import OrderSource from '../../../data/order-source';
+import ProductSource from '../../../data/product-source';
 import Swal from 'sweetalert2';
 
 class ProductDetailCard extends HTMLElement {
@@ -25,6 +26,56 @@ class ProductDetailCard extends HTMLElement {
     return num.toString();
   }
 
+  async handleDelete() {
+    const result = await Swal.fire({
+      title: 'Apakah anda yakin?',
+      text: 'Produk yang dihapus tidak dapat dikembalikan',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#1D77E6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Ya, Hapus',
+      cancelButtonText: 'Batal'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        Swal.fire({
+          title: 'Menghapus produk...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        const productData = JSON.parse(this.getAttribute('product'));
+        await ProductSource.deleteProduct(productData.id);
+
+        await Swal.fire({
+          title: 'Terhapus!',
+          text: 'Produk berhasil dihapus',
+          icon: 'success',
+          confirmButtonColor: '#1D77E6'
+        });
+
+        window.location.reload();
+      } catch (error) {
+        console.error('Failed to delete product:', error);
+        await Swal.fire({
+          title: 'Gagal Menghapus',
+          text: error.data?.message || 'Terjadi kesalahan saat menghapus produk',
+          icon: 'error',
+          confirmButtonColor: '#1D77E6'
+        });
+      }
+    }
+  }
+
+  handleEdit() {
+    const productData = JSON.parse(this.getAttribute('product'));
+    window.location.href = `#/edit-product/${productData.id}`;
+  }
+
   render() {
     const productData = JSON.parse(this.getAttribute('product'));
     const quantity = parseInt(this.getAttribute('quantity'));
@@ -48,6 +99,74 @@ class ProductDetailCard extends HTMLElement {
           box-shadow: var(--card-shadow);
           overflow: hidden;
           margin: 0;
+          position: relative;
+        }
+
+        .more-options {
+          position: absolute;
+          top: 24px;
+          right: 24px;
+          z-index: 10;
+        }
+
+        .more-options-button {
+          background: none;
+          border: none;
+          font-size: 20px;
+          color: #262626;
+          cursor: pointer;
+          padding: 8px;
+          transition: all 0.2s ease;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: white;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .more-options-button:hover {
+          background: #f8f8f8;
+        }
+
+        .options-menu {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+          z-index: 10;
+          min-width: 150px;
+          overflow: hidden;
+          margin-top: 8px;
+        }
+
+        .delete-button, .edit-button {
+          width: 100%;
+          padding: 12px 16px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          border: none;
+          background: none;
+          cursor: pointer;
+          font-size: 14px;
+          white-space: nowrap;
+          font-family: inherit;
+          transition: background-color 0.2s ease;
+        }
+
+        .delete-button {
+          color: #ed4956;
+        }
+
+        .edit-button {
+          color: #262626;
+        }
+
+        .delete-button:hover, .edit-button:hover {
+          background: #f8f9fa;
         }
 
         .product-image {
@@ -317,6 +436,11 @@ class ProductDetailCard extends HTMLElement {
             height: 44px;
             font-size: 15px;
           }
+
+          .more-options {
+            top: 16px;
+            right: 16px;
+          }
         }
 
         @media screen and (max-width: 480px) {
@@ -380,10 +504,38 @@ class ProductDetailCard extends HTMLElement {
           .buy-button i {
             font-size: 16px;
           }
+
+          .more-options {
+            top: 12px;
+            right: 12px;
+          }
+
+          .more-options-button {
+            font-size: 18px;
+            padding: 6px;
+          }
         }
       </style>
 
       <div class="main-product-card">
+        ${productData.isMyself ? `
+          <div class="more-options">
+            <button class="more-options-button">
+              <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div class="options-menu" style="display: none;">
+              <button class="edit-button">
+                <i class="far fa-edit"></i>
+                <span>Edit</span>
+              </button>
+              <button class="delete-button">
+                <i class="far fa-trash-alt"></i>
+                <span>Hapus</span>
+              </button>
+            </div>
+          </div>
+        ` : ''}
+        
         <div class="product-image">
           <img src="${productData.image}" alt="${productData.name}">
         </div>
@@ -401,7 +553,7 @@ class ProductDetailCard extends HTMLElement {
               <div class="stats-item">
                 <span class="stats-value">${productData.rating}</span>
                 <i class="fas fa-star"></i>
-                <span class="stats-label">(${this.formatNumber(productData.totalRatings)} Ulasan)</span>
+<span class="stats-label">(${this.formatNumber(productData.totalRatings)} Ulasan)</span>
               </div>
               <div class="stats-divider"></div>
               <div class="stats-item">
@@ -443,6 +595,33 @@ class ProductDetailCard extends HTMLElement {
   }
 
   setupEventListeners() {
+    if (JSON.parse(this.getAttribute('product')).isMyself) {
+      const moreButton = this.shadowRoot.querySelector('.more-options-button');
+      const optionsMenu = this.shadowRoot.querySelector('.options-menu');
+
+      moreButton?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        optionsMenu.style.display = optionsMenu.style.display === 'none' ? 'block' : 'none';
+      });
+
+      const deleteButton = this.shadowRoot.querySelector('.delete-button');
+      deleteButton?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.handleDelete();
+      });
+
+      const editButton = this.shadowRoot.querySelector('.edit-button');
+      editButton?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.handleEdit();
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', () => {
+        if (optionsMenu) optionsMenu.style.display = 'none';
+      });
+    }
+
     const decrementBtn = this.shadowRoot.querySelector('.decrement');
     const incrementBtn = this.shadowRoot.querySelector('.increment');
     const buyBtn = this.shadowRoot.querySelector('.buy-button');
@@ -513,10 +692,16 @@ class ProductDetailCard extends HTMLElement {
     const decrementBtn = this.shadowRoot.querySelector('.decrement');
     const incrementBtn = this.shadowRoot.querySelector('.increment');
     const buyBtn = this.shadowRoot.querySelector('.buy-button');
+    const moreButton = this.shadowRoot.querySelector('.more-options-button');
+    const deleteButton = this.shadowRoot.querySelector('.delete-button');
+    const editButton = this.shadowRoot.querySelector('.edit-button');
 
     decrementBtn?.removeEventListener('click', () => {});
     incrementBtn?.removeEventListener('click', () => {});
     buyBtn?.removeEventListener('click', () => {});
+    moreButton?.removeEventListener('click', () => {});
+    deleteButton?.removeEventListener('click', () => {});
+    editButton?.removeEventListener('click', () => {});
   }
 }
 

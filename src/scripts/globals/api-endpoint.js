@@ -45,6 +45,7 @@ const API_ENDPOINT = {
   CREATE_PRODUCT: `${CONFIG.BASE_URL}products`,
   CATEGORIES_PRODUCT: `${CONFIG.BASE_URL}categories`,
   EDIT_PRODUCT: (productId) => `${CONFIG.BASE_URL}products/${productId}`,
+  DELETE_PRODUCT: (productId) => `${CONFIG.BASE_URL}products/${productId}`,
 };
 
 export default API_ENDPOINT;
