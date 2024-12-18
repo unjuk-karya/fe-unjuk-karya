@@ -256,7 +256,7 @@ class SideBar extends HTMLElement {
           }
 
           .overlay {
-            display: none;
+            display: block;
           }
 
           .sidebar {
@@ -372,15 +372,15 @@ class SideBar extends HTMLElement {
     const btn = this.querySelector('#btn-bar');
     const sidebar = this.querySelector('.sidebar');
     const overlay = this.querySelector('.overlay');
-
+  
     btn.addEventListener('click', () => {
       sidebar.classList.toggle('active');
-      overlay.classList.toggle('active');
+      overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
     });
-
+  
     overlay.addEventListener('click', () => {
       sidebar.classList.remove('active');
-      overlay.classList.remove('active');
+      overlay.style.display = 'none';
     });
   }
 
@@ -388,16 +388,16 @@ class SideBar extends HTMLElement {
     const btn = this.querySelector('#btn');
     const sidebar = this.querySelector('.sidebar');
     const overlay = this.querySelector('.overlay');
-
+  
     btn.addEventListener('click', () => {
       sidebar.classList.toggle('active');
-
+  
       // Periksa ukuran layar untuk menampilkan overlay
       if (window.innerWidth < 769) {
         overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none';
       }
     });
-
+  
     overlay.addEventListener('click', () => {
       sidebar.classList.remove('active');
       overlay.style.display = 'none';
