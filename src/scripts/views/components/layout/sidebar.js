@@ -16,12 +16,13 @@ class SideBar extends HTMLElement {
           padding: 0.4rem 0.8rem;
           z-index: 200;
           transition: all 0.5s ease;
+          border: 1px solid #ebf1f6;
         }
 
         .sidebar.active {
           width: 250px;
         }
-
+        
         .sidebar #btn {
           position: absolute;
           margin-top: 20px;

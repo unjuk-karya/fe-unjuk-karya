@@ -1,5 +1,6 @@
 import ProfileSource from '../../../data/profile-source';
 import Swal from 'sweetalert2';
+import AuthSource from '../../../data/auth-source';
 
 const EditProfile = {
   async render() {
@@ -11,6 +12,9 @@ const EditProfile = {
   },
 
   async afterRender() {
+    const token = localStorage.getItem('token');
+    console.log(token);
+
     const editProfileElement = document.querySelector('edit-profile');
 
     // Profile Picture Elements
@@ -37,6 +41,22 @@ const EditProfile = {
     const usernameValidation = editProfileElement.shadowRoot.querySelector('.username-validation');
     const emailValidation = editProfileElement.shadowRoot.querySelector('.email-validation');
 
+    const oldPasswordInput = editProfileElement.shadowRoot.querySelector('#oldPassword');
+    const oldPasswordValidation = editProfileElement.shadowRoot.querySelector('.oldPassword-validation');
+    const newPasswordInput = editProfileElement.shadowRoot.querySelector('#newPassword');
+    const newPasswordValidation = editProfileElement.shadowRoot.querySelector('.newPassword-validation');
+    const confirmPasswordInput = editProfileElement.shadowRoot.querySelector('#confirmPassword');
+    const confirmPasswordValidation = editProfileElement.shadowRoot.querySelector('.confirmPassword-validation');
+    const passwordSubmitButton = editProfileElement.shadowRoot.querySelector('#submit-btn-security');
+
+    const midtransServerKeyInput = editProfileElement.shadowRoot.querySelector('#midtransServerKey');
+    const midtransClientKeyInput = editProfileElement.shadowRoot.querySelector('#midtransClientKey');
+    const midtransIsProductionInput = editProfileElement.shadowRoot.querySelector('#midtransIsProduction');
+    const submitButtonWallet = editProfileElement.shadowRoot.querySelector('#submit-btn-wallet');
+    const midtransServerKeyValidation = editProfileElement.shadowRoot.querySelector('.midtransServerKey-validation');
+    const midtransClientKeyValidation = editProfileElement.shadowRoot.querySelector('.midtransClientKey-validation');
+    const midtransIsProductionValidation = editProfileElement.shadowRoot.querySelector('.midtransIsProduction-validation');
+
     const url = window.location.hash;
     const postId = url.split('/')[2];
 
@@ -51,6 +71,26 @@ const EditProfile = {
       setValidationStyles(emailInput, emailValid, emailValidation, 'Email tidak sesuai');
 
       submitButton.disabled = !(nameValid && usernameValid && emailValid);
+
+      const oldPasswordValid = oldPasswordInput.value.trim().length > 8;
+      const newPasswordValid = newPasswordInput.value.trim().length > 8;
+      const confirmPasswordValid = confirmPasswordInput.value === newPasswordInput.value;
+
+      setValidationStyles(oldPasswordInput, oldPasswordValid, oldPasswordValidation, 'Kata sandi lama harus lebih dari 6 karakter');
+      setValidationStyles(newPasswordInput, newPasswordValid, newPasswordValidation, 'Kata sandi baru harus lebih dari 6 karakter');
+      setValidationStyles(confirmPasswordInput, confirmPasswordValid, confirmPasswordValidation, 'Konfirmasi kata sandi harus sesuai dengan kata sandi baru');
+
+      passwordSubmitButton.disabled = !(oldPasswordValid && newPasswordValid && confirmPasswordValid);
+
+      const midtransServerKeyValid = midtransServerKeyInput.value.trim().length > 3;
+      const midtransClientKeyValid = midtransClientKeyInput.value.trim().length > 3;
+      const midtransIsProductionValid = midtransIsProductionInput.value !== '';
+
+      setValidationStyles(midtransServerKeyInput, midtransServerKeyValid, midtransServerKeyValidation, 'Midtrans Server Key tidak boleh kosong');
+      setValidationStyles(midtransClientKeyInput, midtransClientKeyValid, midtransClientKeyValidation, 'Midtrans Client Key tidak boleh kosong');
+      setValidationStyles(midtransIsProductionInput, midtransIsProductionValid, midtransIsProductionValidation, 'Pilih apakah ini Produksi atau Sandbox');
+
+      submitButtonWallet.disabled = !(midtransServerKeyValid && midtransClientKeyValid && midtransIsProductionValid);
     };
 
     // Set Input Validation Styles
@@ -68,6 +108,12 @@ const EditProfile = {
     nameInput.addEventListener('input', validateInputs);
     usernameInput.addEventListener('input', validateInputs);
     emailInput.addEventListener('input', validateInputs);
+    oldPasswordInput.addEventListener('input', validateInputs);
+    newPasswordInput.addEventListener('input', validateInputs);
+    confirmPasswordInput.addEventListener('input', validateInputs);
+    midtransServerKeyInput.addEventListener('input', validateInputs);
+    midtransClientKeyInput.addEventListener('input', validateInputs);
+    midtransIsProductionInput.addEventListener('change', validateInputs);
 
     try {
       const profileData = await ProfileSource.getUserProfile(postId);
@@ -117,7 +163,7 @@ const EditProfile = {
       });
 
       // Handle Form Submission
-      submitButton.addEventListener('click', async (event) => {
+      const handleFormSubmit = async (event) => {
         event.preventDefault();
 
         const formData = new FormData();
@@ -143,6 +189,7 @@ const EditProfile = {
           }).then(() => {
             window.location.href = '#/profile';
           });
+
           localStorage.setItem('user', JSON.stringify(updatedProfile.data));
           console.log(updatedProfile);
         } catch (error) {
@@ -172,7 +219,69 @@ const EditProfile = {
 
           console.log(error);
         }
+      };
+
+      // Add event listeners for both submit buttons
+      submitButton.addEventListener('click', handleFormSubmit);
+      submitButtonWallet.addEventListener('click', handleFormSubmit);
+
+      // Handle Password Change Form Submission
+      passwordSubmitButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+
+        const passwordData = {
+          oldPassword: oldPasswordInput.value.trim(),
+          newPassword: newPasswordInput.value.trim(),
+          confirmNewPassword: confirmPasswordInput.value.trim(),
+        };
+
+        try {
+          Swal.fire({
+            title: 'Mengubah kata sandi...',
+            text: 'Harap tunggu sementara kami mengubah kata sandi Anda.',
+            icon: 'info',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+          });
+
+          await AuthSource.changePassword(passwordData);
+
+          Swal.close();
+          Swal.fire({
+            title: 'Berhasil!',
+            text: 'Kata sandi Anda telah berhasil diperbarui.',
+            icon: 'success',
+            confirmButtonText: 'Luar biasa!',
+          });
+        } catch (error) {
+          Swal.close();
+
+          let errorMessage = 'Terjadi kesalahan. Silakan coba lagi';
+
+          if (error.status === 422 && error.data?.errors) {
+            const validationErrors = [];
+
+            if (error.data.errors.oldPassword) {
+              validationErrors.push(`Old Password: ${error.data.errors.oldPassword.join(', ')}`);
+            }
+            if (error.data.errors.newPassword) {
+              validationErrors.push(`New Password: ${error.data.errors.newPassword.join(', ')}`);
+            }
+
+            errorMessage = validationErrors.join('\n');
+          }
+
+          Swal.fire({
+            title: 'Terjadi Kesalahan!',
+            text: errorMessage,
+            icon: 'error',
+            confirmButtonText: 'Oke',
+          });
+
+          console.log(error);
+        }
       });
+
     } catch (error) {
       console.error('Failed to fetch profile:', error);
       if (error.status === 404) {
@@ -201,6 +310,9 @@ const EditProfile = {
       phoneInput.value = profileData.phone || '';
       addressInput.value = profileData.address || '';
       bioInput.value = profileData.bio || '';
+      midtransServerKeyInput.value = profileData.midtransServerKey || '';
+      midtransClientKeyInput.value = profileData.midtransClientKey || '';
+      midtransIsProductionInput.value = profileData.midtransIsProduction || '';
     }
 
     // Append Form Data
@@ -211,6 +323,9 @@ const EditProfile = {
       formData.append('phone', phoneInput.value.trim());
       formData.append('address', addressInput.value.trim());
       formData.append('bio', bioInput.value.trim());
+      formData.append('midtransServerKey', midtransServerKeyInput.value.trim());
+      formData.append('midtransClientKey', midtransClientKeyInput.value.trim());
+      formData.append('midtransIsProduction', midtransIsProductionInput.value);
 
       if (profilePictureFile) {
         formData.append('avatar', profilePictureFile);

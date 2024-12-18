@@ -77,6 +77,7 @@ class CreateProduct extends HTMLElement {
         padding: 20px;
         border-radius: 8px;
         background-color: white;
+        border: 1px solid #ebf1f6;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       }
       
@@ -86,6 +87,7 @@ class CreateProduct extends HTMLElement {
         padding: 20px;
         border-radius: 8px;
         background-color: white;
+        border: 1px solid #ebf1f6;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
       }
       
