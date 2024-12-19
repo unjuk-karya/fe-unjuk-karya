@@ -1,4 +1,3 @@
-import { formatDate } from '../../../utils/formatter.js';
 import PostSource from '../../../data/post-source.js';
 
 class PostCardHome extends HTMLElement {
@@ -13,36 +12,34 @@ class PostCardHome extends HTMLElement {
     this.render();
   }
 
-  async handleLike() {
+  async handleLike(event) {
     try {
-      this.post.isLiked = !this.post.isLiked;
-      const likeButton = this.shadowRoot.querySelector('.like-button');
-      const likesCount = this.shadowRoot.querySelector('.likes-count');
-      this.post.likesCount += this.post.isLiked ? 1 : -1;
+      event.stopPropagation(); // Prevent card click event
+      const oldLikeState = this.post.isLiked;
+      const oldLikeCount = this.post.likesCount;
 
-      likeButton.innerHTML = `<i class="${this.post.isLiked ? 'fas' : 'far'} fa-heart"></i>`;
+      this.post.isLiked = !oldLikeState;
+      this.post.likesCount = oldLikeState ? oldLikeCount - 1 : oldLikeCount + 1;
+      
+      const likeButton = this.shadowRoot.querySelector('.like-button');
+      const likeIcon = this.shadowRoot.querySelector('.like-icon');
+      const likesCount = this.shadowRoot.querySelector('.likes-count');
+
+      likeIcon.classList.toggle('fas', this.post.isLiked);
+      likeIcon.classList.toggle('far', !this.post.isLiked);
       likeButton.classList.toggle('liked', this.post.isLiked);
-      likesCount.textContent = `${this.post.likesCount} suka`;
+      likesCount.textContent = this.post.likesCount;
+
       await PostSource.likePost(this.post.id);
     } catch (error) {
       console.error('Error toggling like:', error);
+      this.post.isLiked = !this.post.isLiked;
+      this.post.likesCount += this.post.isLiked ? 1 : -1;
+      this.render();
     }
   }
 
-  handleLikesCountClick() {
-    const postDetailLike = document.createElement('user-list-modal');
-    postDetailLike.setAttribute('post-id', this.post.id);
-    postDetailLike.setType('likes');
-    document.body.appendChild(postDetailLike);
-  }
-
-  handleComment() {
-    const postDetail = document.createElement('post-detail');
-    postDetail.postId = this.post.id;
-    document.body.appendChild(postDetail);
-  }
-
-  handleImageClick() {
+  handleCardClick() {
     const postDetail = document.createElement('post-detail');
     postDetail.postId = this.post.id;
     document.body.appendChild(postDetail);
@@ -50,14 +47,10 @@ class PostCardHome extends HTMLElement {
 
   setupEventListeners() {
     const likeButton = this.shadowRoot.querySelector('.like-button');
-    const commentButton = this.shadowRoot.querySelector('.comment-button');
-    const likesCount = this.shadowRoot.querySelector('.likes-count');
-    const postImage = this.shadowRoot.querySelector('.post-image');
+    const card = this.shadowRoot.querySelector('.card');
 
-    if (likeButton) likeButton.addEventListener('click', () => this.handleLike());
-    if (commentButton) commentButton.addEventListener('click', () => this.handleComment());
-    if (likesCount) likesCount.addEventListener('click', () => this.handleLikesCountClick());
-    if (postImage) postImage.addEventListener('click', () => this.handleImageClick());
+    if (likeButton) likeButton.addEventListener('click', (e) => this.handleLike(e));
+    if (card) card.addEventListener('click', () => this.handleCardClick());
   }
 
   render() {
@@ -66,210 +59,176 @@ class PostCardHome extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
       <style>
-        :host {
-          display: block;
-          width: 100%;
-          background: white;
-          border-radius: 10px;
-          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        .card {
+          background: #fff;
+          border-radius: 8px;
           overflow: hidden;
+          width: 100%;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+          position: relative;
+          cursor: pointer;
           transition: all 0.3s ease;
         }
 
-        :host(:hover) {
+        .card:hover {
           transform: translateY(-4px);
           box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        @media (max-width: 600px) {
-          :host {
-            border-radius: 0;
-            box-shadow: none;
-            border-bottom: 1px solid #dbdbdb;
-          }
-
-          :host(:hover) {
-            transform: none;
-            box-shadow: none;
-          }
-        }
-
-        .post-header {
-          display: flex;
-          align-items: center;
-          padding: 8px 4px 8px 12px;
-          gap: 8px;
-        }
-
-        .user-avatar {
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          object-fit: cover;
-          border: 2px solid #f0f0f0;
-          transition: transform 0.2s ease;
-        }
-
-        :host(:hover) .user-avatar {
-          transform: scale(1.05);
-        }
-
-        .username {
-          font-weight: 600;
-          color: #262626;
-          text-decoration: none;
-          font-size: 13px;
-          transition: color 0.2s ease;
-        }
-        
-        .username:hover {
-          text-decoration: underline;
-        }
-
-        .post-timestamp {
-          color: #8e8e8e;
-          font-size: 12px;
-        }
-
-        .post-image {
+        .card-image-container {
+          position: relative;
           width: 100%;
-          height: auto;
-          display: block;
-          aspect-ratio: 4/3;
+        }
+
+        .card-image {
+          width: 100%;
+          aspect-ratio: 16/9;
           object-fit: cover;
-          cursor: pointer;
-          transition: transform 0.3s ease;
+          background: #f0f0f0;
+          border-radius: 8px 8px 0 0;
+          display: block;
         }
 
-        :host(:hover) .post-image {
-          transform: scale(1.02);
+        .card-content {
+          padding: 12px 16px 16px;
         }
 
-        .post-actions {
+        .author-section {
+          position: absolute;
+          bottom: -20px;
+          left: 16px;
           display: flex;
           align-items: center;
-          padding: 6px 12px 6px;
-          background: white;
+          z-index: 1;
+          pointer-events: none;
+          background: rgba(0, 0, 0, 0.7);
+          border-radius: 25px;
+          padding: 4px;
         }
 
-        .action-group {
+        .author-image {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          margin-right: 8px;
+          object-fit: cover;
+          border: 2px solid #fff;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .author-name {
+          font-size: 14px;
+          color: #fff;
+          font-weight: 500;
+          padding-right: 12px;
+        }
+
+        .metric-item {
           display: flex;
-          gap: 16px;
-        }
-
-        .action-button {
+          align-items: center;
+          gap: 6px;
+          cursor: pointer;
           background: none;
           border: none;
-          padding: 8px 0;
-          cursor: pointer;
-          color: #262626;
-          font-size: 24px;
-          transition: all 0.2s ease;
+          padding: 4px;
+          color: inherit;
+          font-size: inherit;
         }
 
-        .action-button:hover {
-          transform: scale(1.1);
+        .like-button {
+          transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .action-button.save-button {
-          margin-left: auto;
+        .like-button:hover {
+          transform: scale(1.2);
         }
 
-        .action-button.liked i {
+        .like-button:not(:hover) {
+          transform: scale(1);
+          transition: transform 0.2s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+        }
+
+        .liked {
           color: #ed4956;
         }
 
-        .action-button.saved i {
-          color: #1D77E6;
+        .title {
+          font-size: 18px;
+          font-weight: 600;
+          color: #000;
+          margin: 24px 0 12px 0;
+          line-height: 1.3;
         }
 
-        .likes-count {
-          padding: 0 12px 2px;
-          font-size: 14px;
-          font-weight: 600;
-          color: #262626;
+        .metrics {
+          display: flex;
+          align-items: center;
+          font-size: 13px;
+          color: #666;
+          justify-content: flex-start;
+          gap: 12px;
+        }
+
+        .metric-item {
+          display: flex;
+          align-items: center;
+          gap: 6px;
           cursor: pointer;
-          text-decoration: none;
-          display: inline-block;
-          transition: color 0.2s ease;
-        }
-        
-        .likes-count:hover {
-          text-decoration: underline;
+          background: none;
+          border: none;
+          padding: 0;
+          color: inherit;
+          font-size: inherit;
         }
 
-        .content-section {
-          padding: 0 12px 8px;
-          transition: transform 0.2s ease;
+        .metric-item i {
+          font-size: 18px;
         }
 
-        :host(:hover) .content-section {
-          transform: translateY(-2px);
+        .liked {
+          color: #ed4956;
         }
 
-        .post-title {
-          font-size: 14px;
-          font-weight: 600;
-          color: #262626;
-          margin-bottom: 2px;
-          transition: color 0.2s ease;
+        .date {
+          margin-left: auto;
+          color: #666;
         }
 
-        .post-content {
-          font-size: 14px;
-          line-height: 1.4;
-          color: #262626;
-          margin: 0;
-          display: -webkit-box;
-          -webkit-line-clamp: 2; /* Batasi ke 2 baris */
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        @media (max-width: 600px) {
-          .action-button {
-            font-size: 22px;
-            padding: 6px 0;
-          }
-
-          .post-title,
-          .post-content {
-            font-size: 13px;
-          }
+        .image-overlay {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 80px;
+          background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+          border-radius: 0 0 8px 8px;
         }
       </style>
 
-      <article>
-        
-
-        <img class="post-image" src="${this.post.image}" alt="${this.post.title}">
-
-        <div class="post-header">
-          <img class="user-avatar" src="${this.post.user.avatar || 'https://via.placeholder.com/32'}" alt="Avatar pengguna">
-          <div style="display: flex; gap: 4px; align-items: center;">
-            <a href="#/profile/${this.post.user.id}" class="username">${this.post.user.username}</a>
-            <span class="post-timestamp">• ${formatDate(this.post.createdAt)}</span>
+      <div class="card">
+        <div class="card-image-container">
+          <img class="card-image" src="${this.post.image}" alt="${this.post.title}">
+          <div class="image-overlay"></div>
+          <div class="author-section">
+            <img class="author-image" src="${this.post.user.avatar || '/default-avatar.png'}" alt="${this.post.user.name}">
+            <span class="author-name">${this.post.user.name}</span>
           </div>
         </div>
-        
-        <div class="content-section">
-          <h2 class="post-title">${this.post.title}</h2>
-          <p class="post-content">${this.post.content}</p>
-        </div>
-
-        <div class="post-actions">
-          <div class="action-group">
-            <button class="action-button like-button ${this.post.isLiked ? 'liked' : ''}" aria-label="Suka">
-              <i class="${this.post.isLiked ? 'fas' : 'far'} fa-heart"></i>
+        <div class="card-content">
+          <h2 class="title">${this.post.title}</h2>
+          <div class="metrics">
+            <button class="metric-item like-button ${this.post.isLiked ? 'liked' : ''}" aria-label="Like">
+              <i class="like-icon ${this.post.isLiked ? 'fas' : 'far'} fa-heart"></i>
+              <span class="likes-count">${this.post.likesCount}</span>
             </button>
-            <button class="action-button comment-button" aria-label="Komentar">
+            <div class="metric-item">
               <i class="far fa-comment"></i>
-            </button>
+              <span>${this.post.commentsCount || 0}</span>
+            </div>
+            <span class="date">• ${new Date(this.post.createdAt).toLocaleDateString('id-ID', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
           </div>
         </div>
-
-         <span class="likes-count">${this.post.likesCount} suka</span>
-      </article>
+      </div>
     `;
 
     this.setupEventListeners();

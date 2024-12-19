@@ -12,10 +12,12 @@ class ExploreIndex extends HTMLElement {
     this.error = null;
     this.nextPageError = null;
     this.observer = null;
+    this.searchQuery = '';
 
     this.handleRetry = this.handleRetry.bind(this);
     this.handleNextPageRetry = this.handleNextPageRetry.bind(this);
     this.handlePostClick = this.handlePostClick.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
   }
 
   async connectedCallback() {
@@ -28,13 +30,30 @@ class ExploreIndex extends HTMLElement {
 
   setupEventListeners() {
     const mainStateHandler = this.shadowRoot.querySelector('content-state-handler');
+    const nextPageStateHandler = this.shadowRoot.querySelector('#next-page-state-handler');
+    const searchForm = this.shadowRoot.querySelector('.search-form');
+
     if (mainStateHandler) {
       mainStateHandler.addEventListener('retry', this.handleRetry);
     }
-
-    const nextPageStateHandler = this.shadowRoot.querySelector('#next-page-state-handler');
     if (nextPageStateHandler) {
       nextPageStateHandler.addEventListener('retry', this.handleNextPageRetry);
+    }
+    if (searchForm) {
+      searchForm.addEventListener('submit', this.handleSearch);
+    }
+  }
+
+  async handleSearch(event) {
+    event.preventDefault();
+    const searchInput = this.shadowRoot.querySelector('.search-input');
+    const newSearchQuery = searchInput.value.trim();
+    
+    if (this.searchQuery !== newSearchQuery) {
+      this.searchQuery = newSearchQuery;
+      this.posts = [];
+      this.currentPage = 1;
+      await this.fetchPosts();
     }
   }
 
@@ -54,22 +73,6 @@ class ExploreIndex extends HTMLElement {
   async handleNextPageRetry() {
     this.nextPageError = null;
     await this.fetchNextPosts();
-  }
-
-  disconnectedCallback() {
-    const mainStateHandler = this.shadowRoot.querySelector('content-state-handler');
-    const nextPageStateHandler = this.shadowRoot.querySelector('#next-page-state-handler');
-
-    if (mainStateHandler) {
-      mainStateHandler.removeEventListener('retry', this.handleRetry);
-    }
-    if (nextPageStateHandler) {
-      nextPageStateHandler.removeEventListener('retry', this.handleNextPageRetry);
-    }
-    if (this.observer) {
-      this.observer.disconnect();
-    }
-    this.shadowRoot.removeEventListener('post-click', this.handlePostClick);
   }
 
   setupIntersectionObserver() {
@@ -103,7 +106,7 @@ class ExploreIndex extends HTMLElement {
       this.error = null;
       this.render();
 
-      const response = await PostSource.getAllPosts(1, pageSize);
+      const response = await PostSource.getAllPosts(1, pageSize, this.searchQuery);
       this.posts = response.posts;
       this.currentPage = response.pagination.currentPage;
       this.totalPages = response.pagination.totalPages;
@@ -126,7 +129,11 @@ class ExploreIndex extends HTMLElement {
       this.nextPageError = null;
       this.render();
 
-      const response = await PostSource.getAllPosts(this.currentPage + 1, 12);
+      const response = await PostSource.getAllPosts(
+        this.currentPage + 1, 
+        12, 
+        this.searchQuery
+      );
       this.posts = [...this.posts, ...response.posts];
       this.currentPage = response.pagination.currentPage;
       this.totalPages = response.pagination.totalPages;
@@ -168,7 +175,9 @@ class ExploreIndex extends HTMLElement {
     if (!this.isLoading && this.posts.length === 0) {
       return {
         state: 'empty',
-        message: 'Belum ada postingan untuk ditampilkan.'
+        message: this.searchQuery ? 
+          'Tidak ada postingan yang sesuai dengan pencarian.' : 
+          'Belum ada postingan untuk ditampilkan.'
       };
     }
 
@@ -180,11 +189,71 @@ class ExploreIndex extends HTMLElement {
 
     this.shadowRoot.innerHTML = `
       <style>
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+
         :host {
           display: block;
           width: 100%;
           min-height: 100vh;
           margin: 0;
+        }
+
+        .search-container {
+          margin-bottom: 24px;
+          display: flex;
+          justify-content: flex-end;
+          padding: 0 16px;
+        }
+
+        .search-form {
+          width: 100%;
+          max-width: 600px;
+          display: flex;
+          gap: 8px;
+        }
+
+        .search-input {
+          flex: 1;
+          height: 44px;
+          padding: 0 16px;
+          border: 1.5px solid #e0e0e0;
+          border-radius: 8px;
+          font-size: 14px;
+          color: #333;
+          transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+          outline: none;
+          border-color: #1D77E6;
+          box-shadow: 0 0 0 3px rgba(29, 119, 230, 0.1);
+        }
+
+        .search-input::placeholder {
+          color: #999;
+        }
+
+        .search-button {
+          height: 44px;
+          padding: 0 24px;
+          background: #1D77E6;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .search-button:hover {
+          background: #1565c0;
+        }
+
+        .search-button i {
+          font-size: 16px;
         }
 
         .container-explore {
@@ -214,6 +283,25 @@ class ExploreIndex extends HTMLElement {
             gap: 16px;
             padding: 8px;
           }
+
+          .search-container {
+            position: relative;
+            z-index: 10;
+          }
+
+          .search-form {
+            max-width: 300px;
+          }
+
+          .search-input {
+            height: 40px;
+          }
+
+          .search-button {
+            height: 40px;
+            padding: 0 16px;
+            white-space: nowrap;
+          }
         }
 
         @media screen and (max-width: 600px) {
@@ -239,6 +327,20 @@ class ExploreIndex extends HTMLElement {
         }
       </style>
 
+      <div class="search-container">
+        <form class="search-form">
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Cari postingan..."
+            value="${this.searchQuery}"
+          >
+          <button type="submit" class="search-button">
+            <i class="fas fa-search"></i>
+            Cari
+          </button>
+        </form>
+      </div>
 
       <content-state-handler state="${state}" message="${message}">
         ${state === 'success' ? `
@@ -261,6 +363,26 @@ class ExploreIndex extends HTMLElement {
     }
 
     this.setupEventListeners();
+  }
+
+  disconnectedCallback() {
+    const mainStateHandler = this.shadowRoot.querySelector('content-state-handler');
+    const nextPageStateHandler = this.shadowRoot.querySelector('#next-page-state-handler');
+    const searchForm = this.shadowRoot.querySelector('.search-form');
+
+    if (mainStateHandler) {
+      mainStateHandler.removeEventListener('retry', this.handleRetry);
+    }
+    if (nextPageStateHandler) {
+      nextPageStateHandler.removeEventListener('retry', this.handleNextPageRetry);
+    }
+    if (searchForm) {
+      searchForm.removeEventListener('submit', this.handleSearch);
+    }
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+    this.shadowRoot.removeEventListener('post-click', this.handlePostClick);
   }
 }
 

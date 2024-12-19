@@ -1,10 +1,11 @@
 import API_ENDPOINT from '../globals/api-endpoint';
 
 class PostSource {
-  static async getAllPosts(page = 1, pageSize = 8) {
+  static async getAllPosts(page = 1, pageSize = 8, search = '') {
     const token = localStorage.getItem('token');
+    const searchQuery = search ? `&search=${encodeURIComponent(search)}` : '';
 
-    const response = await fetch(API_ENDPOINT.GET_ALL_POSTS(page, pageSize), {
+    const response = await fetch(`${API_ENDPOINT.GET_ALL_POSTS(page, pageSize)}${searchQuery}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -24,7 +25,7 @@ class PostSource {
     return responseData.data;
   }
 
-  static async getFeedPosts(page = 1, pageSize = 8) {
+  static async getFeedPosts(page = 1, pageSize = 9) {
     const token = localStorage.getItem('token');
 
     const response = await fetch(API_ENDPOINT.GET_FEED_POSTS(page, pageSize), {

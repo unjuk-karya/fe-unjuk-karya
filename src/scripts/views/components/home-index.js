@@ -86,7 +86,7 @@ class HomeIndex extends HTMLElement {
     }
   }
 
-  async fetchPosts(pageSize = 8) {
+  async fetchPosts(pageSize = 9) {
     if (this.isLoading) return;
 
     try {
@@ -117,7 +117,7 @@ class HomeIndex extends HTMLElement {
       this.nextPageError = null;
       this.render();
 
-      const response = await PostSource.getFeedPosts(this.currentPage + 1, 8);
+      const response = await PostSource.getFeedPosts(this.currentPage + 1, 9);
       this.posts = [...this.posts, ...response.posts];
       this.currentPage = response.pagination.currentPage;
       this.totalPages = response.pagination.totalPages;
@@ -180,30 +180,62 @@ class HomeIndex extends HTMLElement {
 
         .container-home {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          // grid-template-columns: 800px;
-          gap: 32px;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 24px;
           width: 100%;
+          margin: 0 auto;
+          padding: 16px;
           box-sizing: border-box;
-          justify-content: center;
+        }
+
+        /* Large screens */
+        @media screen and (min-width: 1200px) {
+          .container-home {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+          }
+        }
+
+        /* Medium screens */
+        @media screen and (max-width: 1199px) and (min-width: 768px) {
+          .container-home {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 900px;
+            gap: 24px;
+            padding: 16px;
+          }
+        }
+
+        /* Small screens */
+        @media screen and (max-width: 767px) {
+          .container-home {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 12px;
+            max-width: 100%;
+          }
+        }
+
+        /* Extra small screens */
+        @media screen and (max-width: 480px) {
+          .container-home {
+            grid-template-columns: 1fr;
+            gap: 12px;
+            padding: 8px;
+          }
         }
 
         post-card-home {
           width: 100%;
-        }
-
-        @media screen and (max-width: 600px) {
-          .container-home {
-            grid-template-columns: 1fr;
-            padding: 0;
-            gap: 1px;
-          }
+          display: block;
+          min-width: 0;
         }
 
         #sentinel {
           width: 100%;
           height: 1px;
           visibility: hidden;
+          grid-column: 1 / -1;
         }
       </style>
 

@@ -13,7 +13,7 @@ const API_ENDPOINT = {
   POST_FOLLOW_USER: (userId) => `${CONFIG.BASE_URL}users/${userId}/follow`, // POST
   GET_ALL_POSTS: (page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}posts?page=${page}&pageSize=${pageSize}`, // GET
-  GET_FEED_POSTS: (page = 1, pageSize = 8) =>
+  GET_FEED_POSTS: (page = 1, pageSize = 9) =>
     `${CONFIG.BASE_URL}posts/feed?page=${page}&pageSize=${pageSize}`, // GET
   GET_COMMENTS_BY_POST_ID: (postId, page = 1, pageSize = 10) =>
     `${CONFIG.BASE_URL}posts/${postId}/comments?page=${page}&pageSize=${pageSize}`, // GET

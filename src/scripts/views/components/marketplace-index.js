@@ -12,9 +12,11 @@ class MarketplaceIndex extends HTMLElement {
     this.error = null;
     this.nextPageError = null;
     this.observer = null;
+    this.searchQuery = '';
 
     this.handleRetry = this.handleRetry.bind(this);
     this.handleNextPageRetry = this.handleNextPageRetry.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
   }
 
   async connectedCallback() {
@@ -27,12 +29,29 @@ class MarketplaceIndex extends HTMLElement {
   setupEventListeners() {
     const mainStateHandler = this.shadowRoot.querySelector('content-state-handler');
     const nextPageStateHandler = this.shadowRoot.querySelector('#next-page-state-handler');
+    const searchForm = this.shadowRoot.querySelector('.search-form');
 
     if (mainStateHandler) {
       mainStateHandler.addEventListener('retry', this.handleRetry);
     }
     if (nextPageStateHandler) {
       nextPageStateHandler.addEventListener('retry', this.handleNextPageRetry);
+    }
+    if (searchForm) {
+      searchForm.addEventListener('submit', this.handleSearch);
+    }
+  }
+
+  async handleSearch(event) {
+    event.preventDefault();
+    const searchInput = this.shadowRoot.querySelector('.search-input');
+    const newSearchQuery = searchInput.value.trim();
+    
+    if (this.searchQuery !== newSearchQuery) {
+      this.searchQuery = newSearchQuery;
+      this.products = [];
+      this.currentPage = 1;
+      await this.fetchProducts();
     }
   }
 
@@ -48,29 +67,6 @@ class MarketplaceIndex extends HTMLElement {
     await this.fetchNextProducts();
   }
 
-  setupIntersectionObserver() {
-    if (this.observer) {
-      this.observer.disconnect();
-    }
-
-    this.observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && !this.isLoadingNext && !this.nextPageError && this.currentPage < this.totalPages) {
-          this.fetchNextProducts();
-        }
-      });
-    }, {
-      root: null,
-      rootMargin: '100px',
-      threshold: 0.1
-    });
-
-    const sentinel = this.shadowRoot.querySelector('#sentinel');
-    if (sentinel) {
-      this.observer.observe(sentinel);
-    }
-  }
-
   async fetchProducts() {
     if (this.isLoading) return;
 
@@ -79,7 +75,7 @@ class MarketplaceIndex extends HTMLElement {
       this.error = null;
       this.render();
 
-      const response = await ProductSource.getAllProducts(1);
+      const response = await ProductSource.getAllProducts(1, 8, this.searchQuery);
       this.products = response.products.map((product) => ({
         id: product.id,
         image: product.image,
@@ -88,7 +84,7 @@ class MarketplaceIndex extends HTMLElement {
         name: product.name,
         price: `Rp ${product.price.toLocaleString('id-ID')}`,
         sold: product.sold,
-        isSaved: product.isSaved  // Tambahkan ini
+        isSaved: product.isSaved
       }));
       this.currentPage = response.pagination.currentPage;
       this.totalPages = response.pagination.totalPages;
@@ -111,7 +107,12 @@ class MarketplaceIndex extends HTMLElement {
       this.nextPageError = null;
       this.render();
 
-      const response = await ProductSource.getAllProducts(this.currentPage + 1);
+      const response = await ProductSource.getAllProducts(
+        this.currentPage + 1, 
+        8, 
+        this.searchQuery
+      );
+      
       const newProducts = response.products.map((product) => ({
         id: product.id,
         image: product.image,
@@ -120,7 +121,7 @@ class MarketplaceIndex extends HTMLElement {
         name: product.name,
         price: `Rp ${product.price.toLocaleString('id-ID')}`,
         sold: product.sold,
-        isSaved: product.isSaved  // Tambahkan ini
+        isSaved: product.isSaved
       }));
 
       this.products = [...this.products, ...newProducts];
@@ -152,7 +153,9 @@ class MarketplaceIndex extends HTMLElement {
     if (!this.isLoading && this.products.length === 0) {
       return {
         state: 'empty',
-        message: 'Belum ada produk yang ditampilkan.'
+        message: this.searchQuery ? 
+          'Tidak ada produk yang sesuai dengan pencarian.' : 
+          'Belum ada produk yang ditampilkan.'
       };
     }
 
@@ -160,15 +163,76 @@ class MarketplaceIndex extends HTMLElement {
   }
 
   render() {
+    // The render method remains the same, but we'll update the search form
+    // to maintain the search value
     const { state, message } = this.getStateHandlerProps();
 
     this.shadowRoot.innerHTML = `
      <style>
+       @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+
        :host {
          display: block;
          width: 100%;
          min-height: 100vh;
          margin: 0;
+       }
+
+       .search-container {
+         margin-bottom: 24px;
+         display: flex;
+         justify-content: flex-end;
+       }
+
+       .search-form {
+         width: 100%;
+         max-width: 600px;
+         display: flex;
+         gap: 8px;
+       }
+
+       .search-input {
+         flex: 1;
+         height: 44px;
+         padding: 0 16px;
+         border: 1.5px solid #e0e0e0;
+         border-radius: 8px;
+         font-size: 14px;
+         color: #333;
+         transition: all 0.2s ease;
+       }
+
+       .search-input:focus {
+         outline: none;
+         border-color: #1D77E6;
+         box-shadow: 0 0 0 3px rgba(29, 119, 230, 0.1);
+       }
+
+       .search-input::placeholder {
+         color: #999;
+       }
+
+       .search-button {
+         height: 44px;
+         padding: 0 24px;
+         background: #1D77E6;
+         color: white;
+         border: none;
+         border-radius: 8px;
+         font-size: 14px;
+         font-weight: 500;
+         cursor: pointer;
+         display: flex;
+         align-items: center;
+         gap: 8px;
+       }
+
+       .search-button:hover {
+         background: #1565c0;
+       }
+
+       .search-button i {
+         font-size: 16px;
        }
 
        .products-grid {
@@ -194,6 +258,25 @@ class MarketplaceIndex extends HTMLElement {
            grid-template-columns: 1fr;
            gap: 10px;
          }
+
+         .search-container {
+           position: relative;
+           z-index: 10;
+         }
+
+         .search-form {
+           max-width: 300px;
+         }
+
+         .search-input {
+           height: 40px;
+         }
+
+         .search-button {
+           height: 40px;
+           padding: 0 16px;
+           white-space: nowrap;
+         }
        }
 
        #sentinel {
@@ -203,36 +286,74 @@ class MarketplaceIndex extends HTMLElement {
        }
      </style>
 
-     <content-state-handler state="${state}" message="${message}">
-       ${state === 'success' ? `
-         <div class="products-grid">
-           ${this.products.map((product) => `
-            <product-card
-              image="${product.image}"
-              category="${product.category}"
-              rating="${product.rating}"
-              name="${product.name}"
-              price="${product.price}"
-              sold="${product.sold}"
-              product-id="${product.id}"
-              is-saved="${product.isSaved}"  
-            ></product-card>
-           `).join('')}
-         </div>
-         ${this.currentPage < this.totalPages ? `
-           <div id="sentinel"></div>
-           <content-state-handler 
-             id="next-page-state-handler"
-             state="${this.isLoadingNext ? 'loading' : this.nextPageError ? 'error' : 'success'}" 
-             message="${this.nextPageError ? 'Gagal memuat produk berikutnya. Silakan coba lagi.' : 'Memuat lebih banyak produk...'}"
-           >
-           </content-state-handler>
-         ` : ''}
-       ` : ''}
-     </content-state-handler>
-   `;
+      <div class="search-container">
+        <form class="search-form">
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Cari produk..."
+            value="${this.searchQuery}"
+          >
+          <button type="submit" class="search-button">
+            <i class="fas fa-search"></i>
+            Cari
+          </button>
+        </form>
+      </div>
+
+      <content-state-handler state="${state}" message="${message}">
+        ${state === 'success' ? `
+          <div class="products-grid">
+            ${this.products.map((product) => `
+              <product-card
+                image="${product.image}"
+                category="${product.category}"
+                rating="${product.rating}"
+                name="${product.name}"
+                price="${product.price}"
+                sold="${product.sold}"
+                product-id="${product.id}"
+                is-saved="${product.isSaved}"  
+              ></product-card>
+            `).join('')}
+          </div>
+          ${this.currentPage < this.totalPages ? `
+            <div id="sentinel"></div>
+            <content-state-handler 
+              id="next-page-state-handler"
+              state="${this.isLoadingNext ? 'loading' : this.nextPageError ? 'error' : 'success'}" 
+              message="${this.nextPageError ? 'Gagal memuat produk berikutnya. Silakan coba lagi.' : 'Memuat lebih banyak produk...'}"
+            >
+            </content-state-handler>
+          ` : ''}
+        ` : ''}
+      </content-state-handler>
+    `;
 
     this.setupEventListeners();
+  }
+
+  setupIntersectionObserver() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+  
+    this.observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && !this.isLoadingNext && !this.nextPageError && this.currentPage < this.totalPages) {
+          this.fetchNextProducts();
+        }
+      });
+    }, {
+      root: null,
+      rootMargin: '100px',
+      threshold: 0.1
+    });
+  
+    const sentinel = this.shadowRoot.querySelector('#sentinel');
+    if (sentinel) {
+      this.observer.observe(sentinel);
+    }
   }
 
   disconnectedCallback() {
@@ -241,12 +362,16 @@ class MarketplaceIndex extends HTMLElement {
     }
     const mainStateHandler = this.shadowRoot.querySelector('content-state-handler');
     const nextPageStateHandler = this.shadowRoot.querySelector('#next-page-state-handler');
+    const searchForm = this.shadowRoot.querySelector('.search-form');
 
     if (mainStateHandler) {
       mainStateHandler.removeEventListener('retry', this.handleRetry);
     }
     if (nextPageStateHandler) {
       nextPageStateHandler.removeEventListener('retry', this.handleNextPageRetry);
+    }
+    if (searchForm) {
+      searchForm.removeEventListener('submit', this.handleSearch);
     }
   }
 }
