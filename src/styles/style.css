@@ -6,6 +6,7 @@
 }
 
 body {
+  /*background-color: #f3f3f3;*/
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -14,5 +15,16 @@ body {
 .container {
   margin: 0 auto;
   padding: 20px;
+}
+
+.swal2-confirm {
+  padding: 11px 30px;
+  border-radius: 8px;
+  background: #5d87ff;
+  font-weight: 600;
+}
+
+.swal2-confirm:hover {
+  background: #4f73d9;
 }
 

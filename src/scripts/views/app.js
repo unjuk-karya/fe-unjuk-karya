@@ -17,7 +17,7 @@ class App {
         return;
       }
 
-      if (token && (url === '/login' || url === '/register')) {
+      if (token && (url === '/login' || url === '/register'|| url === '/')) {
         window.location.href = '#/home';
         return;
       }

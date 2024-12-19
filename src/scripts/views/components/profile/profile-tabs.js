@@ -86,6 +86,8 @@ class ProfileTabs extends HTMLElement {
           overflow-x: auto;
           -webkit-overflow-scrolling: touch;
           scrollbar-width: none;
+          border: 1px solid #ebf1f6;
+          border-top: none;
         }
 
         .tabs::-webkit-scrollbar {

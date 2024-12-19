@@ -3,6 +3,7 @@ import CONFIG from '../../../env.js';
 const API_ENDPOINT = {
   POST_LOGIN: `${CONFIG.BASE_URL}auth/login`, // POST
   POST_REGISTER: `${CONFIG.BASE_URL}auth/register`, // POST
+  CHANGE_PASSWORD: `${CONFIG.BASE_URL}auth/change-password`, // POST
   GET_USER_PROFILE: (userId) => `${CONFIG.BASE_URL}users/${userId}/profile`, // GET
   GET_USER_POSTS: (userId, page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}users/${userId}/posts?page=${page}&pageSize=${pageSize}`, // GET

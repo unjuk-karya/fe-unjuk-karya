@@ -1,5 +1,3 @@
-import UrlParser from '../../routes/url-parser';
-
 const LandingPage = {
   async render() {
     return `
@@ -26,6 +24,8 @@ const LandingPage = {
     const contact = document.querySelector('landing-page-header').shadowRoot.querySelector('button:nth-child(3)');
     const begin = document.querySelector('landing-page-header').shadowRoot.querySelector('.begin');
     const join = main.shadowRoot.querySelector('.join');
+
+    main.style.background = 'white';
 
     home.addEventListener('click', () => {
       containerWelcome.scrollIntoView({
