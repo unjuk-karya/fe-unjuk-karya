@@ -17,3 +17,14 @@ body {
   padding: 20px;
 }
 
+.swal2-confirm {
+  padding: 11px 30px;
+  border-radius: 8px;
+  background: #5d87ff;
+  font-weight: 600;
+}
+
+.swal2-confirm:hover {
+  background: #4f73d9;
+}
+

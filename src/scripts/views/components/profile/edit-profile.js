@@ -118,9 +118,13 @@ class EditProfile extends HTMLElement {
         grid-template-columns: 1fr;
       }
       
-      /* TODO */
       #container-wallet {
         grid-template-columns: 1fr;
+      }
+      
+      #icon-info:hover {
+        cursor: pointer;
+        color: #4f73d9;
       }
       
       #container-wallet .profile-container:nth-child(1) {
@@ -309,6 +313,7 @@ class EditProfile extends HTMLElement {
         margin-right: 4px;
       }
       
+      /* TODO */
       button {
         display: flex;
         justify-content: center;
@@ -590,12 +595,12 @@ class EditProfile extends HTMLElement {
             </div>
           </div>
         </div>
-<!--        TODO-->
+
         <div id="container-wallet" class="container">
           <div class="profile-container">
             <div class="profile-container-wrapper">
               <article>
-                <h2>Dompet</h2>
+                <h2>Dompet <i id="icon-info" class="fa-solid fa-circle-info" style="font-size: 14px; margin-left: 4px"></i></h2>
                 <p>Untuk mengelola pengaturan dompet Anda</p>
               </article>
 

@@ -39,7 +39,7 @@ class LandingPage extends HTMLElement {
       }
       
       img {
-        height: 48px;
+        height: 38px;
       }
       
       .container-anchor button {

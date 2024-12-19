@@ -84,6 +84,8 @@ class ProfileHeader extends HTMLElement {
           background-repeat: no-repeat;
           background-position: center;
           border-radius: 10px 10px 0 0;
+          border: 1px solid #ebf1f6;
+          border-bottom: none;
         }
 
         .header {
@@ -139,13 +141,16 @@ class ProfileHeader extends HTMLElement {
           padding: 20px;
           background: #fff;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          border: 1px solid #ebf1f6;
+          border-top: none;
+          border-bottom: none;
         }
 
         .stats {
           display: flex;
           gap: 60px;
         }
-
+        
         .stat-item {
           text-align: center;
         }
@@ -177,22 +182,24 @@ class ProfileHeader extends HTMLElement {
         }
 
         .button {
-          padding: 8px 20px;
-          border-radius: 5px;
           cursor: pointer;
           font-size: 14px;
-          font-weight: 500;
           transition: all 0.3s;
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          padding: 11px 30px;
+          border-radius: 8px;
+          background: #5d87ff;
+          font-weight: 600;
         }
 
         .button-primary {
-          background-color: #1D77E6;
+          background-color: #5d87ff;
           color: #fff;
           border: none;
         }
 
         .button-primary:hover {
-          background-color: #0056b3;
+          background: #4f73d9;
         }
 
         .button-secondary {

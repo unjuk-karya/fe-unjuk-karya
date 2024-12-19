@@ -49,6 +49,7 @@ const EditProfile = {
     const confirmPasswordValidation = editProfileElement.shadowRoot.querySelector('.confirmPassword-validation');
     const passwordSubmitButton = editProfileElement.shadowRoot.querySelector('#submit-btn-security');
 
+    const infoButtonWallet = editProfileElement.shadowRoot.querySelector('#icon-info');
     const midtransServerKeyInput = editProfileElement.shadowRoot.querySelector('#midtransServerKey');
     const midtransClientKeyInput = editProfileElement.shadowRoot.querySelector('#midtransClientKey');
     const midtransIsProductionInput = editProfileElement.shadowRoot.querySelector('#midtransIsProduction');
@@ -114,6 +115,11 @@ const EditProfile = {
     midtransServerKeyInput.addEventListener('input', validateInputs);
     midtransClientKeyInput.addEventListener('input', validateInputs);
     midtransIsProductionInput.addEventListener('change', validateInputs);
+
+    infoButtonWallet.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.open('https://docs.midtrans.com/docs/midtrans-account#:~:text=To%20communicate%20with%20the%20Midtrans,go%20to%20Settings%20%3E%20Access%20Keys.', '_blank');
+    });
 
     try {
       const profileData = await ProfileSource.getUserProfile(postId);
