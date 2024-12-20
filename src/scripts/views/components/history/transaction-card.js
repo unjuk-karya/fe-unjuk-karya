@@ -309,8 +309,10 @@ class TransactionCard extends HTMLElement {
           background: white;
           color: #EF4444;
           border: 1px solid #EF4444;
-          padding: 10px 16px;
-          border-radius: 4px;
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          padding: 11px 30px;
+          font-weight: 600;
+          border-radius: 8px;
           font-size: 13px;
           cursor: pointer;
           transition: all 0.2s;
@@ -321,11 +323,13 @@ class TransactionCard extends HTMLElement {
         }
 
         .buy-again {
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          padding: 11px 30px;
+          border-radius: 8px;
           background: #1D77E6;
           color: white;
           border: none;
-          padding: 10px 16px;
-          border-radius: 4px;
+          font-weight: 600;
           font-size: 13px;
           cursor: pointer;
           transition: background 0.2s;

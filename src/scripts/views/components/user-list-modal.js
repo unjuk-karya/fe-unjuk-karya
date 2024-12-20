@@ -245,8 +245,8 @@ class UserListModal extends HTMLElement {
           padding: 5px 10px;
           font-size: 12px;
           cursor: pointer;
-          border: 1px solid #1D77E6;
-          background-color: #1D77E6;
+          background: #5d87ff;
+          font-family: 'Plus Jakarta Sans', sans-serif;
           color: #fff;
           border-radius: 4px;
           transition: all 0.2s ease;

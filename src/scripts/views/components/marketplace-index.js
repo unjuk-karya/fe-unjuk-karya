@@ -46,7 +46,7 @@ class MarketplaceIndex extends HTMLElement {
     event.preventDefault();
     const searchInput = this.shadowRoot.querySelector('.search-input');
     const newSearchQuery = searchInput.value.trim();
-    
+
     if (this.searchQuery !== newSearchQuery) {
       this.searchQuery = newSearchQuery;
       this.products = [];
@@ -108,11 +108,11 @@ class MarketplaceIndex extends HTMLElement {
       this.render();
 
       const response = await ProductSource.getAllProducts(
-        this.currentPage + 1, 
-        8, 
+        this.currentPage + 1,
+        8,
         this.searchQuery
       );
-      
+
       const newProducts = response.products.map((product) => ({
         id: product.id,
         image: product.image,
@@ -153,8 +153,8 @@ class MarketplaceIndex extends HTMLElement {
     if (!this.isLoading && this.products.length === 0) {
       return {
         state: 'empty',
-        message: this.searchQuery ? 
-          'Tidak ada produk yang sesuai dengan pencarian.' : 
+        message: this.searchQuery ?
+          'Tidak ada produk yang sesuai dengan pencarian.' :
           'Belum ada produk yang ditampilkan.'
       };
     }
@@ -200,6 +200,7 @@ class MarketplaceIndex extends HTMLElement {
          font-size: 14px;
          color: #333;
          transition: all 0.2s ease;
+         font-family: 'Plus Jakarta Sans', sans-serif;
        }
 
        .search-input:focus {
@@ -215,7 +216,8 @@ class MarketplaceIndex extends HTMLElement {
        .search-button {
          height: 44px;
          padding: 0 24px;
-         background: #1D77E6;
+         background: #5d87ff;
+         font-family: 'Plus Jakarta Sans', sans-serif;
          color: white;
          border: none;
          border-radius: 8px;
@@ -228,7 +230,7 @@ class MarketplaceIndex extends HTMLElement {
        }
 
        .search-button:hover {
-         background: #1565c0;
+         background-color: #4f73d9;
        }
 
        .search-button i {
@@ -337,7 +339,7 @@ class MarketplaceIndex extends HTMLElement {
     if (this.observer) {
       this.observer.disconnect();
     }
-  
+
     this.observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting && !this.isLoadingNext && !this.nextPageError && this.currentPage < this.totalPages) {
@@ -349,7 +351,7 @@ class MarketplaceIndex extends HTMLElement {
       rootMargin: '100px',
       threshold: 0.1
     });
-  
+
     const sentinel = this.shadowRoot.querySelector('#sentinel');
     if (sentinel) {
       this.observer.observe(sentinel);

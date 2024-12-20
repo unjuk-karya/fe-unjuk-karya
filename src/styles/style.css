@@ -20,11 +20,17 @@ body {
 .swal2-confirm {
   padding: 11px 30px;
   border-radius: 8px;
-  background: #5d87ff;
+  background-color: #5d87ff;
   font-weight: 600;
 }
 
 .swal2-confirm:hover {
-  background: #4f73d9;
+  background-color: #4f73d9;
+}
+
+.swal2-cancel {
+  padding: 11px 30px;
+  border-radius: 8px;
+  font-weight: 600;
 }
 

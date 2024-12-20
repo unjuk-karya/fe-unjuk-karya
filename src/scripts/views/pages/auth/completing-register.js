@@ -163,6 +163,8 @@ const CompletingRegister = {
             window.location.href = '#/home';
           });
 
+          localStorage.setItem('user', JSON.stringify(updatedProfile.data));
+
           console.log(updatedProfile);
         } catch (error) {
           Swal.close();
