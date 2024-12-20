@@ -36,6 +36,9 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    margin-top: 40px;
+  }
   .login-image {
     display: none; /* Sembunyikan gambar pada layar kecil */
   }

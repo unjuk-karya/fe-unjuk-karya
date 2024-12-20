@@ -42,8 +42,10 @@ class PostCardExplore extends HTMLElement {
             cursor: pointer;
             width: 100%;
             max-width: 100%;
+            height: 100%;
             margin: 0 auto;
             box-sizing: border-box;
+            top: 100px;
           }
           
           .card:hover {

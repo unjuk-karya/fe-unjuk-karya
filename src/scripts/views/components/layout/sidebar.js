@@ -257,17 +257,18 @@ class SideBar extends HTMLElement {
           }
 
           .overlay {
+            display: none;
+          }
+
+          .overlay.active {
             display: block;
           }
 
           .sidebar {
-            position: fixed;
-            width: 55px;
-            left: -100px;
+            left: -250px;
           }
 
           .sidebar.active {
-            width: 250px;
             left: 0;
           }
         }

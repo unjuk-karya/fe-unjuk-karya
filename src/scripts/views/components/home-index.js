@@ -199,7 +199,7 @@ class HomeIndex extends HTMLElement {
         /* Medium screens */
         @media screen and (max-width: 1199px) and (min-width: 768px) {
           .container-home {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             max-width: 900px;
             gap: 24px;
             padding: 16px;
@@ -210,7 +210,7 @@ class HomeIndex extends HTMLElement {
         @media screen and (max-width: 767px) {
           .container-home {
             grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+            gap: 20px;
             padding: 12px;
             max-width: 100%;
           }
