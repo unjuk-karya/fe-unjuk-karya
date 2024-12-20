@@ -48,7 +48,7 @@ class ExploreIndex extends HTMLElement {
     event.preventDefault();
     const searchInput = this.shadowRoot.querySelector('.search-input');
     const newSearchQuery = searchInput.value.trim();
-    
+
     if (this.searchQuery !== newSearchQuery) {
       this.searchQuery = newSearchQuery;
       this.posts = [];
@@ -130,8 +130,8 @@ class ExploreIndex extends HTMLElement {
       this.render();
 
       const response = await PostSource.getAllPosts(
-        this.currentPage + 1, 
-        12, 
+        this.currentPage + 1,
+        12,
         this.searchQuery
       );
       this.posts = [...this.posts, ...response.posts];
@@ -175,8 +175,8 @@ class ExploreIndex extends HTMLElement {
     if (!this.isLoading && this.posts.length === 0) {
       return {
         state: 'empty',
-        message: this.searchQuery ? 
-          'Tidak ada postingan yang sesuai dengan pencarian.' : 
+        message: this.searchQuery ?
+          'Tidak ada postingan yang sesuai dengan pencarian.' :
           'Belum ada postingan untuk ditampilkan.'
       };
     }
@@ -220,6 +220,7 @@ class ExploreIndex extends HTMLElement {
           border-radius: 8px;
           font-size: 14px;
           color: #333;
+          font-family: 'Plus Jakarta Sans', sans-serif;
           transition: all 0.2s ease;
         }
 
@@ -236,7 +237,8 @@ class ExploreIndex extends HTMLElement {
         .search-button {
           height: 44px;
           padding: 0 24px;
-          background: #1D77E6;
+          background: #5d87ff;
+          font-family: 'Plus Jakarta Sans', sans-serif;
           color: white;
           border: none;
           border-radius: 8px;
@@ -249,7 +251,7 @@ class ExploreIndex extends HTMLElement {
         }
 
         .search-button:hover {
-          background: #1565c0;
+          background: #4f73d9;
         }
 
         .search-button i {
@@ -260,7 +262,6 @@ class ExploreIndex extends HTMLElement {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
           gap: 24px;
-          padding: 16px;
         }
 
         @media screen and (min-width: 1200px) {

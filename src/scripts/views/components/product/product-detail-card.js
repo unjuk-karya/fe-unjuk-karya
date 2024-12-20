@@ -105,6 +105,7 @@ class ProductDetailCard extends HTMLElement {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 48px;
+    border: 1px solid #ebf1f6;
     padding: 24px;
     align-items: start;
     background: white;
@@ -220,6 +221,7 @@ class ProductDetailCard extends HTMLElement {
   }
 
   .product-image {
+    border: 1px solid #ebf1f6;
     position: relative;
     overflow: hidden;
     border-radius: 12px;
@@ -404,6 +406,7 @@ class ProductDetailCard extends HTMLElement {
     border: none;
     border-radius: 12px;
     color: white;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;

@@ -102,6 +102,7 @@ class ProductReviews extends HTMLElement {
 
                 .review-card {
                     background: white;
+                    border: 1px solid #ebf1f6;
                     border-radius: var(--card-radius, 16px);
                     box-shadow: var(--card-shadow, 0 2px 12px rgba(0, 0, 0, 0.08));
                     overflow: hidden;

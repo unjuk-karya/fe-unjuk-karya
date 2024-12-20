@@ -124,6 +124,7 @@ class ProductDetailIndex extends HTMLElement {
 
         .description-card {
           background: white;
+          border: 1px solid #ebf1f6;
           border-radius: var(--card-radius);
           box-shadow: var(--card-shadow);
           overflow: hidden;

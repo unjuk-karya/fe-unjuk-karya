@@ -33,7 +33,6 @@ class AppLayout extends HTMLElement {
           }
   
           .content-wrapper {
-            padding-top: 10px;
             flex: 1;
             overflow-y: auto; /* Tambahkan ini */
             height: 100%; /* Tambahkan ini */

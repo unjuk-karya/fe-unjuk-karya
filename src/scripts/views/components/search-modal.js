@@ -91,6 +91,7 @@ class SearchModal extends HTMLElement {
 
        .search-input {
          width: 100%;
+         font-family: 'Plus Jakarta Sans', sans-serif;
          padding: 12px 16px;
          border: 1px solid #ddd;
          border-radius: 8px;
