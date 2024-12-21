@@ -67,19 +67,20 @@ class ProfileHeader extends HTMLElement {
 
   render() {
     if (!this._profileData) return;
-    const coverPhoto = this._profileData.coverPhoto || 'https://picsum.photos/800/400';
-    const avatar = this._profileData.avatar || 'https://picsum.photos/200';
+    const coverPhoto = this._profileData.coverPhoto || '';
+    const avatar = this._profileData.avatar || '';
 
     this.shadowRoot.innerHTML = `
       <style>
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+
         :host {
           display: block;
         }
 
         .profile-container {
           position: relative;
-          background: linear-gradient(to right, #a5d6ff, #d6a5ff);
-          background-image: url('${coverPhoto}');
+          background: ${coverPhoto ? `url('${coverPhoto}')` : 'linear-gradient(to right, #a5d6ff, #d6a5ff)'};
           background-size: cover;
           background-repeat: no-repeat;
           background-position: center;
@@ -103,11 +104,17 @@ class ProfileHeader extends HTMLElement {
           background-color: #fff;
           margin-bottom: -75px;
           object-fit: cover;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 100px;
+          color: #ccc;
         }
 
         .profile-info {
           text-align: center;
           padding-top: 85px;
+          padding-bottom: 20px;
           margin-bottom: 0;
           background: rgba(255, 255, 255, 0.8);
         }
@@ -325,7 +332,7 @@ class ProfileHeader extends HTMLElement {
 
       <div class="profile-container">
         <header class="header">
-          <img src="${avatar}" alt="Foto Profil" class="profile-pic">
+          ${avatar ? `<img src="${avatar}" alt="Foto Profil" class="profile-pic">` : '<div class="profile-pic"><i class="fas fa-user"></i></div>'}
         </header>
 
         <div class="profile-info">

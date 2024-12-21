@@ -87,11 +87,26 @@ class PostDetailComment extends HTMLElement {
           flex-shrink: 0;
         }
 
-        .user-avatar {
+        .avatar-container {
           width: 32px;
           height: 32px;
           border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #e0e0e0;
+          overflow: hidden;
+        }
+
+        .user-avatar {
+          width: 100%;
+          height: 100%;
           object-fit: cover;
+        }
+
+        .avatar-icon {
+          font-size: 16px;
+          color: #fff;
         }
 
         .comment-content {
@@ -172,13 +187,16 @@ class PostDetailComment extends HTMLElement {
       <div class="comment">
         <div class="comment-container">
           <div class="avatar-column">
-            <img class="user-avatar" 
-                 src="${this._data.user.avatar || 'https://via.placeholder.com/32'}" 
-                 alt="${this._data.user.username}">
+            <div class="avatar-container">
+              ${this._data.user.avatar ?
+    `<img class="user-avatar" src="${this._data.user.avatar}" alt="${this._data.user.username}">` :
+    '<i class="fas fa-user avatar-icon"></i>'
+}
+            </div>
           </div>
           <div class="comment-content">
             <div class="content-text">
-            <a href="#/profile/${this._data.user.id}" class="username">${this._data.user.username}</a>
+              <a href="#/profile/${this._data.user.id}" class="username">${this._data.user.username}</a>
               <span class="comment-text">${this._data.content}</span>
             </div>
             <div class="comment-actions">
@@ -206,6 +224,15 @@ class PostDetailComment extends HTMLElement {
   }
 
   async setupEventListeners() {
+    const usernameLink = this.shadowRoot.querySelector('.username');
+    usernameLink.addEventListener('click', (e) => {
+      // Find post-detail element through root node
+      const postDetail = document.querySelector('post-detail');
+      if (postDetail) {
+        postDetail.remove();
+      }
+    });
+
     const likeButton = this.shadowRoot.querySelector('.like-button');
     likeButton.addEventListener('click', async (e) => {
       e.stopPropagation();
@@ -218,13 +245,6 @@ class PostDetailComment extends HTMLElement {
         console.error('Error liking comment:', error);
       }
     });
-
-    if (this._data.isMyself) {
-      const deleteButton = this.shadowRoot.querySelector('.delete-button');
-      deleteButton.addEventListener('click', () => {
-        this.handleDelete();
-      });
-    }
   }
 }
 

@@ -315,13 +315,28 @@ class PostDetail extends HTMLElement {
     position: relative;
   }
 
-  .user-avatar {
+.user-avatar-container {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e0e0e0;
+    overflow: hidden;
   }
 
+  .user-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .user-avatar-icon {
+    font-size: 18px;
+    color: #fff;
+  }
   .username {
     font-weight: 600;
     color: #000;
@@ -416,7 +431,6 @@ class PostDetail extends HTMLElement {
     cursor: pointer;
     font-size: 14px;
     white-space: nowrap;
-    font-family: inherit;
     transition: background-color 0.2s ease;
   }
 
@@ -496,7 +510,6 @@ class PostDetail extends HTMLElement {
     line-height: 1.4;
     max-height: 80px;
     overflow-y: auto;
-    font-family: inherit;
     padding: 8px 0;
   }
 
@@ -743,29 +756,34 @@ class PostDetail extends HTMLElement {
             <img class="post-image" src="${this._post.image}" alt="">
           </div>
           <div class="post-sidebar">
-            <div class="post-header">
-              <img class="user-avatar" src="${this._post.user.avatar || 'https://via.placeholder.com/32'}" alt="">
-              <a href="#/profile/${this._post.user.id}" class="username">${this._post.user.username}</a>
-              ${this._post.isMyself ? `
-                <button class="more-options-button">
-                  <i class="fas fa-ellipsis-h"></i>
-                </button>
-                <div class="options-menu" style="display: none;">
-                  <button class="delete-button">
-                    <i class="far fa-trash-alt"></i>
-                    <span>Hapus</span>
-                  </button>
-                  <button class="edit-button">
-                    <i class="far fa-edit"></i>
-                    <span>Edit</span>
-                  </button>
-                </div>
-              ` : `
-              <button class="follow-button ${this._post.isFollowing ? 'following' : ''}" id="follow-button">
-                  ${this._post.isFollowing ? 'Mengikuti' : 'Ikuti'}
-                </button>
-              `}
-            </div>
+  <div class="post-header">
+    <div class="user-avatar-container">
+      ${this._post.user.avatar ?
+    `<img class="user-avatar" src="${this._post.user.avatar}" alt="${this._post.user.username}">` :
+    '<i class="fas fa-user user-avatar-icon"></i>'
+}
+    </div>
+    <a href="#/profile/${this._post.user.id}" class="username">${this._post.user.username}</a>
+    ${this._post.isMyself ? `
+      <button class="more-options-button">
+        <i class="fas fa-ellipsis-h"></i>
+      </button>
+      <div class="options-menu" style="display: none;">
+        <button class="delete-button">
+          <i class="far fa-trash-alt"></i>
+          <span>Hapus</span>
+        </button>
+        <button class="edit-button">
+          <i class="far fa-edit"></i>
+          <span>Edit</span>
+        </button>
+      </div>
+    ` : `
+    <button class="follow-button ${this._post.isFollowing ? 'following' : ''}" id="follow-button">
+        ${this._post.isFollowing ? 'Mengikuti' : 'Ikuti'}
+      </button>
+    `}
+  </div>
   
             <div class="comments-section">
               <div class="post-content-section">

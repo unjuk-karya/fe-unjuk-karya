@@ -1,7 +1,7 @@
 import API_ENDPOINT from '../globals/api-endpoint';
 
 class PostSource {
-  static async getAllPosts(page = 1, pageSize = 8, search = '') {
+  static async getAllPosts(page = 1, pageSize = 9, search = '') {
     const token = localStorage.getItem('token');
     const searchQuery = search ? `&search=${encodeURIComponent(search)}` : '';
 

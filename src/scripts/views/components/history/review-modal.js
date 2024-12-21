@@ -169,12 +169,12 @@ class ReviewModal extends HTMLElement {
     const textarea = this.shadowRoot.querySelector('#review-comment');
     const charCount = this.shadowRoot.querySelector('.character-count');
     const progressBar = this.shadowRoot.querySelector('.character-progress-bar');
-    
+
     if (textarea && charCount && progressBar) {
       textarea._inputHandler = () => {
         const count = textarea.value.length;
         const percentage = (count / 500) * 100;
-        
+
         charCount.textContent = `${count}/500`;
         progressBar.style.width = `${percentage}%`;
 
@@ -477,7 +477,6 @@ class ReviewModal extends HTMLElement {
     border-radius: 4px;
     resize: vertical;
     min-height: 120px;
-    font-family: inherit;
     box-sizing: border-box;
     font-size: 14px;
     line-height: 1.5;

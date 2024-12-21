@@ -37,7 +37,6 @@ class ProductReviews extends HTMLElement {
 
   async attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'product-id' && oldValue !== newValue && this._hasInitialized) {
-      // Only fetch if it's not the initial setup
       this.state.targetPage = 1;
       await this.fetchReviews(newValue);
     }
@@ -135,11 +134,27 @@ class ProductReviews extends HTMLElement {
                     gap: 16px;
                 }
 
-                .reviewer-avatar {
+                .avatar-container {
                     width: 48px;
                     height: 48px;
                     border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: #e0e0e0;
+                    overflow: hidden;
+                    flex-shrink: 0;
+                }
+
+                .reviewer-avatar {
+                    width: 100%;
+                    height: 100%;
                     object-fit: cover;
+                }
+
+                .avatar-icon {
+                    font-size: 24px;
+                    color: #fff;
                 }
 
                 .review-content {
@@ -258,9 +273,13 @@ class ProductReviews extends HTMLElement {
                         gap: 12px;
                     }
 
-                    .reviewer-avatar {
+                    .avatar-container {
                         width: 40px;
                         height: 40px;
+                    }
+
+                    .avatar-icon {
+                        font-size: 20px;
                     }
                 }
 
@@ -293,21 +312,26 @@ class ProductReviews extends HTMLElement {
                     ${reviewsState === 'success' && reviews.length > 0 ? `
                         <div class="review-list">
                             ${reviews.map((review) => `
-                    <div class="review-item">
-                        <img src="${review.user.avatar}" alt="${review.user.username}" class="reviewer-avatar">
-                        <div class="review-content">
-                            <div class="reviewer-name">
-                                <a href="#/profile/${review.user.id}">
-                                    ${review.user.username}
-                                </a>
-                            </div>
-                            <div class="review-rating">
-                                <div class="star-rating">${this.generateStars(review.rating)}</div>
-                                <span class="review-date">${formatDate(review.createdAt)}</span>
-                            </div>
-                            <div class="review-text">${review.comment}</div>
-                        </div>
-                    </div>
+                                <div class="review-item">
+                                    <div class="avatar-container">
+                                        ${review.user.avatar ?
+    `<img src="${review.user.avatar}" alt="${review.user.username}" class="reviewer-avatar">` :
+    '<i class="fas fa-user avatar-icon"></i>'
+}
+                                    </div>
+                                    <div class="review-content">
+                                        <div class="reviewer-name">
+                                            <a href="#/profile/${review.user.id}">
+                                                ${review.user.username}
+                                            </a>
+                                        </div>
+                                        <div class="review-rating">
+                                            <div class="star-rating">${this.generateStars(review.rating)}</div>
+                                            <span class="review-date">${formatDate(review.createdAt)}</span>
+                                        </div>
+                                        <div class="review-text">${review.comment}</div>
+                                    </div>
+                                </div>
                             `).join('')}
                         </div>
                         ${pagination.totalPages > 1 ? `

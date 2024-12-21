@@ -12,7 +12,7 @@ const API_ENDPOINT = {
   GET_USER_SAVED_PRODUCTS: (userId, page = 1, pageSize = 8) =>
     `${CONFIG.BASE_URL}users/${userId}/saved-products?page=${page}&pageSize=${pageSize}`, // GET
   POST_FOLLOW_USER: (userId) => `${CONFIG.BASE_URL}users/${userId}/follow`, // POST
-  GET_ALL_POSTS: (page = 1, pageSize = 8) =>
+  GET_ALL_POSTS: (page = 1, pageSize = 9) =>
     `${CONFIG.BASE_URL}posts?page=${page}&pageSize=${pageSize}`, // GET
   GET_FEED_POSTS: (page = 1, pageSize = 9) =>
     `${CONFIG.BASE_URL}posts/feed?page=${page}&pageSize=${pageSize}`, // GET

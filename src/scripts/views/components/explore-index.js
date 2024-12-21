@@ -75,6 +75,26 @@ class ExploreIndex extends HTMLElement {
     await this.fetchNextPosts();
   }
 
+  disconnectedCallback() {
+    const mainStateHandler = this.shadowRoot.querySelector('content-state-handler');
+    const nextPageStateHandler = this.shadowRoot.querySelector('#next-page-state-handler');
+    const searchForm = this.shadowRoot.querySelector('.search-form');
+
+    if (mainStateHandler) {
+      mainStateHandler.removeEventListener('retry', this.handleRetry);
+    }
+    if (nextPageStateHandler) {
+      nextPageStateHandler.removeEventListener('retry', this.handleNextPageRetry);
+    }
+    if (searchForm) {
+      searchForm.removeEventListener('submit', this.handleSearch);
+    }
+    if (this.observer) {
+      this.observer.disconnect();
+    }
+    this.shadowRoot.removeEventListener('post-click', this.handlePostClick);
+  }
+
   setupIntersectionObserver() {
     if (this.observer) {
       this.observer.disconnect();
@@ -98,7 +118,7 @@ class ExploreIndex extends HTMLElement {
     }
   }
 
-  async fetchPosts(pageSize = 12) {
+  async fetchPosts(pageSize = 9) {
     if (this.isLoading) return;
 
     try {
@@ -131,7 +151,7 @@ class ExploreIndex extends HTMLElement {
 
       const response = await PostSource.getAllPosts(
         this.currentPage + 1,
-        12,
+        9,
         this.searchQuery
       );
       this.posts = [...this.posts, ...response.posts];
@@ -154,8 +174,8 @@ class ExploreIndex extends HTMLElement {
 
     container.innerHTML = '';
     this.posts.forEach((post) => {
-      const postCard = document.createElement('post-card-explore');
-      postCard.post = post;
+      const postCard = document.createElement('post-card-home');
+      postCard.data = post;
       container.appendChild(postCard);
     });
   }
@@ -202,7 +222,6 @@ class ExploreIndex extends HTMLElement {
           margin-bottom: 24px;
           display: flex;
           justify-content: flex-end;
-          padding: 0 16px;
         }
 
         .search-form {
@@ -262,27 +281,35 @@ class ExploreIndex extends HTMLElement {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
           gap: 24px;
+          width: 100%;
+          margin: 0 auto;
+          box-sizing: border-box;
         }
 
+        /* Large screens */
         @media screen and (min-width: 1200px) {
           .container-explore {
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
           }
         }
 
-        @media screen and (max-width: 1199px) {
+        /* Medium screens */
+        @media screen and (max-width: 1199px) and (min-width: 768px) {
           .container-explore {
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-          }
+            grid-template-columns: repeat(3, 1fr);
+            max-width: 900px;
+            gap: 24px;
+
+            }
         }
 
-        @media screen and (max-width: 900px) {
+        /* Small screens */
+        @media screen and (max-width: 767px) {
           .container-explore {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 16px;
-            padding: 8px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 100%;
           }
 
           .search-container {
@@ -305,26 +332,25 @@ class ExploreIndex extends HTMLElement {
           }
         }
 
-        @media screen and (max-width: 600px) {
+        /* Extra small screens */
+        @media screen and (max-width: 480px) {
           .container-explore {
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: 1fr;
             gap: 12px;
-            padding: 4px;
           }
         }
 
-        @media screen and (max-width: 400px) {
-          .container-explore {
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 8px;
-            padding: 4px;
-          }
+        post-card-home {
+          width: 100%;
+          display: block;
+          min-width: 0;
         }
 
         #sentinel {
           width: 100%;
           height: 1px;
           visibility: hidden;
+          grid-column: 1 / -1;
         }
       </style>
 
@@ -364,26 +390,6 @@ class ExploreIndex extends HTMLElement {
     }
 
     this.setupEventListeners();
-  }
-
-  disconnectedCallback() {
-    const mainStateHandler = this.shadowRoot.querySelector('content-state-handler');
-    const nextPageStateHandler = this.shadowRoot.querySelector('#next-page-state-handler');
-    const searchForm = this.shadowRoot.querySelector('.search-form');
-
-    if (mainStateHandler) {
-      mainStateHandler.removeEventListener('retry', this.handleRetry);
-    }
-    if (nextPageStateHandler) {
-      nextPageStateHandler.removeEventListener('retry', this.handleNextPageRetry);
-    }
-    if (searchForm) {
-      searchForm.removeEventListener('submit', this.handleSearch);
-    }
-    if (this.observer) {
-      this.observer.disconnect();
-    }
-    this.shadowRoot.removeEventListener('post-click', this.handlePostClick);
   }
 }
 

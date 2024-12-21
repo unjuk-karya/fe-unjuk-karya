@@ -1,4 +1,3 @@
-// product-detail-seller.js
 class ProductDetailSeller extends HTMLElement {
   constructor() {
     super();
@@ -66,35 +65,44 @@ class ProductDetailSeller extends HTMLElement {
             transition: all 0.2s;
           }
 
-.seller-username {
-    font-weight: 600;
-    color: #333;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
+          .seller-username {
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
 
-.username-text {
-    transition: all 0.2s;
-}
+          .username-text {
+            transition: all 0.2s;
+          }
 
-.profile-main:hover .username-text {
-    text-decoration: underline;
-    text-underline-offset: 2px;
-}
+          .profile-main:hover .username-text {
+            text-decoration: underline;
+            text-underline-offset: 2px;
+          }
 
-          .seller-avatar {
+          .avatar-container {
             width: 48px;
             height: 48px;
             border-radius: 24px;
             overflow: hidden;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e0e0e0;
           }
   
-          .seller-avatar img {
+          .seller-avatar {
             width: 100%;
             height: 100%;
             object-fit: cover;
+          }
+
+          .avatar-icon {
+            font-size: 24px;
+            color: #fff;
           }
   
           .seller-details {
@@ -102,7 +110,6 @@ class ProductDetailSeller extends HTMLElement {
             flex-direction: column;
             gap: 4px;
           }
-  
   
           .seller-stats {
             display: flex;
@@ -163,14 +170,17 @@ class ProductDetailSeller extends HTMLElement {
           <div class="seller-info">
             <div class="seller-profile">
               <div class="profile-main">
-                <div class="seller-avatar">
-                  <img src="${seller.avatar}" alt="${seller.username}">
+                <div class="avatar-container">
+                  ${seller.avatar ?
+    `<img class="seller-avatar" src="${seller.avatar}" alt="${seller.username}">` :
+    '<i class="fas fa-user avatar-icon"></i>'
+}
                 </div>
                 <div class="seller-details">
-<div class="seller-username">
-    <span class="username-text">${seller.username}</span>
-    <i class="fas fa-chevron-right"></i>
-</div>
+                  <div class="seller-username">
+                    <span class="username-text">${seller.username}</span>
+                    <i class="fas fa-chevron-right"></i>
+                  </div>
                 </div>
               </div>
               <div class="seller-stats">

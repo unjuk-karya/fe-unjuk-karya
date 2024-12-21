@@ -184,7 +184,6 @@ class HomeIndex extends HTMLElement {
           gap: 24px;
           width: 100%;
           margin: 0 auto;
-          padding: 16px;
           box-sizing: border-box;
         }
 
@@ -202,7 +201,6 @@ class HomeIndex extends HTMLElement {
             grid-template-columns: repeat(3, 1fr);
             max-width: 900px;
             gap: 24px;
-            padding: 16px;
           }
         }
 
@@ -211,7 +209,6 @@ class HomeIndex extends HTMLElement {
           .container-home {
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-            padding: 12px;
             max-width: 100%;
           }
         }
@@ -221,7 +218,6 @@ class HomeIndex extends HTMLElement {
           .container-home {
             grid-template-columns: 1fr;
             gap: 12px;
-            padding: 8px;
           }
         }
 

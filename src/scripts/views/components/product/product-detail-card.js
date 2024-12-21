@@ -204,7 +204,6 @@ class ProductDetailCard extends HTMLElement {
     cursor: pointer;
     font-size: 14px;
     white-space: nowrap;
-    font-family: inherit;
     transition: background-color 0.2s ease;
   }
 

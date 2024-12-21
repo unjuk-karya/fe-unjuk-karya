@@ -80,7 +80,6 @@ class UserListModal extends HTMLElement {
       this.render();
 
       const response = await ProfileSource.getFollowings(userId);
-
       this.likes = Array.isArray(response) ? response : [];
 
     } catch (error) {
@@ -105,7 +104,6 @@ class UserListModal extends HTMLElement {
       this.render();
 
       const response = await ProfileSource.getFollowers(userId);
-
       this.likes = Array.isArray(response) ? response : [];
 
     } catch (error) {
@@ -168,23 +166,25 @@ class UserListModal extends HTMLElement {
           align-items: center;
           justify-content: center;
           z-index: 1000;
+          padding: 16px;
         }
   
         .modal-content {
           background: #fff;
           width: 100%;
           max-width: 400px;
-          border-radius: 10px;
+          border-radius: 16px;
           overflow: hidden;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           display: flex;
           flex-direction: column;
           position: relative;
+          animation: modalSlide 0.3s ease;
         }
   
         .modal-header {
-          padding: 14px;
-          font-weight: bold;
+          padding: 16px;
+          font-weight: 600;
           font-size: 18px;
           text-align: center;
           border-bottom: 1px solid #e6e6e6;
@@ -192,44 +192,64 @@ class UserListModal extends HTMLElement {
         }
   
         .modal-body {
-          max-height: 400px;
+          height: 400px;
           overflow-y: auto;
-          padding: 10px;
+          padding: 16px;
           scroll-behavior: smooth;
         }
   
         .user-item {
           display: flex;
           align-items: center;
-          padding: 10px;
-          border-bottom: 1px solid #f0f0f0;
+          padding: 12px;
+          border-radius: 12px;
+          margin-bottom: 4px;
+          transition: background-color 0.2s ease;
+        }
+
+        .user-item:hover {
+          background-color: #f8fafc;
         }
   
-        .user-item:last-child {
-          border-bottom: none;
-        }
-  
-        .user-avatar {
-          width: 40px;
-          height: 40px;
+        .user-avatar-container {
+          width: 44px;
+          height: 44px;
           border-radius: 50%;
+          margin-right: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #e0e0e0;
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+
+        .user-avatar {
+          width: 100%;
+          height: 100%;
           object-fit: cover;
-          margin-right: 10px;
+        }
+
+        .avatar-icon {
+          font-size: 22px;
+          color: #fff;
         }
   
         .user-info {
           flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
+          min-width: 0;
         }
   
         .username {
           font-size: 14px;
-          font-weight: bold;
+          font-weight: 600;
           color: #333;
           text-decoration: none;
           transition: color 0.2s ease;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: block;
         }
 
         .username:hover {
@@ -237,82 +257,210 @@ class UserListModal extends HTMLElement {
         }
   
         .fullname {
-          font-size: 12px;
+          font-size: 13px;
           color: #666;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
   
         .follow-button {
-          padding: 5px 10px;
-          font-size: 12px;
+          padding: 6px 16px;
+          font-size: 13px;
           cursor: pointer;
           background: #5d87ff;
           font-family: 'Plus Jakarta Sans', sans-serif;
           color: #fff;
-          border-radius: 4px;
+          border: 1.5px solid #5d87ff;
+          border-radius: 6px;
           transition: all 0.2s ease;
+          flex-shrink: 0;
+          min-width: 80px;
+          font-weight: 500;
         }
   
         .follow-button.following {
           background-color: #fff;
           color: #1D77E6;
+          border-color: #1D77E6;
         }
 
         .follow-button:hover {
-          transform: scale(1.05);
+          transform: translateY(-1px);
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .follow-button:active {
+          transform: translateY(0);
         }
   
         .modal-close {
           position: absolute;
-          top: 10px;
-          right: 10px;
+          top: 12px;
+          right: 12px;
+          width: 32px;
+          height: 32px;
           font-size: 24px;
           color: #666;
           cursor: pointer;
           background: none;
           border: none;
-          padding: 5px;
-          line-height: 1;
-          z-index: 10;
-          transition: color 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          transition: all 0.2s ease;
         }
 
         .modal-close:hover {
           color: #333;
+          background-color: #f3f4f6;
         }
 
-        @media (max-width: 480px) {
+        .modal-body::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+          background: #d1d5db;
+          border-radius: 3px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+          background: #9ca3af;
+        }
+
+        @keyframes modalSlide {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        /* Large screens */
+        @media screen and (min-width: 1024px) {
           .modal-content {
-            height: 100%;
-            max-width: none;
-            border-radius: 0;
+            max-width: 450px;
           }
 
           .modal-body {
-            max-height: none;
-            flex: 1;
+            height: 450px;
+          }
+        }
+
+        /* Medium screens */
+        @media screen and (max-width: 1023px) and (min-width: 768px) {
+          .modal-content {
+            max-width: 400px;
+          }
+
+          .modal-body {
+            height: 400px;
+          }
+        }
+
+        /* Small screens */
+        @media screen and (max-width: 767px) {
+          .modal-overlay {
+            padding: 0;
+            align-items: flex-end;
+          }
+
+          .modal-content {
+            max-width: 100%;
+            border-radius: 16px 16px 0 0;
+            max-height: 85vh;
+          }
+
+          .modal-body {
+            height: auto;
+            max-height: calc(85vh - 60px);
+          }
+
+          .modal-header {
+            padding: 14px;
+          }
+
+          .user-item {
+            padding: 10px;
+          }
+
+          .user-avatar-container {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+          }
+
+          .avatar-icon {
+            font-size: 20px;
+          }
+
+          .username {
+            font-size: 13px;
+          }
+
+          .fullname {
+            font-size: 12px;
+          }
+
+          .follow-button {
+            padding: 5px 12px;
+            font-size: 12px;
+            min-width: 70px;
+          }
+        }
+
+        /* Handle landscape */
+        @media screen and (max-height: 600px) {
+          .modal-overlay {
+            align-items: center;
+          }
+
+          .modal-content {
+            max-height: 90vh;
+            border-radius: 16px;
+          }
+
+          .modal-body {
+            max-height: calc(90vh - 60px);
           }
         }
       </style>
   
       <div class="modal-overlay">
         <div class="modal-content">
-          <button class="modal-close" aria-label="Tutup">&times;</button>
-          <div class="modal-header">${headerText}</div>
+          <div class="modal-header">
+            ${headerText}
+            <button class="modal-close" aria-label="Tutup">&times;</button>
+          </div>
           <div class="modal-body">
-<content-state-handler 
-  state="${this.isLoading ? 'loading' : this.error ? 'error' : this.likes.length === 0 ? 'empty' : 'success'}"
-  message="${this.error ? 'Gagal memuat data. Silakan coba lagi.' :
+            <content-state-handler 
+              state="${this.isLoading ? 'loading' : this.error ? 'error' : this.likes.length === 0 ? 'empty' : 'success'}"
+              message="${this.error ? 'Gagal memuat data. Silakan coba lagi.' :
     this.likes.length === 0 ?
       this.type === 'likes' ? 'Belum ada yang menyukai' :
         this.type === 'followers' ? 'Belum ada pengikut' :
           'Anda belum mengikuti siapapun' : ''}"
->
+            >
               ${!this.isLoading && !this.error && this.likes.length > 0 ?
     this.likes.map((like, index) => `
                   <div class="user-item">
-                    <img src="${like.user.avatar || 'https://via.placeholder.com/40'}" alt="Avatar ${like.user.username}" class="user-avatar">
+                    <div class="user-avatar-container">
+                      ${like.user.avatar ?
+    `<img src="${like.user.avatar}" alt="${like.user.username}" class="user-avatar">` :
+    '<i class="fas fa-user avatar-icon"></i>'
+}
+                    </div>
                     <div class="user-info">
-                      <a href="#/profile/${like.user.id}" class="username">${like.user.username}</a>
+<a href="#/profile/${like.user.id}" onclick="this.getRootNode().host.handleNavigation('${like.user.id}'); return false;" class="username">
                       <span class="fullname">${like.user.name || ''}</span>
                     </div>
                     ${like.user.isMyself ? '' : `
@@ -356,12 +504,45 @@ class UserListModal extends HTMLElement {
       button.addEventListener('click', () => this.handleFollow(this.likes[index].user.id, index));
     });
   }
+  handleNavigation(userId) {
+  // Hapus modal likes
+    this.remove();
 
+    // Hapus post-detail jika ada
+    const postDetailModal = document.querySelector('post-detail');
+    if (postDetailModal) {
+      postDetailModal.remove();
+    }
+
+    // Navigasi ke profile
+    window.location.href = `#/profile/${userId}`;
+  }
   disconnectedCallback() {
     const stateHandler = this.shadowRoot.querySelector('content-state-handler');
     if (stateHandler) {
       stateHandler.removeEventListener('retry', this.handleRetry);
     }
+
+    // Cleanup click events
+    this.shadowRoot.querySelector('.modal-close')?.removeEventListener('click', () => this.remove());
+    this.shadowRoot.querySelector('.modal-overlay')?.removeEventListener('click', (e) => {
+      if (e.target.classList.contains('modal-overlay')) {
+        this.remove();
+      }
+    });
+
+    // Hapus bagian ini
+    this.shadowRoot.querySelectorAll('.username').forEach((usernameLink) => {
+      usernameLink.addEventListener('click', () => {
+        this.remove();
+      });
+    });
+
+    const followButtons = this.shadowRoot.querySelectorAll('.follow-button');
+    followButtons.forEach((button) => {
+      const index = button.getAttribute('data-index');
+      button.removeEventListener('click', () => this.handleFollow(this.likes[index].user.id, index));
+    });
   }
 }
 

@@ -25,7 +25,7 @@ class TransactionCard extends HTMLElement {
     };
 
     if (order.status !== 'PAID') return REVIEW_BUTTON_STATES.NOT_PAID;
-    return order.isReviewed ? REVIEW_BUTTON_STATES.REVIEWED : REVIEW_BUTTON_STATES.NOT_REVIEWED;
+    return order.reviewId ? REVIEW_BUTTON_STATES.REVIEWED : REVIEW_BUTTON_STATES.NOT_REVIEWED;
   }
 
   handleProductClick(productId) {

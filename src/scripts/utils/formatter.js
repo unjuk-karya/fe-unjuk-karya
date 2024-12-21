@@ -7,11 +7,11 @@ export function formatDate(dateString) {
   const days = Math.floor(hours / 24);
 
   if (minutes < 60) {
-    return `${minutes}m`; // menit
+    return `${minutes} menit`; // menit
   } else if (hours < 24) {
-    return `${hours}j`; // jam
+    return `${hours} jam`; // jam
   } else if (days < 7) {
-    return `${days}h`; // hari
+    return `${days} hari`; // hari
   } else {
     return date.toLocaleDateString('id-ID'); // tanggal
   }

@@ -322,11 +322,11 @@ class SideBar extends HTMLElement {
           <li class="create">
             <a href="javascript:void(0)">
               <i class="fa-solid fa-square-plus"></i>
-              <span class="nav-item">Buat Postingan</span>
+              <span class="nav-item">Tambah</span>
             </a>
             <div class="dropdown">
-              <a href="#/create-post"><i class="fa-solid fa-file-image"></i><span class="nav-item-dropdown">Buat Post</span></a>
-              <a href="#/create-product"><i class="fa-solid fa-box"></i><span class="nav-item-dropdown">Buat Produk</span></a>
+              <a href="#/create-post"><i class="fa-solid fa-file-image"></i><span class="nav-item-dropdown">Post</span></a>
+              <a href="#/create-product"><i class="fa-solid fa-box"></i><span class="nav-item-dropdown">Produk</span></a>
             </div>
           </li>
           <li>

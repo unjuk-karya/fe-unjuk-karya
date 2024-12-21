@@ -20,7 +20,7 @@ class PostCardHome extends HTMLElement {
 
       this.post.isLiked = !oldLikeState;
       this.post.likesCount = oldLikeState ? oldLikeCount - 1 : oldLikeCount + 1;
-      
+
       const likeButton = this.shadowRoot.querySelector('.like-button');
       const likeIcon = this.shadowRoot.querySelector('.like-icon');
       const likesCount = this.shadowRoot.querySelector('.likes-count');
@@ -106,7 +106,7 @@ class PostCardHome extends HTMLElement {
           padding: 4px;
         }
 
-        .author-image {
+        .author-avatar {
           width: 40px;
           height: 40px;
           border-radius: 50%;
@@ -114,9 +114,25 @@ class PostCardHome extends HTMLElement {
           object-fit: cover;
           border: 2px solid #fff;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #e0e0e0;
         }
 
-        .author-name {
+        .author-avatar img {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+
+        .author-avatar i {
+          font-size: 20px;
+          color: #fff;
+        }
+
+        .author-username {
           font-size: 14px;
           color: #fff;
           font-weight: 500;
@@ -158,6 +174,21 @@ class PostCardHome extends HTMLElement {
           color: #000;
           margin: 24px 0 12px 0;
           line-height: 1.3;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .content {
+          font-size: 14px;
+          color: #666;
+          margin: 0 0 12px 0;
+          line-height: 1.4;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .metrics {
@@ -210,12 +241,18 @@ class PostCardHome extends HTMLElement {
           <img class="card-image" src="${this.post.image}" alt="${this.post.title}">
           <div class="image-overlay"></div>
           <div class="author-section">
-            <img class="author-image" src="${this.post.user.avatar || '/default-avatar.png'}" alt="${this.post.user.name}">
-            <span class="author-name">${this.post.user.name}</span>
+            <div class="author-avatar">
+              ${this.post.user.avatar ?
+    `<img src="${this.post.user.avatar}" alt="${this.post.user.username}">` :
+    '<i class="fas fa-user"></i>'
+}
+            </div>
+            <span class="author-username">${this.post.user.username}</span>
           </div>
         </div>
         <div class="card-content">
           <h2 class="title">${this.post.title}</h2>
+          <p class="content">${this.post.content}</p>
           <div class="metrics">
             <button class="metric-item like-button ${this.post.isLiked ? 'liked' : ''}" aria-label="Like">
               <i class="like-icon ${this.post.isLiked ? 'fas' : 'far'} fa-heart"></i>
