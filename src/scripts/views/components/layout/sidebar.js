@@ -251,6 +251,11 @@ class SideBar extends HTMLElement {
           cursor: pointer;
         }
 
+        .sidebar ul li a.active {
+          background-color: #EEF3FF;
+          color: #1D77E6;
+        }
+
         @media (max-width: 768px) {
           .app-bar {
             display: flex;
@@ -308,19 +313,19 @@ class SideBar extends HTMLElement {
         </div>
         <ul>
           <li>
-            <a href="#/home">
+            <a href="#/home" id="homeLink">
               <i class="fa-solid fa-house"></i>
               <span class="nav-item">Beranda</span>
             </a>
           </li>
           <li>
-            <a href="#/explore">
+            <a href="#/explore" id="exploreLink">
               <i class="fa-solid fa-compass"></i>
               <span class="nav-item">Jelajahi</span>
             </a>
           </li>
           <li class="create">
-            <a href="javascript:void(0)">
+            <a href="javascript:void(0)" id="createLink">
               <i class="fa-solid fa-square-plus"></i>
               <span class="nav-item">Tambah</span>
             </a>
@@ -330,33 +335,16 @@ class SideBar extends HTMLElement {
             </div>
           </li>
           <li>
-            <a href="javascript:void(0)" id="searchIcon">
-              <i class="fa-solid fa-magnifying-glass"></i>
-              <span class="nav-item">Pencarian</span>
-            </a>
-          </li>
-          <li>
-            <a href="#/marketplace">
+            <a href="#/marketplace" id="marketplaceLink">
               <i class="fa-solid fa-shop"></i>
               <span class="nav-item">Marketplace</span>
             </a>
           </li>
           <li>
-            <a href="#/profile">
+            <a href="#/profile" id="profileLink">
               <i class="fa-solid fa-user"></i>
               <span class="nav-item">Profil</span>
             </a>
-          </li>
-          <li class="more">
-            <a href="javascript:void(0)">
-              <i class="fa-solid fa-ellipsis"></i>
-              <span class="nav-item">Lainnya</span>
-            </a>
-            <div class="dropdown">
-              <a href="#/transaction-history"><i class="fa-solid fa-clock-rotate-left"></i><span class="nav-item-dropdown">Riwayat Transaksi</span></a>
-              <a href="#/settings"><i class="fa-solid fa-gear"></i><span class="nav-item-dropdown">Pengaturan</span></a>
-              <a href="#/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="nav-item-dropdown">Keluar</span></a>
-            </div>
           </li>
         </ul>
       </div>
@@ -368,9 +356,29 @@ class SideBar extends HTMLElement {
     this.initSearchModal();
     this.initCreatePostDropdown();
     this.initAppBarToggle();
+    this.highlightActiveLink();
+    this.listenForHashChange();
   }
 
   // TODO
+
+  highlightActiveLink() {
+    const links = this.querySelectorAll('.sidebar ul li a');
+    links.forEach((link) => link.classList.remove('active'));
+
+    const currentHash = window.location.hash;
+
+    const activeLink = Array.from(links).find((link) => link.getAttribute('href') === currentHash);
+    if (activeLink) {
+      activeLink.classList.add('active');
+    }
+  }
+
+  listenForHashChange() {
+    window.addEventListener('hashchange', () => {
+      this.highlightActiveLink();
+    });
+  }
 
   initAppBarToggle() {
     const btn = this.querySelector('#btn-bar');
