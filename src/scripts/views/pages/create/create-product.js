@@ -1,7 +1,6 @@
 import CreateSource from '../../../data/create-source';
 import { categoriesProduct } from '../../../utils/categories-product';
 import Swal from 'sweetalert2';
-import ProfileSource from '../../../data/profile-source';
 
 const CreateProduct = {
   async render() {
@@ -16,34 +15,6 @@ const CreateProduct = {
     const createProductElement = document.querySelector('create-product');
     const submitButton = createProductElement.shadowRoot.querySelector('#submit-button');
     const mobileSubmitButton = createProductElement.shadowRoot.querySelector('#mobile-submit-button');
-
-    const user = JSON.parse(localStorage.getItem('user'));
-    const userId = user.id;
-    let profileData;
-    try {
-      profileData = await ProfileSource.getUserProfile(userId);
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: error,
-        text: 'Gagal mengambil data profil pengguna.',
-      });
-      return;
-    }
-
-    const midtransServerKey = profileData.midtransServerKey;
-    const midtransClientKey = profileData.midtransClientKey;
-
-    if (!midtransServerKey || !midtransClientKey) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Penting!',
-        text: 'Anda perlu mengisi informasi midtrans di profil Anda terlebih dahulu.',
-      }).then(() => {
-        window.location.href = `#/edit-profile/${userId}`;
-      });
-      return;
-    }
 
     // Get Category
     await categoriesProduct(createProductElement);

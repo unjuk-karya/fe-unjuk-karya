@@ -115,8 +115,8 @@ const EditProduct = {
     formData.append('categoryId', category);
 
     const loadingAlert = Swal.fire({
-      title: 'Membuat produk...',
-      text: 'Tunggu sebentar sementara kami membuat produk Anda.',
+      title: 'Memperbarui produk...',
+      text: 'Tunggu sebentar sementara kami memperbarui produk Anda.',
       didOpen: () => {
         Swal.showLoading();
       },
@@ -131,8 +131,8 @@ const EditProduct = {
         loadingAlert.close();
         Swal.fire({
           icon: 'success',
-          title: 'Produk Dibuat',
-          text: 'Produk Anda telah berhasil dibuat.',
+          title: 'Produk Diperbarui',
+          text: 'Produk Anda telah berhasil diperbarui.',
         }).then(() => {
           window.location.href = '#/home';
         });
@@ -140,7 +140,7 @@ const EditProduct = {
         createPostElement.shadowRoot.querySelector('form').reset();
         fileInput.value = '';
       } else {
-        throw new Error(response.message || 'Pembuatan produk gagal');
+        throw new Error(response.message || 'Pembaruan produk gagal');
       }
     } catch (error) {
       loadingAlert.close();

@@ -612,6 +612,31 @@ class CreateProduct extends HTMLElement {
     imagePreview.style.display = 'none';
     deleteIcon.style.display = 'none';
     fileInput.value = '';
+
+    this._validateInputs();
+  }
+
+  _validateInputs() {
+    const titleInput = this._shadowRoot.querySelector('#name');
+    const priceInput = this._shadowRoot.querySelector('#price');
+    const stockInput = this._shadowRoot.querySelector('#stock');
+    const categoryInput = this._shadowRoot.querySelector('#category');
+    const descInput = this._shadowRoot.querySelector('#description');
+    const submitButton = this._shadowRoot.querySelector('#submit-button');
+    const mobileSubmitButton = this._shadowRoot.querySelector('#mobile-submit-button');
+    const imagePreview = this._shadowRoot.querySelector('#image-preview');
+    const fileInput = this._shadowRoot.querySelector('#file-input');
+
+    const titleValid = titleInput.value.trim().length >= 3;
+    const descValid = descInput.value.trim().length >= 8;
+    const priceValid = !isNaN(priceInput.value.replace(/[^\d]/g, '')) && parseFloat(priceInput.value.replace(/[^\d]/g, '')) > 0;
+    const stockValid = !isNaN(stockInput.value) && stockInput.value >= 0;
+    const categoryValid = categoryInput.value.trim().length > 0;
+    const imageValid = fileInput && fileInput.files.length > 0 && imagePreview.src !== '';
+
+    const isValid = titleValid && descValid && priceValid && stockValid && categoryValid && imageValid;
+    submitButton.disabled = !isValid;
+    mobileSubmitButton.disabled = !isValid;
   }
 }
 
