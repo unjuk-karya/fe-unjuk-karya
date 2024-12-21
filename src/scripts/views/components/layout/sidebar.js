@@ -76,7 +76,7 @@ class SideBar extends HTMLElement {
 
         .sidebar ul li {
           height: 40px;
-          width: 100%;
+          width: 95%;
           margin: 0.8rem 0;
           margin-bottom: 1.5rem;
           display: flex;
@@ -121,7 +121,7 @@ class SideBar extends HTMLElement {
         .sidebar ul .more {
           position: absolute;
           bottom: 40px;
-          width: 100%;
+          width: 95%;
         }
 
         .more .dropdown {
@@ -134,23 +134,22 @@ class SideBar extends HTMLElement {
           box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
           border-radius: 8px;
           z-index: 200;
-          margin-left: 10px;
           padding: 10px;
         }
 
         .more .dropdown a {
-          padding: 0.3rem;
           display: block;
           color: #2A3547;
           text-decoration: none;
           font-size: 1rem;
           transition: background-color 0.3s ease;
-          width: 90%;
+          width: 95%;
+          margin-bottom: 15px;
         }
 
         .more .dropdown a:hover {
           background-color: #EEF3FF;
-          width: 90%;
+          width: 95%;
         }
 
         .more.active .dropdown {
@@ -173,13 +172,13 @@ class SideBar extends HTMLElement {
         }
         
         .create .dropdown a {
-          padding: 0.3rem;
           display: block;
           color: #2A3547;
           text-decoration: none;
           font-size: 1rem;
           transition: background-color 0.3s ease;
           width: 90%;
+          margin-bottom: 15px;
         }
         
         .create .dropdown a:hover {
@@ -251,11 +250,6 @@ class SideBar extends HTMLElement {
           cursor: pointer;
         }
 
-        .sidebar ul li a.active {
-          background-color: #EEF3FF;
-          color: #1D77E6;
-        }
-
         @media (max-width: 768px) {
           .app-bar {
             display: flex;
@@ -298,6 +292,11 @@ class SideBar extends HTMLElement {
           .sidebar.active + .content {
             margin-left: 20px;
           }
+
+          .sidebar ul li a.active {
+            background-color: #EEF3FF;
+            color: #1D77E6;
+          }
         }
       </style>
       <div class="app-bar">
@@ -330,12 +329,18 @@ class SideBar extends HTMLElement {
               <span class="nav-item">Tambah</span>
             </a>
             <div class="dropdown">
-              <a href="#/create-post"><i class="fa-solid fa-file-image"></i><span class="nav-item-dropdown">Post</span></a>
-              <a href="#/create-product"><i class="fa-solid fa-box"></i><span class="nav-item-dropdown">Produk</span></a>
+              <a href="#/create-post"><i class="fa-solid fa-file-image"></i><span class="nav-item-dropdown" id="postLink">Post</span></a>
+              <a href="#/create-product"><i class="fa-solid fa-box"></i><span class="nav-item-dropdown" id="produkLink">Produk</span></a>
             </div>
           </li>
           <li>
-            <a href="#/marketplace" id="marketplaceLink">
+            <a href="javascript:void(0)" id="searchIcon">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span class="nav-item">Pencarian</span>
+            </a>
+          </li>
+          <li>
+            <a href="#/marketplace">
               <i class="fa-solid fa-shop"></i>
               <span class="nav-item">Marketplace</span>
             </a>
@@ -345,6 +350,17 @@ class SideBar extends HTMLElement {
               <i class="fa-solid fa-user"></i>
               <span class="nav-item">Profil</span>
             </a>
+          </li>
+          <li class="more">
+            <a href="javascript:void(0)" id="moreLink">
+              <i class="fa-solid fa-ellipsis"></i>
+              <span class="nav-item">Lainnya</span>
+            </a>
+            <div class="dropdown">
+              <a href="#/transaction-history"><i class="fa-solid fa-clock-rotate-left"></i><span class="nav-item-dropdown">Riwayat Transaksi</span></a>
+              <a href="#/settings"><i class="fa-solid fa-gear"></i><span class="nav-item-dropdown">Pengaturan</span></a>
+              <a href="#/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="nav-item-dropdown">Keluar</span></a>
+            </div>
           </li>
         </ul>
       </div>
@@ -356,18 +372,21 @@ class SideBar extends HTMLElement {
     this.initSearchModal();
     this.initCreatePostDropdown();
     this.initAppBarToggle();
-    this.highlightActiveLink();
+    this.highlightActiveLink(); // Panggil fungsi untuk menyoroti item aktif
     this.listenForHashChange();
   }
 
   // TODO
 
   highlightActiveLink() {
+    // Hapus semua kelas "active" dari item sebelumnya
     const links = this.querySelectorAll('.sidebar ul li a');
     links.forEach((link) => link.classList.remove('active'));
 
+    // Periksa hash saat ini
     const currentHash = window.location.hash;
 
+    // Temukan link dengan href yang sesuai dengan hash saat ini
     const activeLink = Array.from(links).find((link) => link.getAttribute('href') === currentHash);
     if (activeLink) {
       activeLink.classList.add('active');
@@ -379,6 +398,7 @@ class SideBar extends HTMLElement {
       this.highlightActiveLink();
     });
   }
+
 
   initAppBarToggle() {
     const btn = this.querySelector('#btn-bar');
