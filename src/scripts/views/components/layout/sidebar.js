@@ -129,7 +129,7 @@ class SideBar extends HTMLElement {
           position: absolute;
           bottom: 40px;
           left: 0;
-          width: 100%;
+          width: 95%;
           background-color: #fff;
           box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
           border-radius: 8px;
@@ -143,13 +143,11 @@ class SideBar extends HTMLElement {
           text-decoration: none;
           font-size: 1rem;
           transition: background-color 0.3s ease;
-          width: 95%;
           margin-bottom: 15px;
         }
 
         .more .dropdown a:hover {
           background-color: #EEF3FF;
-          width: 95%;
         }
 
         .more.active .dropdown {
@@ -162,7 +160,7 @@ class SideBar extends HTMLElement {
           position: absolute;
           top: 20px;
           left: 0;
-          width: 100%;
+          width: 90%;
           background-color: #fff;
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
           border-radius: 8px;
@@ -177,13 +175,11 @@ class SideBar extends HTMLElement {
           text-decoration: none;
           font-size: 1rem;
           transition: background-color 0.3s ease;
-          width: 90%;
           margin-bottom: 15px;
         }
         
         .create .dropdown a:hover {
           background-color: #EEF3FF;
-          width: 90%;
         }
         
         .create.active .dropdown {
@@ -358,7 +354,6 @@ class SideBar extends HTMLElement {
             </a>
             <div class="dropdown">
               <a href="#/transaction-history"><i class="fa-solid fa-clock-rotate-left"></i><span class="nav-item-dropdown">Riwayat Transaksi</span></a>
-              <a href="#/settings"><i class="fa-solid fa-gear"></i><span class="nav-item-dropdown">Pengaturan</span></a>
               <a href="#/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i><span class="nav-item-dropdown">Keluar</span></a>
             </div>
           </li>
