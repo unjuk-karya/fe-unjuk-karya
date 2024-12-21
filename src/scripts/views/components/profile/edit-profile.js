@@ -436,7 +436,7 @@ class EditProfile extends HTMLElement {
         <div class="parent-button">
           <button id="btn-setting" class="btn-setting"><i class="fa-solid fa-user" style="padding-right: 8px"></i> Pengaturan</button>
           <button id="btn-security" class="btn-setting"><i class="fa-solid fa-shield-halved" style="padding-right: 8px"></i> Keamanan</button>
-          <button id="btn-wallet" class="btn-setting"><i class="fa-solid fa-wallet" style="padding-right: 8px"></i> Dompet</button>
+<!--          <button id="btn-wallet" class="btn-setting"><i class="fa-solid fa-wallet" style="display: none;"></i> Dompet</button>-->
         </div>
         
         <div id="container-setting" class="container">
@@ -661,7 +661,7 @@ class EditProfile extends HTMLElement {
     // Button Event Listeners for Show/Hide Containers
     const btnSetting = this._shadowRoot.querySelector('#btn-setting');
     const btnSecurity = this._shadowRoot.querySelector('#btn-security');
-    const btnWallet = this._shadowRoot.querySelector('#btn-wallet');
+    // const btnWallet = this._shadowRoot.querySelector('#btn-wallet');
 
     const containerSetting = this._shadowRoot.querySelector('#container-setting');
     const containerSecurity = this._shadowRoot.querySelector('#container-security');
@@ -683,7 +683,7 @@ class EditProfile extends HTMLElement {
       // Activate the Setting button and deactivate the Security button
       btnSetting.classList.add('active');
       btnSecurity.classList.remove('active');
-      btnWallet.classList.remove('active');
+      // btnWallet.classList.remove('active');
     });
 
     btnSecurity.addEventListener('click', () => {
@@ -695,20 +695,20 @@ class EditProfile extends HTMLElement {
       // Activate the Security button and deactivate the Setting button
       btnSecurity.classList.add('active');
       btnSetting.classList.remove('active');
-      btnWallet.classList.remove('active');
+      // btnWallet.classList.remove('active');
     });
 
-    btnWallet.addEventListener('click', () => {
-      // Show the Security container and hide the Setting container
-      containerWallet.classList.add('active');
-      containerSetting.classList.remove('active');
-      containerSecurity.classList.remove('active');
-
-      // Activate the Security button and deactivate the Setting button
-      btnWallet.classList.add('active');
-      btnSetting.classList.remove('active');
-      btnSecurity.classList.remove('active');
-    });
+    // btnWallet.addEventListener('click', () => {
+    //   // Show the Security container and hide the Setting container
+    //   containerWallet.classList.add('active');
+    //   containerSetting.classList.remove('active');
+    //   containerSecurity.classList.remove('active');
+    //
+    //   // Activate the Security button and deactivate the Setting button
+    //   btnWallet.classList.add('active');
+    //   btnSetting.classList.remove('active');
+    //   btnSecurity.classList.remove('active');
+    // });
 
     // Toggle Password
     const passwordFields = [

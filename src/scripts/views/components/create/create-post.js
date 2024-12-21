@@ -337,6 +337,7 @@ class CreatePost extends HTMLElement {
     const submitButton = this._shadowRoot.querySelector('#submit-button');
     const mobileSubmitButton = this._shadowRoot.querySelector('#mobile-submit-button');
     const fileInput = this._shadowRoot.querySelector('#file-input');
+    const imgPreview = this._shadowRoot.querySelector('#image-preview');
 
     const titleValidationMessage = this._shadowRoot.querySelector('.title-validation');
     const descValidationMessage = this._shadowRoot.querySelector('.description-validation');
@@ -347,7 +348,7 @@ class CreatePost extends HTMLElement {
     const validateInputs = () => {
       const titleValid = titleInput.value.trim().length >= 3;
       const descValid = descInput.value.trim().length >= 8;
-      const imageValid = fileInput && fileInput.files.length > 0;
+      const imageValid = fileInput && fileInput.files.length > 0 && imgPreview.src != null;
 
       if (titleValidationMessage) {
         if (titleFocused.value && !titleValid) {
@@ -423,6 +424,26 @@ class CreatePost extends HTMLElement {
     imagePreview.style.display = 'none';
     deleteIcon.style.display = 'none';
     fileInput.value = '';
+
+    this._validateInputs();
+  }
+
+  _validateInputs() {
+    const titleInput = this._shadowRoot.querySelector('#title');
+    const descInput = this._shadowRoot.querySelector('#description');
+    const fileInput = this._shadowRoot.querySelector('#file-input');
+    const imgPreview = this._shadowRoot.querySelector('#image-preview');
+    const submitButton = this._shadowRoot.querySelector('#submit-button');
+    const mobileSubmitButton = this._shadowRoot.querySelector('#mobile-submit-button');
+
+    const titleValid = titleInput.value.trim().length >= 3;
+    const descValid = descInput.value.trim().length >= 8;
+    const imageValid = fileInput && fileInput.files.length > 0 && imgPreview.src !== '';
+
+    const isValid = titleValid && descValid && imageValid;
+
+    submitButton.disabled = !isValid;
+    mobileSubmitButton.disabled = !isValid;
   }
 
   render() {
