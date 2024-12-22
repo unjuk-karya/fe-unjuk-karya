@@ -302,7 +302,7 @@ class SideBar extends HTMLElement {
       <div class="sidebar">
         <div class="top">
           <div class="logo">
-            <img src="/images/logo2.png" alt="Logo">
+            <img src="./images/logo2.png" alt="Logo">
           </div>
           <i class="fa fa-bars" id="btn"></i>
         </div>
