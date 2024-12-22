@@ -428,7 +428,7 @@ class UserListModal extends HTMLElement {
             max-height: 90vh;
             border-radius: 16px;
           }
-
+          
           .modal-body {
             max-height: calc(90vh - 60px);
           }
@@ -461,7 +461,7 @@ class UserListModal extends HTMLElement {
                     </div>
                     <div class="user-info">
 <a href="#/profile/${like.user.id}" onclick="this.getRootNode().host.handleNavigation('${like.user.id}'); return false;" class="username">
-                      <span class="fullname">${like.user.name || ''}</span>
+                      <span class="fullname">${like.user.username || ''}</span>
                     </div>
                     ${like.user.isMyself ? '' : `
                       <button 

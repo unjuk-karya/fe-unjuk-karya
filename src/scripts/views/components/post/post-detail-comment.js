@@ -245,6 +245,13 @@ class PostDetailComment extends HTMLElement {
         console.error('Error liking comment:', error);
       }
     });
+
+    if (this._data.isMyself) {
+      const deleteButton = this.shadowRoot.querySelector('.delete-button');
+      deleteButton.addEventListener('click', () => {
+        this.handleDelete();
+      });
+    }
   }
 }
 
