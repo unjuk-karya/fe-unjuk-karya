@@ -42,3 +42,30 @@ Platform media sosial dan marketplace untuk seniman Indonesia, dirancang untuk m
 - **Github Page**: Deployment aplikasi frontend.
 - **Google Cloud**: Infrastruktur cloud untuk backend.
 - **GitHub**: Version control dan kolaborasi pengembangan.
+
+### Installation
+
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/unjuk-karya/fe-unjuk-karya.git
+    ```
+
+2. Change to the project directory:
+    ```sh
+    cd fe-unjuk-karya
+    ```
+
+3. Install the dependencies:
+    ```sh
+    npm install
+    ```
+
+4. Build the dependencies:
+    ```sh
+    npm run build
+    ```
+    
+5. Start the development server:
+    ```sh
+    npm run start-dev
+    ```
