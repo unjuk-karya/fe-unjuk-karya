@@ -57,8 +57,7 @@ class ProductDetailCard extends HTMLElement {
           icon: 'success',
           confirmButtonColor: '#1D77E6'
         });
-
-        window.location.reload();
+        history.back();
       } catch (error) {
         console.error('Failed to delete product:', error);
         await Swal.fire({
