@@ -1,0 +1,36 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+body {
+  /*background-color: #f3f3f3;*/
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.swal2-confirm {
+  padding: 11px 30px;
+  border-radius: 8px;
+  background-color: #5d87ff;
+  font-weight: 600;
+}
+
+.swal2-confirm:hover {
+  background-color: #4f73d9;
+}
+
+.swal2-cancel {
+  padding: 11px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
