@@ -34,7 +34,7 @@ Platform media sosial dan marketplace untuk seniman Indonesia, dirancang untuk m
 - **cors**: Untuk mengatur kebijakan akses lintas asal.
 - **multer**: Untuk menangani unggahan file.
 - **mysql2**: Pustaka koneksi database MySQL.
-- 
+
 ### Tools & Resources
 - **Figma**: Desain antarmuka pengguna dan prototipe.
 - **Postman**: Pengujian API.
