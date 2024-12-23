@@ -298,7 +298,7 @@ class SideBar extends HTMLElement {
       <div class="app-bar">
         <i class="fa fa-bars" id="btn-bar"></i>
       </div>
-
+      
       <div class="sidebar">
         <div class="top">
           <div class="logo">
