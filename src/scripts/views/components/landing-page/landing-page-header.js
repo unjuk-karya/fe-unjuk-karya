@@ -205,9 +205,9 @@ class LandingPage extends HTMLElement {
             <button class="close" aria-label="Close"><i class="fa-solid fa-x"></i></button>
           </div>
           
-          <button>Beranda</button>
-          <button>Tentang Kami</button>
-          <button>Kontak</button>
+          <button class="home-mobile">Beranda</button>
+          <button class="about-mobile">Tentang Kami</button>
+          <button class="contact-mobile">Kontak</button>
         </div>
       </div>
     `;
