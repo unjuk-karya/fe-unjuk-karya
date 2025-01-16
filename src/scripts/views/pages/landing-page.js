@@ -22,6 +22,9 @@ const LandingPage = {
     const home = document.querySelector('landing-page-header').shadowRoot.querySelector('button:nth-child(1)');
     const about = document.querySelector('landing-page-header').shadowRoot.querySelector('button:nth-child(2)');
     const contact = document.querySelector('landing-page-header').shadowRoot.querySelector('button:nth-child(3)');
+    const homeMobile = document.querySelector('landing-page-header').shadowRoot.querySelector('.home-mobile');
+    const aboutMobile = document.querySelector('landing-page-header').shadowRoot.querySelector('.about-mobile');
+    const contactMobile = document.querySelector('landing-page-header').shadowRoot.querySelector('.contact-mobile');
     const begin = document.querySelector('landing-page-header').shadowRoot.querySelector('.begin');
     const join = main.shadowRoot.querySelector('.join');
 
@@ -42,6 +45,27 @@ const LandingPage = {
     });
 
     contact.addEventListener('click', () => {
+      containerAbout.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+
+    homeMobile.addEventListener('click', () => {
+      containerWelcome.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+
+    aboutMobile.addEventListener('click', () => {
+      containerHome.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+
+    contactMobile.addEventListener('click', () => {
       containerAbout.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
